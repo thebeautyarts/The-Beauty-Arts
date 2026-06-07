@@ -18,7 +18,7 @@ header p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
 .container { max-width: 1300px; margin: 24px auto; padding: 0 16px; }
 .summary-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
 .card { background: white; border-radius: 10px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); text-align: center; border-top: 3px solid #0ea5e9; }
-.card .label { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+.card .label { font-size: 11px; color: #475569; text-transform: uppercase; margin-bottom: 5px; font-weight: 600; }
 .card .value { font-size: 18px; font-weight: 700; color: #0c4a6e; }
 .card.green { border-top-color: #22c55e; } .card.green .value { color: #16a34a; }
 .card.red { border-top-color: #ef4444; } .card.red .value { color: #dc2626; }
@@ -28,18 +28,38 @@ header p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
 .panel.active { display: block; }
 .box { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 20px; margin-bottom: 20px; }
 .box h3 { font-size: 14px; font-weight: 700; color: #0c4a6e; margin-bottom: 16px; }
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-.cal-header { text-align: center; font-size: 11px; font-weight: 700; color: #888; padding: 4px; }
-.cal-day { border: 1px solid #e0f2fe; border-radius: 8px; padding: 7px 5px; min-height: 66px; cursor: pointer; transition: all 0.15s; position: relative; }
-.cal-day:hover { border-color: #0ea5e9; background: #f0f9ff; }
-.cal-day.has-data { border-color: #0ea5e9; background: #f0f9ff; }
-.cal-day.today-d { border-color: #f97316; background: #fff7ed; }
-.cal-day.empty-day { background: #f9fafb; cursor: default; opacity: 0.25; pointer-events: none; }
-.cal-day .d-num { font-weight: 700; font-size: 13px; color: #0c4a6e; }
-.cal-day .d-rev { font-size: 10px; color: #16a34a; font-weight: 600; margin-top: 2px; }
-.cal-day .d-exp { font-size: 10px; color: #dc2626; }
-.cal-day .d-dot { position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
-.section-label { font-size: 12px; font-weight: 700; color: #0c4a6e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid #e0f2fe; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-header { text-align: center; font-size: 12px; font-weight: 700; color: #1e3a5f; padding: 4px; }
+.cal-header.h-sun { color: #dc2626; }
+.cal-header.h-sat { color: #7c3aed; }
+.cal-day { border: 1.5px solid #bae6fd; border-radius: 8px; padding: 6px 5px; min-height: 100px; cursor: pointer; transition: all 0.15s; position: relative; background:#fff; }
+.cal-day:hover { filter: brightness(0.96); }
+/* วันทำงานปกติ — มีลูกค้า */
+.cal-day.has-data { border: 2px solid #0ea5e9; background: #e0f7fa; }
+.cal-day.has-data:hover { background: #b2ebf2; }
+/* วันว่าง — ไม่มีลูกค้า */
+.cal-day.no-data { border: 1.5px dashed #cbd5e1; background: #f8fafc; }
+.cal-day.no-data .d-num { color: #94a3b8; }
+/* วันอาทิตย์ */
+.cal-day.is-sun { background: #fff0f0; border-color: #fca5a5; }
+.cal-day.is-sun .d-num { color: #dc2626; }
+.cal-day.is-sun.has-data { background: #ffe4e4; border: 2px solid #ef4444; }
+/* วันเสาร์ */
+.cal-day.is-sat { background: #faf0ff; border-color: #d8b4fe; }
+.cal-day.is-sat .d-num { color: #7c3aed; }
+.cal-day.is-sat.has-data { background: #ede9fe; border: 2px solid #8b5cf6; }
+/* วันนี้ */
+.cal-day.today-d { border: 2.5px solid #f97316 !important; box-shadow: 0 0 0 2px #fed7aa; }
+.cal-day.today-d .d-num { color: #ea580c !important; }
+/* วันหยุด empty */
+.cal-day.empty-day { background: #f1f5f9; cursor: default; opacity: 0.2; pointer-events: none; }
+.cal-day .d-num { font-weight: 700; font-size: 14px; color: #0c4a6e; margin-bottom: 2px; }
+.cal-day .d-rev { font-size: 12px; color: #15803d; font-weight: 700; margin-top: 2px; }
+.cal-day .d-exp { font-size: 12px; color: #b91c1c; font-weight: 700; margin-top: 1px; }
+.cal-day .d-haein { font-size: 11px; color: #7c3aed; font-weight: 700; margin-top: 1px; }
+.cal-day .d-profit { font-size: 11px; color: #0369a1; font-weight: 700; margin-top: 2px; border-top: 1px dashed #bae6fd; padding-top: 2px; }
+.cal-day .d-dot { position: absolute; top: 4px; right: 4px; width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+.section-label { font-size: 13px; font-weight: 700; color: #0c4a6e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid #e0f2fe; }
 .artist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
 .artist-card { border: 1px solid #e0f2fe; border-radius: 8px; padding: 12px; background: #f8fbff; }
 .artist-card h4 { font-size: 12px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
@@ -47,7 +67,7 @@ header p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
 .svc-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 6px; }
 .svc-table th { background: #e0f2fe; color: #0c4a6e; padding: 4px 6px; text-align: center; font-weight: 700; }
 .svc-table th:first-child { text-align: left; }
-.svc-table td { padding: 3px 6px; border-bottom: 1px solid #f0f9ff; }
+.svc-table td { padding: 3px 6px; border-bottom: 1px solid #f0f9ff; color: #1e293b; }
 .svc-table td:not(:first-child) { text-align: right; }
 .svc-table input { width: 100%; padding: 3px 5px; border: 1px solid #ddd; border-radius: 4px; font-size: 11px; text-align: right; }
 .svc-table input:focus { outline: none; border-color: #0ea5e9; }
@@ -58,7 +78,7 @@ header p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
 .channel-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 18px; }
 .ch-card { border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: center; }
 .ch-card .ch-icon { font-size: 20px; margin-bottom: 4px; }
-.ch-card .ch-label { font-size: 11px; color: #555; font-weight: 600; margin-bottom: 6px; }
+.ch-card .ch-label { font-size: 12px; color: #1e293b; font-weight: 700; margin-bottom: 6px; }
 .ch-card input { width: 100%; padding: 5px 7px; border: 1px solid #ddd; border-radius: 5px; font-size: 12px; text-align: right; }
 .ch-card input:focus { outline: none; border-color: #0ea5e9; }
 .ch-cash { border-color: #86efac; background: #f0fdf4; }
@@ -77,7 +97,7 @@ header p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
 .note-box { border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px; background: #f0fdf4; }
 .note-box h4 { font-size: 12px; font-weight: 700; color: #16a34a; margin-bottom: 8px; }
 .note-box textarea { width: 100%; padding: 7px; border: 1px solid #ddd; border-radius: 5px; font-size: 12px; resize: vertical; min-height: 70px; font-family: inherit; }
-.day-preview { margin-top: 8px; font-size: 12px; color: #555; }
+.day-preview { margin-top: 8px; font-size: 12px; color: #1e293b; font-weight: 500; }
 .day-preview span { font-weight: 700; color: #0c4a6e; }
 .btn-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .btn { padding: 8px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
@@ -91,12 +111,12 @@ thead th { background: #0c4a6e; color: white; padding: 10px 8px; text-align: cen
 thead th:first-child { text-align: left; padding-left: 14px; }
 tbody tr:nth-child(even) { background: #f0f9ff; }
 tbody tr:hover { background: #e0f2fe; }
-td { padding: 8px; text-align: right; border-bottom: 1px solid #e0f2fe; white-space: nowrap; }
+td { padding: 8px; text-align: right; border-bottom: 1px solid #e0f2fe; white-space: nowrap; color: #1e293b; }
 td:first-child { text-align: left; padding-left: 14px; font-weight: 600; }
-tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e; }
+tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e; color: #0c4a6e; }
 .ch-summary { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 20px; }
 .ch-sum-card { background: white; border-radius: 8px; padding: 12px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-.ch-sum-card .ch-s-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+.ch-sum-card .ch-s-label { font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600; }
 .ch-sum-card .ch-s-val { font-size: 15px; font-weight: 700; color: #0c4a6e; }
 .ch-sum-card .ch-s-pct { font-size: 11px; color: #888; margin-top: 2px; }
 .haein-box { border: 2px solid #6d28d9; border-radius: 8px; padding: 14px; background: #faf5ff; margin-bottom: 18px; }
@@ -110,7 +130,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
 .absent-box h4 { font-size: 12px; font-weight: 700; color: #92400e; margin-bottom: 10px; }
 .absent-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
 .absent-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-.absent-item label { font-size: 11px; color: #555; font-weight: 600; text-align: center; cursor: pointer; }
+.absent-item label { font-size: 12px; color: #1e293b; font-weight: 700; text-align: center; cursor: pointer; }
 .absent-item input[type=checkbox] { width: 18px; height: 18px; cursor: pointer; accent-color: #f97316; }
 .salary-settings { background: white; border-radius: 10px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 20px; }
 .salary-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 12px; }
@@ -588,12 +608,12 @@ async function seedIfEmpty() {
   if (snap.exists()) return;
   const empty = () => ({tat:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0});
   const SEED = {
-    1:{svc:[empty(),empty(),empty(),{...empty(),tat:8890},empty(),empty()],commR2:[0,0,0,499,0,0],channels:{cash:0,transfer:7890,tap:0,credit:0,deposit:1000},haein:{sadryi:590,henna:0,product:0,channel:'transfer'},expenses:[{n:'หน้ากากอนามัย',a:1750},{n:'กระดาษทำใบเซอร์',a:665},{n:'เลาดิไอน้ำ',a:654},{n:'ตลับยา',a:213},{n:'ลูกซิป',a:118},{n:'ค้าเตอบัด ก้านยาว L',a:497},{n:'ทีซู่',a:507},{n:'อโรมา',a:419},{n:'ชิ้นวางของ',a:127},{n:'Line แพ็กเกจ',a:1906},{n:'ข้อความเพิ่ม',a:1700},{n:'DTAC 081',a:663},{n:'DTAC 082',a:747.93},{n:'Al Pro',a:375},{n:'YouTube',a:399},{n:'ค่าไฟฟ้า',a:15268.49}],note:'ช่างมะลิ: สักคิ้ว 3,900 + สักปาก 4,990',absent:Array(5).fill(false)},
-    2:{svc:[empty(),{...empty(),tat:9900},empty(),{...empty(),tat:100},empty(),empty()],commR2:[0,499,0,0,0,0],channels:{cash:8900,transfer:100,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:10000,product:1200,channel:'transfer'},expenses:[{n:'ค่าแฟ',a:108}],note:'มด: สักคิ้ว 9,900 | มะลิ: กันคิ้ว 100 | HAE-IN: Henna 10,000 + ขายสินค้า 1,200',absent:Array(5).fill(false)},
-    3:{svc:[empty(),empty(),{...empty(),tat:10900},{...empty(),tat:4990},empty(),empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:0,tap:9890,credit:4000,deposit:0},haein:{sadryi:0,henna:0,product:2400,channel:'transfer'},expenses:[{n:'CAP CUT PRO',a:289},{n:'น้ำดื่ม',a:1125}],note:'บ๋อม: สักคิ้ว 5,900 + สักปาก 5,000 | มะลิ: สักปาก 4,990 | HAE-IN: ขายสินค้า 2,400',absent:Array(5).fill(false)},
-    4:{svc:[empty(),{...empty(),hair:7950},{...empty(),hair:7950},empty(),{...empty(),lash:2290},empty()],commR2:Array(6).fill(0),channels:{cash:16090,transfer:1100,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:1900,product:0,channel:'transfer'},expenses:[],note:'มด: สักผม 7,950 | บ๋อม: สักผม 7,950 | เจน: ขนตา 2,290 | HAE-IN: Henna 1,900',absent:Array(5).fill(false)},
-    5:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:300},empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:300,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'เงินสำรองจ่าย',a:1492}],note:'เจน: ทำเล็บ ฿300 (โอน/แม่มณี)',absent:Array(5).fill(false)},
-    6:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:499},empty()],commR2:[0,590,590,0,0,0],channels:{cash:0,transfer:499,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'กระดาษ 120 แกรม',a:436},{n:'พัสดุจากจีน',a:3295}],note:'เจน: ทำเล็บ ฿499 (แม่มณี) | มด+บ๋อม: คอมรอบ2 คนละ ฿590',absent:Array(5).fill(false)}
+    1:{svc:[empty(),empty(),empty(),{...empty(),tat:8890},empty(),empty()],commR2:[0,0,0,499,0,0],channels:{cash:0,transfer:7890,tap:0,credit:0,deposit:1000},haein:{sadryi:590,henna:0,product:0,channel:'transfer'},expenses:[{n:'หน้ากากอนามัย',a:1750},{n:'กระดาษทำใบเซอร์',a:665},{n:'เลาดิไอน้ำ',a:654},{n:'ตลับยา',a:213},{n:'ลูกซิป',a:118},{n:'ค้าเตอบัด ก้านยาว L',a:497},{n:'ทีซู่',a:507},{n:'อโรมา',a:419},{n:'ชิ้นวางของ',a:127},{n:'Line แพ็กเกจ',a:1906},{n:'ข้อความเพิ่ม',a:1700},{n:'DTAC 081',a:663},{n:'DTAC 082',a:747.93},{n:'Al Pro',a:375},{n:'YouTube',a:399},{n:'ค่าไฟฟ้า',a:15268.49}],note:'ช่างมะลิ: สักคิ้ว 3,900 + สักปาก 4,990 | HAE-IN: สระ-ไดร์ ฿590',absent:[false,false,false,false,false]},
+    2:{svc:[empty(),{...empty(),tat:9900},empty(),{...empty(),tat:100},empty(),empty()],commR2:[0,499,0,0,0,0],channels:{cash:8900,transfer:100,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:10000,product:1200,channel:'transfer'},expenses:[{n:'ค่าแฟ',a:108}],note:'มด: สักคิ้ว 9,900 | มะลิ: กันคิ้ว 100 | HAE-IN: Henna 10,000 + ขายสินค้า 1,200',absent:[false,false,false,false,false]},
+    3:{svc:[empty(),empty(),{...empty(),tat:10900},{...empty(),tat:4990},empty(),empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:0,tap:9890,credit:4000,deposit:0},haein:{sadryi:0,henna:0,product:2400,channel:'transfer'},expenses:[{n:'CAP CUT PRO',a:289},{n:'น้ำดื่ม',a:1125}],note:'บ๋อม: สักคิ้ว 5,900 + สักปาก 5,000 | มะลิ: สักปาก 4,990 | HAE-IN: ขายสินค้า 2,400 | มด: หยุด',absent:[true,false,false,false,false]},
+    4:{svc:[empty(),{...empty(),hair:7950},{...empty(),hair:7950},empty(),{...empty(),lash:2290},empty()],commR2:Array(6).fill(0),channels:{cash:16090,transfer:1100,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:1900,product:0,channel:'transfer'},expenses:[],note:'มด: สักผม 7,950 | บ๋อม: สักผม 7,950 | เจน: ขนตา 2,290 | HAE-IN: Henna 1,900 | มะลิ+เจน+อั๋น: หยุด',absent:[false,false,true,true,true]},
+    5:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:300},empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:300,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'เงินสำรองจ่าย',a:1492}],note:'เจน: ทำเล็บ ฿300 (โอน/แม่มณี) | บ๋อม: หยุด',absent:[false,true,false,false,false]},
+    6:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:499},empty()],commR2:[0,590,590,0,0,0],channels:{cash:0,transfer:499,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'กระดาษ 120 แกรม',a:436},{n:'พัสดุจากจีน',a:3295}],note:'เจน: ทำเล็บ ฿499 (แม่มณี) | มด+บ๋อม: คอมรอบ2 คนละ ฿590 | มะลิ: หยุด',absent:[false,false,true,false,false]}
   };
   await set(ref(db, getRoot()), SEED);
 }
@@ -603,7 +623,7 @@ function buildCal() {
     `💙 สรุปยอด The Beauty Arts & HAE-IN — ${MONTH_TH_NAMES[curMonth]} ${curYear}`;
   const g = document.getElementById('cal-grid');
   const days = ['อา','จ','อ','พ','พฤ','ศ','ส'];
-  let h = days.map(d=>`<div class="cal-header">${d}</div>`).join('');
+  let h = days.map((d,i)=>`<div class="cal-header${i===0?' h-sun':i===6?' h-sat':''}">${d}</div>`).join('');
   const firstDow = getFirstDow();
   const daysInMonth = getDaysInMonth();
   for (let i=0;i<firstDow;i++) h += `<div class="cal-day empty-day"></div>`;
@@ -616,10 +636,23 @@ function buildCal() {
     const exp = dd.expenses.reduce((a,e)=>a+(+e.a||0),0);
     const hasData = rev>0||exp>0||dd.note;
     const isToday = isThisMonth && today.getDate()===d;
-    h += `<div class="cal-day ${hasData?'has-data':''} ${isToday?'today-d':''}" onclick="window._selectDay(${d})">
-      <div class="d-num">${d}</div>
-      ${rev>0?`<div class="d-rev">฿${(rev/1000).toFixed(1)}K</div>`:''}
-      ${exp>0?`<div class="d-exp">-฿${(exp/1000).toFixed(1)}K</div>`:''}
+    const hiT = (dd.haein ? (+(dd.haein.sadryi)||0)+(+(dd.haein.henna)||0)+(+(dd.haein.product)||0) : 0);
+    const profit = rev + hiT - exp;
+    const dow = (firstDow + d - 1) % 7; // 0=อา, 6=ส
+    const isSun = dow === 0;
+    const isSat = dow === 6;
+    const dayClass = [
+      hasData ? 'has-data' : 'no-data',
+      isToday ? 'today-d' : '',
+      isSun ? 'is-sun' : '',
+      isSat ? 'is-sat' : ''
+    ].filter(Boolean).join(' ');
+    h += `<div class="cal-day ${dayClass}" onclick="window._selectDay(${d})">
+      <div class="d-num">${d}${isToday?' ●':''}</div>
+      ${rev>0?`<div class="d-rev">💚 ฿${rev.toLocaleString('th-TH')}</div>`:''}
+      ${hiT>0?`<div class="d-haein">💜 ฿${hiT.toLocaleString('th-TH')}</div>`:''}
+      ${exp>0?`<div class="d-exp">💸 ฿${exp.toLocaleString('th-TH')}</div>`:''}
+      ${(rev>0||hiT>0)?`<div class="d-profit">= ฿${profit.toLocaleString('th-TH')}</div>`:''}
       ${hasData?'<div class="d-dot"></div>':''}
     </div>`;
   }
