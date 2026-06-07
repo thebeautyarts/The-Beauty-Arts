@@ -333,6 +333,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
 <!-- ===== TAB 2: SUMMARY ===== -->
 <div id="p-summary" class="panel">
   <div class="summary-row" id="sum-cards"></div>
+  <div id="svc-dashboard" style="margin-bottom:20px"></div>
   <div class="table-wrap">
     <table>
       <thead><tr>
@@ -628,7 +629,34 @@ function totalRevFromSvc(sv) {
 function haeinTotal(hi) { return (hi.sadryi||0)+(hi.henna||0)+(hi.product||0); }
 
 function getDay(d) {
-  return data[d] || {
+  const dd = data[d] || data['d'+d] || data[String(d)] || null;
+  if (dd) {
+    // normalize svc — รองรับทั้ง array และ object
+    if (dd.svc && !Array.isArray(dd.svc)) {
+      dd.svc = Object.values(dd.svc);
+    }
+    // normalize absent
+    if (dd.absent && !Array.isArray(dd.absent)) {
+      dd.absent = Object.values(dd.absent);
+    }
+    // normalize commR2
+    if (dd.commR2 && !Array.isArray(dd.commR2)) {
+      dd.commR2 = Object.values(dd.commR2);
+    }
+    // normalize expenses / other
+    if (dd.expenses && !Array.isArray(dd.expenses)) {
+      dd.expenses = Object.values(dd.expenses);
+    }
+    if (dd.other && !Array.isArray(dd.other)) {
+      dd.other = Object.values(dd.other);
+    }
+    // normalize each svc item
+    if (dd.svc) {
+      dd.svc = dd.svc.map(sv => sv || {brow:0,eye:0,lip:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0});
+    }
+    return dd;
+  }
+  return {
     svc: ARTISTS.map(() => ({brow:0,eye:0,lip:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0})),
     commR2: Array(6).fill(0),
     channels: {cash:0,transfer:0,tap:0,credit:0,deposit:0},
@@ -657,7 +685,26 @@ function stopSync() {
 function startRealtimeSync() {
   syncUnsub = onValue(ref(db, getRoot()), (snapshot) => {
     const val = snapshot.val();
-    if (val) data = val;
+    if (val) {
+      data = {};
+      if (Array.isArray(val)) {
+        // Firebase แปลง integer key เป็น Array — index 0=null, 1=วันที่1...
+        val.forEach((item, idx) => {
+          if (item && idx > 0) data[idx] = item;
+        });
+      } else {
+        // Object — รองรับทั้ง d1,d2... และ 1,2,3...
+        Object.keys(val).forEach(k => {
+          if (k.startsWith('d')) {
+            const num = parseInt(k.slice(1));
+            if (!isNaN(num)) data[num] = val[k];
+          } else {
+            const num = parseInt(k);
+            if (!isNaN(num)) data[num] = val[k];
+          }
+        });
+      }
+    }
     setFbStatus(true, `🔥 Firebase ซิงค์แล้ว — ${MONTH_TH_NAMES[curMonth]} ${curYear}`);
     setBadge('✅ ซิงค์แล้ว');
     updateLastSync();
@@ -697,7 +744,11 @@ async function seedIfEmpty() {
     5:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:300},empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:300,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'เงินสำรองจ่าย',a:1492}],note:'เจน: ทำเล็บ ฿300 (โอน/แม่มณี) | บ๋อม: หยุด',absent:[false,true,false,false,false]},
     6:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:499},empty()],commR2:[0,590,590,0,0,0],channels:{cash:0,transfer:499,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'กระดาษ 120 แกรม',a:436},{n:'พัสดุจากจีน',a:3295}],note:'เจน: ทำเล็บ ฿499 (แม่มณี) | มด+บ๋อม: คอมรอบ2 คนละ ฿590 | มะลิ: หยุด',absent:[false,false,true,false,false]}
   };
-  await set(ref(db, getRoot()), SEED);
+  // Firebase ต้องการ string key — แต่เราต้องการ number key
+  // ใช้ path แยกต่างหากสำหรับแต่ละวัน เพื่อไม่ให้ Firebase แปลงเป็น Array
+  for (const [day, dayData] of Object.entries(SEED)) {
+    await set(ref(db, getRoot() + '/d' + day), dayData);
+  }
 }
 
 function buildCal() {
@@ -714,8 +765,8 @@ function buildCal() {
   const isThisMonth = today.getFullYear()===adYear && today.getMonth()===curMonth;
   for (let d=1;d<=daysInMonth;d++) {
     const dd = getDay(d);
-    const rev = dd.svc.reduce((s,sv) => s+totalRevFromSvc(sv), 0);
-    const exp = dd.expenses.reduce((a,e)=>a+(+e.a||0),0);
+    const rev = (dd.svc||[]).reduce((s,sv) => s+totalRevFromSvc(sv), 0);
+    const exp = (dd.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);
     const hasData = rev>0||exp>0||dd.note;
     const isToday = isThisMonth && today.getDate()===d;
     const hiT = (dd.haein ? (+(dd.haein.sadryi)||0)+(+(dd.haein.henna)||0)+(+(dd.haein.product)||0) : 0);
@@ -746,8 +797,8 @@ function buildEntryCards() {
   let totRev=0,totExp=0,daysWorked=0;
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
-    const r=dd.svc.reduce((s,sv)=>s+totalRevFromSvc(sv),0);
-    totRev+=r; totExp+=dd.expenses.reduce((a,e)=>a+(+e.a||0),0);
+    const r=(dd.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0);
+    totRev+=r; totExp+=(dd.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);
     if(r>0) daysWorked++;
   }
   document.getElementById('entry-cards').innerHTML=`
@@ -915,7 +966,7 @@ window.saveDay = async function() {
   const haein={sadryi:+document.getElementById('hi-sadryi').value||0,henna:+document.getElementById('hi-henna').value||0,product:+document.getElementById('hi-product').value||0,channel:document.getElementById('hi-channel').value};
   const dayData={svc,commR2,channels,haein,expenses,other,note:document.getElementById('day-note').value,absent};
   data[selDay]=dayData;
-  await saveToFirebase(selDay, dayData);
+  await saveToFirebase('d'+selDay, dayData);
   buildCal();
   const m=document.getElementById('entry-msg');
   m.textContent=`✓ บันทึกวันที่ ${selDay} แล้ว`;
@@ -988,11 +1039,15 @@ function buildSvcDashboard(daysData) {
 
   const activeCards = Object.entries(svcs).filter(([k,s])=>s.totRev>0);
   if (!activeCards.length && !haein.totRev && !other.totRev) {
-    document.getElementById('svc-dashboard').innerHTML = '';
+    const svcDashEl = document.getElementById('svc-dashboard');
+  if (!svcDashEl) return;
+  svcDashEl.innerHTML = '';
     return;
   }
 
-  document.getElementById('svc-dashboard').innerHTML = `
+  const svcDashEl = document.getElementById('svc-dashboard');
+  if (!svcDashEl) return;
+  svcDashEl.innerHTML = `
     <div style="background:white;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:18px;margin-bottom:4px">
       <h3 style="font-size:14px;font-weight:700;color:#0c4a6e;margin-bottom:14px">📊 แดชบอร์ดรายบริการ — รายรับ + คอม + แยกตามช่าง</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
@@ -1009,9 +1064,9 @@ window.buildSummary = function() {
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
     allDays.push(dd);
-    const revA=dd.svc.map(sv=>totalRevFromSvc(sv));
+    const revA=(dd.svc||[]).map(sv=>totalRevFromSvc(sv));
     const rev=revA.reduce((a,b)=>a+b,0);
-    const exp=dd.expenses.reduce((a,e)=>a+(+e.a||0),0);
+    const exp=(dd.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);
     const hiT=haeinTotal(dd.haein||{});
     const otherRev=(dd.other||[]).reduce((a,e)=>a+(+e.a||0),0);
     revA.forEach((r,i)=>totRevA[i]+=r); totRev+=rev; totExp+=exp; totHaein+=hiT; totOther+=otherRev;
@@ -1039,7 +1094,7 @@ window.buildChannels = function() {
   let totCh={cash:0,transfer:0,tap:0,credit:0,deposit:0},totRevA=0,rows='';
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
-    const rev=dd.svc.reduce((s,sv)=>s+totalRevFromSvc(sv),0);
+    const rev=(dd.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0);
     const ct=chTotal(dd.channels);
     if(rev>0||ct>0){
       CHANNELS.forEach(k=>totCh[k]+=dd.channels[k]||0); totRevA+=rev;
@@ -1065,7 +1120,7 @@ window.calcPayroll = function() {
   let totBrow=Array(6).fill(0),totEye=Array(6).fill(0),totLip=Array(6).fill(0),totLaser=Array(6).fill(0),totLash=Array(6).fill(0),totHair=Array(6).fill(0),totNail=Array(6).fill(0),totItem=Array(6).fill(0),totChalacol=Array(6).fill(0),totR2=Array(6).fill(0),absentDays=Array(5).fill(0),totHaeinRev=0;
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
-    dd.svc.forEach((sv,i)=>{
+    (dd.svc||[]).forEach((sv,i)=>{
       totBrow[i]+=(sv.brow||0);
       totEye[i]+=(sv.eye||0);
       totLip[i]+=(sv.lip||0);
@@ -1076,8 +1131,8 @@ window.calcPayroll = function() {
       totItem[i]+=sv.item||0;
       totChalacol[i]+=sv.chalacol||0;
     });
-    dd.commR2.forEach((r,i)=>totR2[i]+=r);
-    if(dd.absent) dd.absent.forEach((a,i)=>{if(a)absentDays[i]++;});
+    (dd.commR2||[]).forEach((r,i)=>totR2[i]+=r);
+    if(dd.absent) (dd.absent||[]).forEach((a,i)=>{if(a)absentDays[i]++;});
     totHaeinRev+=haeinTotal(dd.haein||{});
   }
   const haeinPool=totHaeinRev*0.10, haeinPP=haeinPool/6;
@@ -1158,13 +1213,13 @@ window.calcPayroll = function() {
 window.exportSummaryCSV=function(){
   const dim=getDaysInMonth(),root=getRoot(),mo=String(curMonth+1).padStart(2,'0'),yr=String(curYear).slice(2);
   let rows=[['วันที่',...ARTISTS,'รายรับรวม','HAE-IN','รายจ่าย','กำไร','หมายเหตุ']];
-  for(let d=1;d<=dim;d++){const dd=getDay(d);const revA=dd.svc.map(sv=>totalRevFromSvc(sv));const rev=revA.reduce((a,b)=>a+b,0);const exp=dd.expenses.reduce((a,e)=>a+(+e.a||0),0);const hi=haeinTotal(dd.haein||{});if(rev>0||exp>0||dd.note)rows.push([`${d}/${mo}/${yr}`,...revA,rev,hi,exp,rev+hi-exp,dd.note||'']);}
+  for(let d=1;d<=dim;d++){const dd=getDay(d);const revA=(dd.svc||[]).map(sv=>totalRevFromSvc(sv));const rev=revA.reduce((a,b)=>a+b,0);const exp=(dd.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);const hi=haeinTotal(dd.haein||{});if(rev>0||exp>0||dd.note)rows.push([`${d}/${mo}/${yr}`,...revA,rev,hi,exp,rev+hi-exp,dd.note||'']);}
   dl('﻿'+rows.map(r=>r.join(',')).join('\n'),`daily_${root}.csv`);
 };
 window.exportChannelCSV=function(){
   const dim=getDaysInMonth(),root=getRoot(),mo=String(curMonth+1).padStart(2,'0'),yr=String(curYear).slice(2);
   let rows=[['วันที่',...CH_LABELS,'รวมช่องทาง','รวมช่าง','ผลต่าง']];
-  for(let d=1;d<=dim;d++){const dd=getDay(d);const rev=dd.svc.reduce((s,sv)=>s+totalRevFromSvc(sv),0);const ct=chTotal(dd.channels);if(rev>0||ct>0)rows.push([`${d}/${mo}/${yr}`,...CHANNELS.map(k=>dd.channels[k]||0),ct,rev,ct-rev]);}
+  for(let d=1;d<=dim;d++){const dd=getDay(d);const rev=(dd.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0);const ct=chTotal(dd.channels);if(rev>0||ct>0)rows.push([`${d}/${mo}/${yr}`,...CHANNELS.map(k=>dd.channels[k]||0),ct,rev,ct-rev]);}
   dl('﻿'+rows.map(r=>r.join(',')).join('\n'),`channels_${root}.csv`);
 };
 window.exportPayrollCSV=function(){window.calcPayroll();const root=getRoot();const rows=[['พนักงาน','วันหยุด','ปรับวันหยุด','คิ้ว/ปาก/ตา','คอมรอบ2','เลเซอร์','ขนตา/ผม/เล็บ','ขายของ','ชลาชล','HAE-IN','รวมคอม','ฐาน','รวมรับ']];document.querySelectorAll('#pr-tbody tr').forEach(tr=>{rows.push([...tr.querySelectorAll('td')].map(td=>td.innerText.replace(/\n/g,' ').trim()));});dl('﻿'+rows.map(r=>r.join(',')).join('\n'),`payroll_${root}.csv`);};
@@ -1418,7 +1473,7 @@ function showLineSt(type,msg){
 
 function buildDailyMsg(d, dateLabel){
   const dd = getDay(d);
-  const revA = dd.svc.map(sv=>totalRevFromSvc(sv));
+  const revA = (dd.svc||[]).map(sv=>totalRevFromSvc(sv));
   const totRev = revA.reduce((a,b)=>a+b,0);
   const haein = haeinTotal(dd.haein||{});
   const otherRev = (dd.other||[]).reduce((a,e)=>a+(+e.a||0),0);
@@ -1426,7 +1481,7 @@ function buildDailyMsg(d, dateLabel){
   const totGross = totRev + haein + otherRev;
   const profit = totGross - totExp;
   const ch = dd.channels||{};
-  const chSum = CHANNELS.reduce((s,k)=>s+(+ch[k]||0),0);
+  const chSum = CHANNELS.reduce((s,k)=>s+(+(ch||{})[k]||0),0);
 
   const LINE = '─'.repeat(28);
   let msg = `💙 สรุปยอดประจำวัน\n`;
