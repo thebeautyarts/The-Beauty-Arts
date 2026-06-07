@@ -603,7 +603,7 @@ async function saveToFirebase(day, dayData) {
 
 async function seedIfEmpty() {
   // Seed ข้อมูลตัวอย่างเฉพาะ มิถุนายน 2569 เท่านั้น
-  if (getRoot() !== 'jun2569') return;
+  // seed สำหรับทุกเดือน
   const snap = await get(ref(db, getRoot()));
   if (snap.exists()) return;
   const empty = () => ({tat:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0});
