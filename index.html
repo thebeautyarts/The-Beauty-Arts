@@ -29,35 +29,35 @@ header p { font-size: 12px; opacity: 0.8; margin-top: 3px; }
 .box { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 20px; margin-bottom: 20px; }
 .box h3 { font-size: 14px; font-weight: 700; color: #0c4a6e; margin-bottom: 16px; }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-.cal-header { text-align: center; font-size: 12px; font-weight: 700; color: #1e3a5f; padding: 4px; }
-.cal-header.h-sun { color: #dc2626; }
-.cal-header.h-sat { color: #7c3aed; }
-.cal-day { border: 1.5px solid #bae6fd; border-radius: 8px; padding: 6px 5px; min-height: 100px; cursor: pointer; transition: all 0.15s; position: relative; background:#fff; }
+.cal-header { text-align: center; font-size: 13px; font-weight: 800; color: #0f172a; padding: 6px 4px; }
+.cal-header.h-sun { color: #b91c1c; font-weight: 800; }
+.cal-header.h-sat { color: #6d28d9; font-weight: 800; }
+.cal-day { border: 1.5px solid #bae6fd; border-radius: 8px; padding: 6px 5px; min-height: 110px; cursor: pointer; transition: all 0.15s; position: relative; background:#ffffff !important; }
 .cal-day:hover { filter: brightness(0.96); }
 /* วันทำงานปกติ — มีลูกค้า */
-.cal-day.has-data { border: 2px solid #0ea5e9; background: #e0f7fa; }
+.cal-day.has-data { border: 2px solid #0284c7; background: #e0f2fe; }
 .cal-day.has-data:hover { background: #b2ebf2; }
 /* วันว่าง — ไม่มีลูกค้า */
-.cal-day.no-data { border: 1.5px dashed #cbd5e1; background: #f8fafc; }
-.cal-day.no-data .d-num { color: #94a3b8; }
+.cal-day.no-data { border: 1.5px dashed #94a3b8; background: #f8fafc !important; }
+.cal-day.no-data .d-num { color: #1e293b !important; font-weight: 900 !important; }
 /* วันอาทิตย์ */
-.cal-day.is-sun { background: #fff0f0; border-color: #fca5a5; }
-.cal-day.is-sun .d-num { color: #dc2626; }
+.cal-day.is-sun { background: #fff1f1 !important; border-color: #fca5a5; }
+.cal-day.is-sun .d-num { color: #b91c1c !important; font-weight: 900 !important; }
 .cal-day.is-sun.has-data { background: #ffe4e4; border: 2px solid #ef4444; }
 /* วันเสาร์ */
-.cal-day.is-sat { background: #faf0ff; border-color: #d8b4fe; }
-.cal-day.is-sat .d-num { color: #7c3aed; }
+.cal-day.is-sat { background: #faf5ff !important; border-color: #d8b4fe; }
+.cal-day.is-sat .d-num { color: #6d28d9 !important; font-weight: 900 !important; }
 .cal-day.is-sat.has-data { background: #ede9fe; border: 2px solid #8b5cf6; }
 /* วันนี้ */
-.cal-day.today-d { border: 2.5px solid #f97316 !important; box-shadow: 0 0 0 2px #fed7aa; }
-.cal-day.today-d .d-num { color: #ea580c !important; }
+.cal-day.today-d { border: 3px solid #f97316 !important; box-shadow: 0 0 0 3px #fed7aa; }
+.cal-day.today-d .d-num { color: #c2410c !important; font-weight: 900 !important; }
 /* วันหยุด empty */
 .cal-day.empty-day { background: #f1f5f9; cursor: default; opacity: 0.2; pointer-events: none; }
-.cal-day .d-num { font-weight: 700; font-size: 14px; color: #0c4a6e; margin-bottom: 2px; }
-.cal-day .d-rev { font-size: 12px; color: #15803d; font-weight: 700; margin-top: 2px; }
-.cal-day .d-exp { font-size: 12px; color: #b91c1c; font-weight: 700; margin-top: 1px; }
-.cal-day .d-haein { font-size: 11px; color: #7c3aed; font-weight: 700; margin-top: 1px; }
-.cal-day .d-profit { font-size: 11px; color: #0369a1; font-weight: 700; margin-top: 2px; border-top: 1px dashed #bae6fd; padding-top: 2px; }
+.cal-day .d-num { font-weight: 900 !important; font-size: 15px !important; color: #0f172a !important; margin-bottom: 3px; text-shadow: 0 0 1px rgba(0,0,0,0.1); }
+.cal-day .d-rev { font-size: 11px; color: #166534; font-weight: 800; margin-top: 3px; background:#dcfce7; border-radius:3px; padding:1px 3px; }
+.cal-day .d-exp { font-size: 11px; color: #991b1b; font-weight: 800; margin-top: 2px; background:#fee2e2; border-radius:3px; padding:1px 3px; }
+.cal-day .d-haein { font-size: 11px; color: #6d28d9; font-weight: 800; margin-top: 2px; background:#ede9fe; border-radius:3px; padding:1px 3px; }
+.cal-day .d-profit { font-size: 11px; color: #0c4a6e; font-weight: 800; margin-top: 3px; border-top: 1px solid #bae6fd; padding-top: 3px; background:#e0f2fe; border-radius:3px; padding:2px 3px; }
 .cal-day .d-dot { position: absolute; top: 4px; right: 4px; width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
 .section-label { font-size: 13px; font-weight: 700; color: #0c4a6e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid #e0f2fe; }
 .artist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
@@ -204,18 +204,26 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
   <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
     <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border-radius:8px;padding:6px 12px;">
       <span style="font-size:12px;opacity:.8;">📅</span>
-      <select id="sel-month" onchange="changeMonth()" style="background:transparent;border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;outline:none;">
-        <option value="0">มกราคม</option><option value="1">กุมภาพันธ์</option><option value="2">มีนาคม</option>
-        <option value="3">เมษายน</option><option value="4">พฤษภาคม</option><option value="5" selected>มิถุนายน</option>
-        <option value="6">กรกฎาคม</option><option value="7">สิงหาคม</option><option value="8">กันยายน</option>
-        <option value="9">ตุลาคม</option><option value="10">พฤศจิกายน</option><option value="11">ธันวาคม</option>
+      <select id="sel-month" onchange="changeMonth()" style="background:#1e3a5f;border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;outline:none;border-radius:4px;padding:2px 4px;">
+        <option value="0" style="background:#1e3a5f;color:#fff">มกราคม</option>
+        <option value="1" style="background:#1e3a5f;color:#fff">กุมภาพันธ์</option>
+        <option value="2" style="background:#1e3a5f;color:#fff">มีนาคม</option>
+        <option value="3" style="background:#1e3a5f;color:#fff">เมษายน</option>
+        <option value="4" style="background:#1e3a5f;color:#fff">พฤษภาคม</option>
+        <option value="5" selected style="background:#1e3a5f;color:#fff">มิถุนายน</option>
+        <option value="6" style="background:#1e3a5f;color:#fff">กรกฎาคม</option>
+        <option value="7" style="background:#1e3a5f;color:#fff">สิงหาคม</option>
+        <option value="8" style="background:#1e3a5f;color:#fff">กันยายน</option>
+        <option value="9" style="background:#1e3a5f;color:#fff">ตุลาคม</option>
+        <option value="10" style="background:#1e3a5f;color:#fff">พฤศจิกายน</option>
+        <option value="11" style="background:#1e3a5f;color:#fff">ธันวาคม</option>
       </select>
-      <select id="sel-year" onchange="changeMonth()" style="background:transparent;border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;outline:none;">
-        <option value="2568">2568</option>
-        <option value="2569" selected>2569</option>
-        <option value="2570">2570</option>
-        <option value="2571">2571</option>
-        <option value="2572">2572</option>
+      <select id="sel-year" onchange="changeMonth()" style="background:#1e3a5f;border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;outline:none;border-radius:4px;padding:2px 4px;">
+        <option value="2568" style="background:#1e3a5f;color:#fff">2568</option>
+        <option value="2569" selected style="background:#1e3a5f;color:#fff">2569</option>
+        <option value="2570" style="background:#1e3a5f;color:#fff">2570</option>
+        <option value="2571" style="background:#1e3a5f;color:#fff">2571</option>
+        <option value="2572" style="background:#1e3a5f;color:#fff">2572</option>
       </select>
     </div>
     <div class="save-badge" id="save-badge">⏳ กำลังเชื่อมต่อ...</div>
@@ -229,6 +237,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
   <div class="tab" onclick="showPanel('p-payroll')">💰 เงินเดือน</div>
   <div class="tab" onclick="showPanel('p-yearly')">📈 สรุปรายปี</div>
   <div class="tab" onclick="showPanel('p-line')">💬 ส่งไลน์</div>
+  <div class="tab" onclick="showPanel('p-course')">🎓 คอร์สเรียน</div>
 </div>
 
 <div class="container">
@@ -289,6 +298,14 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
       <div class="ch-card ch-deposit"><div class="ch-icon">🔖</div><div class="ch-label">มัดจำ</div><input type="number" id="ch-deposit" placeholder="0" min="0" oninput="syncChannelTotal()"></div>
     </div>
     <div id="channel-diff" style="font-size:12px;color:#888;margin-bottom:14px;padding:6px 10px;background:#f9fafb;border-radius:6px"></div>
+    <div class="section-label">💚 รายรับอื่นๆ (บริการพิเศษ เช่น สักลานนม ฯลฯ)</div>
+    <div class="other-box">
+      <h4>💚 รายรับอื่นๆ — ชื่อบริการ | ยอด (฿) | ช่างที่ทำ</h4>
+      <div id="other-list"></div>
+      <button class="add-other" onclick="addOtherRow()">+ เพิ่มรายการ</button>
+      <div id="other-total" style="margin-top:10px;font-size:13px;color:#15803d;font-weight:700"></div>
+    </div>
+
     <div class="expense-grid">
       <div class="exp-box">
         <h4>💸 รายจ่าย</h4>
@@ -320,7 +337,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
     <table>
       <thead><tr>
         <th>วันที่</th><th>อ.หญิง</th><th>ช่างมด</th><th>ช่างบ๋อม</th><th>ช่างมะลิ</th><th>ช่างเจน</th><th>ช่างอั๋น</th>
-        <th>ร้านหลัก</th><th style="background:#6d28d9">💜 HAE-IN</th><th>รายจ่าย</th><th>กำไร</th><th>หมายเหตุ</th>
+        <th>ร้านหลัก</th><th style="background:#6d28d9">💜 HAE-IN</th><th style="background:#92400e">💛 อื่นๆ</th><th>รายจ่าย</th><th>กำไร</th><th>หมายเหตุ</th>
       </tr></thead>
       <tbody id="sum-tbody"></tbody>
       <tfoot id="sum-tfoot"></tfoot>
@@ -450,9 +467,71 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
 
 </div>
 
+<!-- ===== TAB: COURSE ===== -->
+<div id="p-course" class="panel">
+<div class="container">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+    <div class="box" style="border-top:4px solid #7c3aed">
+      <h3 style="color:#5b21b6;margin-bottom:14px">🎓 บันทึกคอร์สเรียน</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div class="s-field"><label>วันที่</label><input type="date" id="cr-date" style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px"></div>
+        <div class="s-field"><label>รหัสคอร์ส</label>
+          <select id="cr-code" onchange="fillCourseName()" style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:12px">
+            <option value="">-- เลือกคอร์ส --</option>
+            <option value="TBA002">TBA002 — Premium Course 7 วัน ฿55,000</option>
+            <option value="TBA004">TBA004 — Inner Liner Perfection 3 วัน ฿29,900</option>
+            <option value="TBA005">TBA005 — Lash Lifting 1 วัน ฿12,900</option>
+            <option value="TBA006">TBA006 — ต่อขนตา VIP 3 วัน ฿25,900</option>
+            <option value="TBA008">TBA008 — Microblading 4 วัน ฿39,900</option>
+            <option value="TBA009">TBA009 — Hair Stroke 5 วัน ฿49,900</option>
+            <option value="CANDY">— Candy Lips 3 วัน ฿29,900</option>
+            <option value="SMP2">— Scalp Painting SMP 2 วัน ฿39,900</option>
+            <option value="SMP5">— Scalp Painting SMP Full ฿49,900</option>
+            <option value="GLOW">— BB Glow 1 วัน ฿19,900</option>
+            <option value="OTHER">— คอร์สอื่นๆ</option>
+          </select>
+        </div>
+        <div class="s-field" style="grid-column:1/-1"><label>ชื่อคอร์ส *</label><input type="text" id="cr-name" placeholder="ชื่อคอร์ส..." style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px"></div>
+        <div class="s-field"><label>จำนวนนักเรียน</label><input type="number" id="cr-students" placeholder="0" min="1" style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px" oninput="calcCourseTotal()"></div>
+        <div class="s-field"><label>ราคา/คน (฿)</label><input type="number" id="cr-price" placeholder="0" min="0" style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px" oninput="calcCourseTotal()"></div>
+        <div class="s-field"><label>ผู้สอน</label>
+          <select id="cr-teacher" style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:12px">
+            <option>อ.หญิง</option><option>ช่างมด</option><option>ช่างบ๋อม</option>
+            <option>ช่างมะลิ</option><option>ช่างเจน</option><option>อั๋น</option><option>อื่นๆ</option>
+          </select>
+        </div>
+        <div class="s-field"><label>คอมผู้สอน (฿)</label><input type="number" id="cr-comm" placeholder="0" min="0" style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px" oninput="calcCourseTotal()"></div>
+        <div class="s-field" style="grid-column:1/-1"><label>หมายเหตุ</label><input type="text" id="cr-note" placeholder="หมายเหตุ..." style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px"></div>
+      </div>
+      <div id="course-calc" style="background:#f5f3ff;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#5b21b6;font-weight:600;display:none"></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn" style="background:#7c3aed;color:white" onclick="saveCourse()">💾 บันทึกคอร์ส</button>
+        <span id="course-msg" style="font-size:12px;color:#16a34a"></span>
+      </div>
+    </div>
+    <div class="box" style="border-top:4px solid #22c55e">
+      <h3 style="color:#15803d;margin-bottom:12px">📚 รายชื่อคอร์สอ้างอิง</h3>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${['TBA002 — Premium Course 7 วัน — ฿55,000','TBA004 — Inner Liner Perfection 3 วัน — ฿29,900','TBA005 — Lash Lifting 1 วัน — ฿12,900','TBA006 — ต่อขนตา VIP 3 วัน — ฿25,900','TBA008 — Microblading 4 วัน — ฿39,900','TBA009 — Hair Stroke 5 วัน — ฿49,900','Candy Lips 3 วัน — ฿29,900','Scalp Painting SMP 2 วัน — ฿39,900','Scalp Painting SMP Full — ฿49,900','BB Glow 1 วัน — ฿19,900'].map(x=>{const p=x.split(' — ');return `<div style="display:flex;justify-content:space-between;padding:6px 10px;background:#f0fdf4;border-radius:6px;font-size:12px;border:1px solid #bbf7d0"><span>${p[0]}</span><span style="font-weight:700;color:#15803d">${p[1]||''}</span></div>`;}).join('')}
+      </div>
+    </div>
+  </div>
+  <div class="box" style="border-top:4px solid #7c3aed">
+    <h3 style="color:#5b21b6;margin-bottom:14px">📋 รายการคอร์สที่บันทึก</h3>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px">
+      <div style="background:#f5f3ff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:11px;color:#6d28d9;font-weight:600;margin-bottom:4px">รายรับรวม</div><div style="font-size:16px;font-weight:700;color:#5b21b6" id="cs-rev">฿0</div></div>
+      <div style="background:#f5f3ff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:11px;color:#6d28d9;font-weight:600;margin-bottom:4px">คอมผู้สอนรวม</div><div style="font-size:16px;font-weight:700;color:#5b21b6" id="cs-comm">฿0</div></div>
+      <div style="background:#f5f3ff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:11px;color:#6d28d9;font-weight:600;margin-bottom:4px">จำนวนนักเรียน</div><div style="font-size:16px;font-weight:700;color:#5b21b6" id="cs-students">0 คน</div></div>
+      <div style="background:#f5f3ff;border-radius:8px;padding:12px;text-align:center"><div style="font-size:11px;color:#6d28d9;font-weight:600;margin-bottom:4px">จำนวนคอร์ส</div><div style="font-size:16px;font-weight:700;color:#5b21b6" id="cs-count">0 คอร์ส</div></div>
+    </div>
+    <div id="course-list"></div>
+  </div>
+</div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, remove, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBuTHvh-4KJzrmjbmmu0RQaiW3RGzFrbGQ",
@@ -504,6 +583,7 @@ window.changeMonth = function() {
   stopSync();
   buildCal();
   startRealtimeSync();
+  startCourseSync();
 };
 
 const ARTISTS = ['อ.หญิง','ช่างมด','ช่างบ๋อม','ช่างมะลิ','ช่างเจน','ช่างอั๋น'];
@@ -514,7 +594,7 @@ const CH_ICONS = ['💵','📲','📡','💳','🔖'];
 const LEAVE_DAYS = 4;
 const ATTEND_ARTISTS = ['ช่างมด','ช่างบ๋อม','ช่างมะลิ','ช่างเจน','ช่างอั๋น'];
 const ATTEND_IDX = [1,2,3,4,5];
-const SVC_IDS = ['tat','lash','hair','nail','item','laser','chalacol'];
+const SVC_IDS = ['brow','eye','lip','lash','hair','nail','item','laser','chalacol'];
 const CHALACOL_RATE = 1161;
 
 let data = {};
@@ -527,9 +607,11 @@ const chTotal = ch => CHANNELS.reduce((s,k) => s+(+ch[k]||0), 0);
 
 function calcItemComm(amount) { return Math.floor(amount / 150) * 50; }
 
-// tat=20%, laser=20%, lash/hair/nail=10%, item=150->50, chalacol=1161/ครั้ง
+// brow/eye/lip=20%, laser=20%, lash/hair/nail=10%, item=150->50, chalacol=1161/ครั้ง
 function calcSvcComm(sv) {
-  return (sv.tat||0)*0.20
+  return (sv.brow||0)*0.20
+       + (sv.eye||0)*0.20
+       + (sv.lip||0)*0.20
        + (sv.laser||0)*0.20
        + (sv.lash||0)*0.10
        + (sv.hair||0)*0.10
@@ -540,18 +622,18 @@ function calcSvcComm(sv) {
 
 // chalacol ไม่นับรายได้ร้าน (ดีลนอก)
 function totalRevFromSvc(sv) {
-  return (sv.tat||0)+(sv.laser||0)+(sv.lash||0)+(sv.hair||0)+(sv.nail||0)+(sv.item||0);
+  return (sv.brow||0)+(sv.eye||0)+(sv.lip||0)+(sv.laser||0)+(sv.lash||0)+(sv.hair||0)+(sv.nail||0)+(sv.item||0);
 }
 
 function haeinTotal(hi) { return (hi.sadryi||0)+(hi.henna||0)+(hi.product||0); }
 
 function getDay(d) {
   return data[d] || {
-    svc: ARTISTS.map(() => ({tat:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0})),
+    svc: ARTISTS.map(() => ({brow:0,eye:0,lip:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0})),
     commR2: Array(6).fill(0),
     channels: {cash:0,transfer:0,tap:0,credit:0,deposit:0},
     haein: {sadryi:0,henna:0,product:0,channel:'transfer'},
-    expenses: [], note: '', absent: Array(5).fill(false)
+    expenses: [], other: [], note: '', absent: Array(5).fill(false)
   };
 }
 
@@ -606,11 +688,11 @@ async function seedIfEmpty() {
   // seed สำหรับทุกเดือน
   const snap = await get(ref(db, getRoot()));
   if (snap.exists()) return;
-  const empty = () => ({tat:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0});
+  const empty = () => ({brow:0,eye:0,lip:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0});
   const SEED = {
-    1:{svc:[empty(),empty(),empty(),{...empty(),tat:8890},empty(),empty()],commR2:[0,0,0,499,0,0],channels:{cash:0,transfer:7890,tap:0,credit:0,deposit:1000},haein:{sadryi:590,henna:0,product:0,channel:'transfer'},expenses:[{n:'หน้ากากอนามัย',a:1750},{n:'กระดาษทำใบเซอร์',a:665},{n:'เลาดิไอน้ำ',a:654},{n:'ตลับยา',a:213},{n:'ลูกซิป',a:118},{n:'ค้าเตอบัด ก้านยาว L',a:497},{n:'ทีซู่',a:507},{n:'อโรมา',a:419},{n:'ชิ้นวางของ',a:127},{n:'Line แพ็กเกจ',a:1906},{n:'ข้อความเพิ่ม',a:1700},{n:'DTAC 081',a:663},{n:'DTAC 082',a:747.93},{n:'Al Pro',a:375},{n:'YouTube',a:399},{n:'ค่าไฟฟ้า',a:15268.49}],note:'ช่างมะลิ: สักคิ้ว 3,900 + สักปาก 4,990 | HAE-IN: สระ-ไดร์ ฿590',absent:[false,false,false,false,false]},
-    2:{svc:[empty(),{...empty(),tat:9900},empty(),{...empty(),tat:100},empty(),empty()],commR2:[0,499,0,0,0,0],channels:{cash:8900,transfer:100,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:10000,product:1200,channel:'transfer'},expenses:[{n:'ค่าแฟ',a:108}],note:'มด: สักคิ้ว 9,900 | มะลิ: กันคิ้ว 100 | HAE-IN: Henna 10,000 + ขายสินค้า 1,200',absent:[false,false,false,false,false]},
-    3:{svc:[empty(),empty(),{...empty(),tat:10900},{...empty(),tat:4990},empty(),empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:0,tap:9890,credit:4000,deposit:0},haein:{sadryi:0,henna:0,product:2400,channel:'transfer'},expenses:[{n:'CAP CUT PRO',a:289},{n:'น้ำดื่ม',a:1125}],note:'บ๋อม: สักคิ้ว 5,900 + สักปาก 5,000 | มะลิ: สักปาก 4,990 | HAE-IN: ขายสินค้า 2,400 | มด: หยุด',absent:[true,false,false,false,false]},
+    1:{svc:[empty(),empty(),empty(),{...empty(),brow:3900,lip:4990},empty(),empty()],commR2:[0,0,0,499,0,0],channels:{cash:0,transfer:7890,tap:0,credit:0,deposit:1000},haein:{sadryi:590,henna:0,product:0,channel:'transfer'},expenses:[{n:'หน้ากากอนามัย',a:1750},{n:'กระดาษทำใบเซอร์',a:665},{n:'เลาดิไอน้ำ',a:654},{n:'ตลับยา',a:213},{n:'ลูกซิป',a:118},{n:'ค้าเตอบัด ก้านยาว L',a:497},{n:'ทีซู่',a:507},{n:'อโรมา',a:419},{n:'ชิ้นวางของ',a:127},{n:'Line แพ็กเกจ',a:1906},{n:'ข้อความเพิ่ม',a:1700},{n:'DTAC 081',a:663},{n:'DTAC 082',a:747.93},{n:'Al Pro',a:375},{n:'YouTube',a:399},{n:'ค่าไฟฟ้า',a:15268.49}],note:'ช่างมะลิ: สักคิ้ว 3,900 + สักปาก 4,990 | HAE-IN: สระ-ไดร์ ฿590',absent:[false,false,false,false,false]},
+    2:{svc:[empty(),{...empty(),brow:9900},empty(),{...empty(),brow:100},empty(),empty()],commR2:[0,499,0,0,0,0],channels:{cash:8900,transfer:100,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:10000,product:1200,channel:'transfer'},expenses:[{n:'ค่าแฟ',a:108}],note:'มด: สักคิ้ว 9,900 | มะลิ: กันคิ้ว 100 | HAE-IN: Henna 10,000 + ขายสินค้า 1,200',absent:[false,false,false,false,false]},
+    3:{svc:[empty(),empty(),{...empty(),brow:5900,lip:5000},{...empty(),lip:4990},empty(),empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:0,tap:9890,credit:4000,deposit:0},haein:{sadryi:0,henna:0,product:2400,channel:'transfer'},expenses:[{n:'CAP CUT PRO',a:289},{n:'น้ำดื่ม',a:1125}],note:'บ๋อม: สักคิ้ว 5,900 + สักปาก 5,000 | มะลิ: สักปาก 4,990 | HAE-IN: ขายสินค้า 2,400 | มด: หยุด',absent:[true,false,false,false,false]},
     4:{svc:[empty(),{...empty(),hair:7950},{...empty(),hair:7950},empty(),{...empty(),lash:2290},empty()],commR2:Array(6).fill(0),channels:{cash:16090,transfer:1100,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:1900,product:0,channel:'transfer'},expenses:[],note:'มด: สักผม 7,950 | บ๋อม: สักผม 7,950 | เจน: ขนตา 2,290 | HAE-IN: Henna 1,900 | มะลิ+เจน+อั๋น: หยุด',absent:[false,false,true,true,true]},
     5:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:300},empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:300,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'เงินสำรองจ่าย',a:1492}],note:'เจน: ทำเล็บ ฿300 (โอน/แม่มณี) | บ๋อม: หยุด',absent:[false,true,false,false,false]},
     6:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:499},empty()],commR2:[0,590,590,0,0,0],channels:{cash:0,transfer:499,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'กระดาษ 120 แกรม',a:436},{n:'พัสดุจากจีน',a:3295}],note:'เจน: ทำเล็บ ฿499 (แม่มณี) | มด+บ๋อม: คอมรอบ2 คนละ ฿590 | มะลิ: หยุด',absent:[false,false,true,false,false]}
@@ -681,14 +763,20 @@ function selectDay(d) {
   document.getElementById('sel-date-label').textContent = `${d} ${MONTH_TH_NAMES[curMonth]} ${curYear}`;
   const dd = getDay(d);
   document.getElementById('artist-inputs').innerHTML = ARTISTS.map((name,i) => {
-    const sv = dd.svc[i] || {tat:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0};
+    const sv = dd.svc[i] || {brow:0,eye:0,lip:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0};
     return `<div class="artist-card">
       <h4><span class="av" style="background:${COLORS[i]}">${name.charAt(name.length-1)}</span>${name}</h4>
       <table class="svc-table">
-        <tr><th>บริการ</th><th>ยอด / ครั้ง</th><th>คอม</th></tr>
-        <tr><td>🎨 คิ้ว/ปาก/ตา</td>
-          <td><input type="number" id="svc-${i}-tat" value="${sv.tat||0}" min="0" oninput="window._updateArtist(${i})"></td>
-          <td id="comm-${i}-tat" style="color:#92400e;font-size:10px">${sv.tat>0?fmt(sv.tat*0.2):'–'}</td></tr>
+        <tr><th>บริการ</th><th>ยอด (฿)</th><th>คอม</th></tr>
+        <tr style="background:#fef9c3"><td>🖊️ สักคิ้ว</td>
+          <td><input type="number" id="svc-${i}-brow" value="${sv.brow||0}" min="0" oninput="window._updateArtist(${i})"></td>
+          <td id="comm-${i}-brow" style="color:#92400e;font-size:10px">${(sv.brow||0)>0?fmt((sv.brow||0)*0.2):'–'}</td></tr>
+        <tr style="background:#fef2f2"><td>👁️ สักตา</td>
+          <td><input type="number" id="svc-${i}-eye" value="${sv.eye||0}" min="0" oninput="window._updateArtist(${i})"></td>
+          <td id="comm-${i}-eye" style="color:#92400e;font-size:10px">${(sv.eye||0)>0?fmt((sv.eye||0)*0.2):'–'}</td></tr>
+        <tr style="background:#fdf4ff"><td>💄 สักปาก</td>
+          <td><input type="number" id="svc-${i}-lip" value="${sv.lip||0}" min="0" oninput="window._updateArtist(${i})"></td>
+          <td id="comm-${i}-lip" style="color:#92400e;font-size:10px">${(sv.lip||0)>0?fmt((sv.lip||0)*0.2):'–'}</td></tr>
         <tr><td>👁️ ขนตา</td>
           <td><input type="number" id="svc-${i}-lash" value="${sv.lash||0}" min="0" oninput="window._updateArtist(${i})"></td>
           <td id="comm-${i}-lash" style="color:#1e40af;font-size:10px">${sv.lash>0?fmt(sv.lash*0.1):'–'}</td></tr>
@@ -731,6 +819,10 @@ function selectDay(d) {
   const exps = dd.expenses.length ? dd.expenses : [{n:'',a:''}];
   document.getElementById('exp-list').innerHTML = exps.map(e=>`
     <div class="exp-row"><input type="text" class="en" placeholder="รายการ" value="${e.n||''}"><input type="number" class="ea" placeholder="0" value="${e.a||''}" min="0"></div>`).join('');
+  const others = (dd.other&&dd.other.length) ? dd.other : [{n:'',a:'',w:''}];
+  const oList = document.getElementById('other-list');
+  oList.innerHTML = '';
+  others.forEach(e => oList.appendChild(makeOtherItem(e.n||'', e.a||'', e.w||'')));
   document.getElementById('day-note').value = dd.note||'';
   updatePreview();
   document.querySelector('.entry-wrap').scrollIntoView({behavior:'smooth'});
@@ -745,7 +837,7 @@ window._updateArtist = function(i) {
     if(!el) return;
     if(val<=0){el.textContent='–';return;}
     if(id==='item') el.textContent=fmt(calcItemComm(val));
-    else if(id==='tat'||id==='laser') el.textContent=fmt(val*0.2);
+    else if(['brow','eye','lip','laser'].includes(id)) el.textContent=fmt(val*0.2);
     else if(id==='chalacol') el.textContent=fmt(val*CHALACOL_RATE);
     else el.textContent=fmt(val*0.1);
   });
@@ -759,7 +851,7 @@ window._updateArtist = function(i) {
 function updatePreview() {
   let at=0,ct2=0;
   ARTISTS.forEach((_,i)=>{
-    ['tat','lash','hair','nail','item','laser'].forEach(id=>{at+=+document.getElementById(`svc-${i}-${id}`)?.value||0;});
+    ['brow','eye','lip','lash','hair','nail','item','laser'].forEach(id=>{at+=+document.getElementById(`svc-${i}-${id}`)?.value||0;});
     const sv=Object.fromEntries(SVC_IDS.map(id=>[id,+document.getElementById(`svc-${i}-${id}`)?.value||0]));
     ct2+=calcSvcComm(sv)+(+document.getElementById(`r2-${i}`)?.value||0);
   });
@@ -770,12 +862,16 @@ function updatePreview() {
   const hiT=(+document.getElementById('hi-sadryi')?.value||0)+(+document.getElementById('hi-henna')?.value||0)+(+document.getElementById('hi-product')?.value||0);
   const hiEl=document.getElementById('hi-total');
   if(hiEl) hiEl.textContent=hiT>0?`รวม HAE-IN: ${fmtN(hiT)} | คอม 10%÷6 = ${fmtN(hiT*0.1/6)} ต่อคน`:'';
+  // other income total
+  const otherTotal=[...document.querySelectorAll('.oa')].reduce((s,e)=>s+(+e.value||0),0);
+  const otEl=document.getElementById('other-total');
+  if(otEl) otEl.textContent=otherTotal>0?`รวมรายรับอื่นๆ: ${fmtN(otherTotal)}`:'';
   syncChannelTotal();
 }
 
 function syncChannelTotal() {
   let at=0;
-  ARTISTS.forEach((_,i)=>{['tat','lash','hair','nail','item','laser'].forEach(id=>{at+=+document.getElementById(`svc-${i}-${id}`)?.value||0;});});
+  ARTISTS.forEach((_,i)=>{['brow','eye','lip','lash','hair','nail','item','laser'].forEach(id=>{at+=+document.getElementById(`svc-${i}-${id}`)?.value||0;});});
   const ct=CHANNELS.reduce((s,k)=>s+(+document.getElementById('ch-'+k)?.value||0),0);
   document.getElementById('artist-total-preview').textContent=fmtN(at);
   document.getElementById('channel-total-preview').textContent=fmtN(ct);
@@ -791,6 +887,17 @@ window.addExpRow = function() {
   row.innerHTML=`<input type="text" class="en" placeholder="รายการ"><input type="number" class="ea" placeholder="0" min="0">`;
   document.getElementById('exp-list').appendChild(row);
 };
+function makeOtherItem(n='', a='', artist='') {
+  const artistOpts = ['','อ.หญิง','ช่างมด','ช่างบ๋อม','ช่างมะลิ','ช่างเจน','ช่างอั๋น']
+    .map(x=>`<option value="${x}"${x===artist?' selected':''}>${x||'– ไม่ระบุ –'}</option>`).join('');
+  const div = document.createElement('div');
+  div.className = 'other-row';
+  div.innerHTML = `<input type="text" class="on" placeholder="ชื่อบริการ เช่น สักลานนม 2cm" value="${n}"><input type="number" class="oa" placeholder="0" value="${a}" min="0" oninput="updatePreview()"><select class="ow">${artistOpts}</select>`;
+  return div;
+}
+window.addOtherRow = function() {
+  document.getElementById('other-list').appendChild(makeOtherItem());
+};
 
 window.saveDay = async function() {
   if(!selDay) return;
@@ -800,9 +907,13 @@ window.saveDay = async function() {
   const names=[...document.querySelectorAll('.en')].map(e=>e.value.trim());
   const amts=[...document.querySelectorAll('.ea')].map(e=>+e.value||0);
   const expenses=names.map((n,i)=>({n,a:amts[i]})).filter(e=>e.n||e.a);
+  const onames=[...document.querySelectorAll('.on')].map(e=>e.value.trim());
+  const oamts=[...document.querySelectorAll('.oa')].map(e=>+e.value||0);
+  const oworkers=[...document.querySelectorAll('.ow')].map(e=>e.value||'');
+  const other=onames.map((n,i)=>({n,a:oamts[i],w:oworkers[i]})).filter(e=>e.n||e.a);
   const absent=ATTEND_ARTISTS.map((_,i)=>document.getElementById('absent-'+i)?.checked||false);
   const haein={sadryi:+document.getElementById('hi-sadryi').value||0,henna:+document.getElementById('hi-henna').value||0,product:+document.getElementById('hi-product').value||0,channel:document.getElementById('hi-channel').value};
-  const dayData={svc,commR2,channels,haein,expenses,note:document.getElementById('day-note').value,absent};
+  const dayData={svc,commR2,channels,haein,expenses,other,note:document.getElementById('day-note').value,absent};
   data[selDay]=dayData;
   await saveToFirebase(selDay, dayData);
   buildCal();
@@ -813,31 +924,115 @@ window.saveDay = async function() {
 
 window.clearForm = function() { if(selDay) selectDay(selDay); };
 
+function buildSvcDashboard(daysData) {
+  // รวบรวมข้อมูลแต่ละบริการ
+  const svcs = {
+    brow:  {label:'🖊️ สักคิ้ว',  color:'#92400e', bg:'#fef9c3', rate:0.20, totRev:0, byArtist:Array(6).fill(0)},
+    eye:   {label:'👁️ สักตา',   color:'#1e40af', bg:'#eff6ff', rate:0.20, totRev:0, byArtist:Array(6).fill(0)},
+    lip:   {label:'💄 สักปาก',   color:'#9d174d', bg:'#fdf2f8', rate:0.20, totRev:0, byArtist:Array(6).fill(0)},
+    laser: {label:'⚡ เลเซอร์',  color:'#c2410c', bg:'#fff7ed', rate:0.20, totRev:0, byArtist:Array(6).fill(0)},
+    lash:  {label:'✨ ขนตา',     color:'#0f766e', bg:'#f0fdfa', rate:0.10, totRev:0, byArtist:Array(6).fill(0)},
+    hair:  {label:'✂️ สักผม',    color:'#1d4ed8', bg:'#eff6ff', rate:0.10, totRev:0, byArtist:Array(6).fill(0)},
+    nail:  {label:'💅 เล็บ',     color:'#be185d', bg:'#fdf2f8', rate:0.10, totRev:0, byArtist:Array(6).fill(0)},
+    item:  {label:'🛍️ ขายของ',  color:'#6d28d9', bg:'#faf5ff', rate:null,  totRev:0, byArtist:Array(6).fill(0)},
+  };
+  const haein = {label:'💜 HAE-IN', color:'#6d28d9', bg:'#faf5ff', totRev:0};
+  const other = {label:'💚 อื่นๆ',  color:'#15803d', bg:'#f0fdf4', totRev:0};
+
+  daysData.forEach(dd => {
+    dd.svc.forEach((sv, i) => {
+      Object.keys(svcs).forEach(k => {
+        if (sv[k]) { svcs[k].totRev += sv[k]; svcs[k].byArtist[i] += sv[k]; }
+      });
+    });
+    haein.totRev += haeinTotal(dd.haein||{});
+    other.totRev += (dd.other||[]).reduce((s,e)=>s+(+e.a||0),0);
+  });
+
+  const maxRev = Math.max(...Object.values(svcs).map(s=>s.totRev), haein.totRev, other.totRev, 1);
+
+  const card = (svc, key) => {
+    const comm = svc.rate != null
+      ? (key==='item' ? Math.floor(svc.totRev/150)*50 : Math.round(svc.totRev*svc.rate))
+      : 0;
+    const artistBars = svc.byArtist ? ARTISTS.map((name,i) => {
+      if (!svc.byArtist[i]) return '';
+      const pct = Math.round(svc.byArtist[i]/svc.totRev*100);
+      return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+        <span class="av" style="background:${COLORS[i]};width:18px;height:18px;font-size:8px;flex-shrink:0">${name.charAt(name.length-1)}</span>
+        <div style="flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden">
+          <div style="height:8px;background:${svc.color};border-radius:4px;width:${pct}%"></div>
+        </div>
+        <span style="font-size:10px;color:#555;width:80px;text-align:right">${fmtN(svc.byArtist[i])}</span>
+      </div>`;
+    }).join('') : '';
+
+    return `<div style="background:${svc.bg};border:1.5px solid ${svc.color}33;border-radius:10px;padding:14px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:${svc.color};border-radius:10px 0 0 10px"></div>
+      <div style="padding-left:8px">
+        <div style="font-size:13px;font-weight:700;color:${svc.color};margin-bottom:8px">${svc.label}</div>
+        <div style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:2px">${fmtN(svc.totRev)}</div>
+        ${svc.rate!=null?`<div style="font-size:11px;color:#16a34a;font-weight:600;margin-bottom:8px">คอมรวม: ${fmtN(comm)}</div>`:'<div style="margin-bottom:8px"></div>'}
+        ${artistBars ? `<div style="border-top:1px solid ${svc.color}22;padding-top:8px">${artistBars}</div>` : ''}
+      </div>
+    </div>`;
+  };
+
+  const simpleCard = (svc) => `<div style="background:${svc.bg};border:1.5px solid ${svc.color}33;border-radius:10px;padding:14px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;left:0;width:4px;height:100%;background:${svc.color};border-radius:10px 0 0 10px"></div>
+    <div style="padding-left:8px">
+      <div style="font-size:13px;font-weight:700;color:${svc.color};margin-bottom:8px">${svc.label}</div>
+      <div style="font-size:20px;font-weight:800;color:#0f172a">${fmtN(svc.totRev)}</div>
+    </div>
+  </div>`;
+
+  const activeCards = Object.entries(svcs).filter(([k,s])=>s.totRev>0);
+  if (!activeCards.length && !haein.totRev && !other.totRev) {
+    document.getElementById('svc-dashboard').innerHTML = '';
+    return;
+  }
+
+  document.getElementById('svc-dashboard').innerHTML = `
+    <div style="background:white;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:18px;margin-bottom:4px">
+      <h3 style="font-size:14px;font-weight:700;color:#0c4a6e;margin-bottom:14px">📊 แดชบอร์ดรายบริการ — รายรับ + คอม + แยกตามช่าง</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
+        ${activeCards.map(([k,s])=>card(s,k)).join('')}
+        ${haein.totRev>0?simpleCard(haein):''}
+        ${other.totRev>0?simpleCard(other):''}
+      </div>
+    </div>`;
+}
+
 window.buildSummary = function() {
-  let totRevA=Array(6).fill(0),totRev=0,totExp=0,totHaein=0,rows='';
+  let totRevA=Array(6).fill(0),totRev=0,totExp=0,totHaein=0,totOther=0,rows='';
+  const allDays=[];
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
+    allDays.push(dd);
     const revA=dd.svc.map(sv=>totalRevFromSvc(sv));
     const rev=revA.reduce((a,b)=>a+b,0);
     const exp=dd.expenses.reduce((a,e)=>a+(+e.a||0),0);
     const hiT=haeinTotal(dd.haein||{});
-    revA.forEach((r,i)=>totRevA[i]+=r); totRev+=rev; totExp+=exp; totHaein+=hiT;
-    if(rev>0||exp>0||dd.note||hiT>0) rows+=`<tr>
+    const otherRev=(dd.other||[]).reduce((a,e)=>a+(+e.a||0),0);
+    revA.forEach((r,i)=>totRevA[i]+=r); totRev+=rev; totExp+=exp; totHaein+=hiT; totOther+=otherRev;
+    if(rev>0||exp>0||dd.note||hiT>0||otherRev>0) rows+=`<tr>
       <td>${d}/06</td>${revA.map(r=>`<td>${r>0?fmt(r):'–'}</td>`).join('')}
       <td style="font-weight:700;color:#0c4a6e">${fmtN(rev)}</td>
       <td style="color:#6d28d9;font-weight:600">${hiT>0?fmtN(hiT):'–'}</td>
+      <td style="color:#92400e;font-weight:600">${otherRev>0?fmtN(otherRev):'–'}</td>
       <td style="color:#dc2626">${exp>0?fmt(exp):'–'}</td>
-      <td style="color:#16a34a;font-weight:600">${fmtN(rev+hiT-exp)}</td>
+      <td style="color:#16a34a;font-weight:600">${fmtN(rev+hiT+otherRev-exp)}</td>
       <td style="text-align:left;font-size:11px;color:#888">${dd.note||''}</td></tr>`;
   }
+  buildSvcDashboard(allDays);
   document.getElementById('sum-tbody').innerHTML=rows||`<tr><td colspan="12" style="text-align:center;padding:20px;color:#aaa">ยังไม่มีข้อมูล</td></tr>`;
-  document.getElementById('sum-tfoot').innerHTML=`<tr><td>รวม</td>${totRevA.map(r=>`<td>${fmtN(r)}</td>`).join('')}<td>${fmtN(totRev)}</td><td style="color:#6d28d9">${fmtN(totHaein)}</td><td style="color:#dc2626">${fmtN(totExp)}</td><td style="color:#16a34a">${fmtN(totRev+totHaein-totExp)}</td><td></td></tr>`;
+  document.getElementById('sum-tfoot').innerHTML=`<tr><td>รวม</td>${totRevA.map(r=>`<td>${fmtN(r)}</td>`).join('')}<td>${fmtN(totRev)}</td><td style="color:#6d28d9">${fmtN(totHaein)}</td><td style="color:#92400e">${fmtN(totOther)}</td><td style="color:#dc2626">${fmtN(totExp)}</td><td style="color:#16a34a">${fmtN(totRev+totHaein+totOther-totExp)}</td><td></td></tr>`;
   document.getElementById('sum-cards').innerHTML=`
     <div class="card"><div class="label">รายรับร้านหลัก</div><div class="value">${fmtN(totRev)}</div></div>
     <div class="card purple"><div class="label">💜 HAE-IN</div><div class="value">${fmtN(totHaein)}</div></div>
+    <div class="card orange"><div class="label">💛 รายรับอื่นๆ</div><div class="value">${fmtN(totOther)}</div></div>
     <div class="card red"><div class="label">รายจ่ายรวม</div><div class="value">${fmtN(totExp)}</div></div>
-    <div class="card green"><div class="label">กำไรรวม</div><div class="value">${fmtN(totRev+totHaein-totExp)}</div></div>
-    <div class="card orange"><div class="label">วันที่บันทึก</div><div class="value">${Object.keys(data).length}/30</div></div>`;
+    <div class="card green"><div class="label">กำไรรวม</div><div class="value">${fmtN(totRev+totHaein+totOther-totExp)}</div></div>`;
 };
 
 window.buildChannels = function() {
@@ -867,13 +1062,17 @@ window.buildChannels = function() {
 window.calcPayroll = function() {
   const bases=['sal-aj','sal-mod','sal-bom','sal-mali','sal-jen','sal-an'].map(id=>+document.getElementById(id).value||0);
   const salMo=+document.getElementById('sal-mo').value||0;
-  let totTat=Array(6).fill(0),totLaser=Array(6).fill(0),totOther=Array(6).fill(0),totItem=Array(6).fill(0),totChalacol=Array(6).fill(0),totR2=Array(6).fill(0),absentDays=Array(5).fill(0),totHaeinRev=0;
+  let totBrow=Array(6).fill(0),totEye=Array(6).fill(0),totLip=Array(6).fill(0),totLaser=Array(6).fill(0),totLash=Array(6).fill(0),totHair=Array(6).fill(0),totNail=Array(6).fill(0),totItem=Array(6).fill(0),totChalacol=Array(6).fill(0),totR2=Array(6).fill(0),absentDays=Array(5).fill(0),totHaeinRev=0;
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
     dd.svc.forEach((sv,i)=>{
-      totTat[i]+=sv.tat||0;
+      totBrow[i]+=(sv.brow||0);
+      totEye[i]+=(sv.eye||0);
+      totLip[i]+=(sv.lip||0);
       totLaser[i]+=sv.laser||0;
-      totOther[i]+=(sv.lash||0)+(sv.hair||0)+(sv.nail||0);
+      totLash[i]+=(sv.lash||0);
+      totHair[i]+=(sv.hair||0);
+      totNail[i]+=(sv.nail||0);
       totItem[i]+=sv.item||0;
       totChalacol[i]+=sv.chalacol||0;
     });
@@ -882,18 +1081,36 @@ window.calcPayroll = function() {
     totHaeinRev+=haeinTotal(dd.haein||{});
   }
   const haeinPool=totHaeinRev*0.10, haeinPP=haeinPool/6;
+  const totTat=totBrow.map((b,i)=>b+totEye[i]+totLip[i]);
+  const totOther=totLash.map((l,i)=>l+totHair[i]+totNail[i]);
   const commTat=totTat.map((t,i)=>Math.max(0,t*0.20-totR2[i]));
   const commLaser=totLaser.map(t=>t*0.20);
+  const commLash=totLash.map(t=>t*0.10);
+  const commHair=totHair.map(t=>t*0.10);
+  const commNail=totNail.map(t=>t*0.10);
   const commOther=totOther.map(t=>t*0.10);
   const commItem=totItem.map(t=>calcItemComm(t));
   const commChalacol=totChalacol.map(t=>t*CHALACOL_RATE);
-  const totalComm=ARTISTS.map((_,i)=>commTat[i]+totR2[i]+commLaser[i]+commOther[i]+commItem[i]+commChalacol[i]+(i>=1?haeinPP:0));
+  // คอมอั๋น: นับจาก other income ที่ราคาตรงกับ AN_COMM_PRICES × 200
+  let anServiceCount = 0;
+  for(let d=1;d<=getDaysInMonth();d++){
+    const dd=getDay(d);
+    (dd.other||[]).forEach(item=>{
+      if(AN_COMM_PRICES.has(+item.a||0)) anServiceCount++;
+    });
+  }
+  const anExtraComm = anServiceCount * AN_COMM_PER_SVC;
+  const totalComm=ARTISTS.map((_,i)=>{
+    const base=commTat[i]+totR2[i]+commLaser[i]+commOther[i]+commItem[i]+commChalacol[i]+(i>=1?haeinPP:0);
+    return i===5 ? base+anExtraComm : base; // index 5 = ช่างอั๋น
+  });
   const leaveAdj=ATTEND_IDX.map((ai,i)=>Math.round((LEAVE_DAYS-absentDays[i])*bases[ai]/30*100)/100);
   const totPay=ARTISTS.map((_,i)=>{const adjIdx=ATTEND_IDX.indexOf(i);return bases[i]+totalComm[i]+(adjIdx>=0?leaveAdj[adjIdx]:0);});
   const grandTotal=totPay.reduce((a,b)=>a+b,0)+salMo;
   const gComm=totalComm.reduce((a,b)=>a+b,0),gBase=bases.reduce((a,b)=>a+b,0);
 
   const totShopRev=ARTISTS.reduce((s,_,i)=>s+totTat[i]+totLaser[i]+totOther[i]+totItem[i],0);
+  const totBrowAll=totBrow.reduce((a,b)=>a+b,0),totEyeAll=totEye.reduce((a,b)=>a+b,0),totLipAll=totLip.reduce((a,b)=>a+b,0);
   document.getElementById('payroll-cards').innerHTML=`
     <div class="card"><div class="label">ยอดรายรับร้านหลัก</div><div class="value">${fmtN(totShopRev)}</div></div>
     <div class="card purple"><div class="label">💜 HAE-IN | pool 10%</div><div class="value">${fmtN(totHaeinRev)} | ${fmtN(haeinPool)}</div></div>
@@ -915,7 +1132,7 @@ window.calcPayroll = function() {
       <td style="color:#9d174d">${totItem[i]>0?fmtN(totItem[i]):'–'}<br><span style="color:#16a34a;font-size:10px">${commItem[i]>0?'+'+fmtN(commItem[i]):''}</span></td>
       <td style="color:#065f46;font-weight:600">${totChalacol[i]>0?`${totChalacol[i]} ครั้ง`:'–'}<br><span style="color:#16a34a;font-size:10px">${commChalacol[i]>0?'+'+fmtN(commChalacol[i]):''}</span></td>
       <td style="color:#6d28d9;font-weight:600">${i>=1?fmtN(haeinPP):'–'}</td>
-      <td style="font-weight:700">${fmtN(totalComm[i])}</td>
+      <td style="font-weight:700">${fmtN(totalComm[i])}${i===5&&anExtraComm>0?`<br><span style="font-size:10px;color:#f59e0b">+คอมอั๋น ${anServiceCount}×฿200=${fmtN(anExtraComm)}</span>`:''}</td>
       <td>${fmtN(bases[i])}</td>
       <td style="font-weight:700;color:#16a34a;font-size:13px">${fmtN(totPay[i])}</td>
     </tr>`;
@@ -957,13 +1174,14 @@ window.showPanel=function(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  const idx=['p-entry','p-summary','p-channels','p-payroll','p-yearly','p-line'].indexOf(id);
+  const idx=['p-entry','p-summary','p-channels','p-payroll','p-yearly','p-line','p-course'].indexOf(id);
   document.querySelectorAll('.tab')[idx].classList.add('active');
   if(id==='p-summary') window.buildSummary();
   if(id==='p-channels') window.buildChannels();
   if(id==='p-payroll') window.calcPayroll();
   if(id==='p-yearly') buildYearly();
   if(id==='p-line') initLinePanel();
+  if(id==='p-course') { renderCourseList(); initCourseDate(); }
 };
 
 // ═══ YEARLY SUMMARY ═══
@@ -1052,6 +1270,121 @@ window.exportYearlyCSV = async function() {
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+rows.map(r=>r.join(',')).join('\n')],{type:'text/csv;charset=utf-8'}));a.download=`yearly_${yr}.csv`;a.click();
 };
 
+// ═══ คอมอั๋น constants ═══
+const AN_COMM_PRICES = new Set([2900,3900,4900,5900,7900,4990,9900,12900,15900,18900]);
+const AN_COMM_PER_SVC = 200;
+
+// ═══ COURSE FUNCTIONS ═══
+const COURSE_CATALOG = {
+  TBA002:{name:'Premium Course 7 วัน (สักคิ้ว)',price:55000},
+  TBA004:{name:'Inner Liner Perfection 3 วัน',price:29900},
+  TBA005:{name:'Lash Lifting 1 วัน',price:12900},
+  TBA006:{name:'ต่อขนตา VIP 3 วัน',price:25900},
+  TBA008:{name:'Microblading 4 วัน',price:39900},
+  TBA009:{name:'Hair Stroke 5 วัน',price:49900},
+  CANDY:{name:'2 Tone Candy Lips 3 วัน',price:29900},
+  SMP2:{name:'Scalp Painting & SMP 2 วัน',price:39900},
+  SMP5:{name:'Scalp Painting & SMP Full',price:49900},
+  GLOW:{name:'Master The Glow BB Glow 1 วัน',price:19900},
+  OTHER:{name:'',price:0}
+};
+
+let courses = {};
+
+window.fillCourseName = function() {
+  const code = document.getElementById('cr-code').value;
+  if (code && COURSE_CATALOG[code]) {
+    document.getElementById('cr-name').value = COURSE_CATALOG[code].name;
+    if (COURSE_CATALOG[code].price > 0)
+      document.getElementById('cr-price').value = COURSE_CATALOG[code].price;
+    window.calcCourseTotal();
+  }
+};
+
+window.calcCourseTotal = function() {
+  const students = +document.getElementById('cr-students')?.value||0;
+  const price = +document.getElementById('cr-price')?.value||0;
+  const comm = +document.getElementById('cr-comm')?.value||0;
+  const total = students * price;
+  const el = document.getElementById('course-calc');
+  if (!el) return;
+  if (total > 0) {
+    el.style.display='block';
+    el.textContent = `รายรับรวม: ${fmtN(total)} (${students} คน × ${fmtN(price)}) | คอมผู้สอน: ${fmtN(comm)} | สุทธิร้าน: ${fmtN(total-comm)}`;
+  } else { el.style.display='none'; }
+};
+
+window.initCourseDate = function() {
+  const el = document.getElementById('cr-date');
+  if (el && !el.value) {
+    const today = new Date();
+    el.value = today.toISOString().slice(0,10);
+  }
+};
+
+window.saveCourse = async function() {
+  const name = document.getElementById('cr-name').value.trim();
+  if (!name) { alert('กรุณากรอกชื่อคอร์ส'); return; }
+  const id = 'CR-'+Date.now().toString(36).toUpperCase();
+  const cr = {
+    id, code: document.getElementById('cr-code').value,
+    name, date: document.getElementById('cr-date').value,
+    students: +document.getElementById('cr-students').value||0,
+    price: +document.getElementById('cr-price').value||0,
+    comm: +document.getElementById('cr-comm').value||0,
+    teacher: document.getElementById('cr-teacher').value,
+    note: document.getElementById('cr-note').value,
+    createdAt: new Date().toISOString()
+  };
+  cr.total = cr.students * cr.price;
+  await set(ref(db, `courses/${id}`), cr);
+  courses[id] = cr;
+  renderCourseList();
+  const m = document.getElementById('course-msg');
+  if(m){m.textContent=`✓ บันทึกคอร์ส "${name}" แล้ว`;setTimeout(()=>m.textContent='',3000);}
+  ['cr-code','cr-name','cr-students','cr-price','cr-comm','cr-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const cc=document.getElementById('course-calc');if(cc)cc.style.display='none';
+};
+
+window.deleteCourse = async function(id) {
+  if (!confirm('ลบคอร์สนี้?')) return;
+  await remove(ref(db, `courses/${id}`));
+  delete courses[id];
+  renderCourseList();
+};
+
+function renderCourseList() {
+  const listEl = document.getElementById('course-list');
+  if (!listEl) return;
+  const list = Object.values(courses).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const totRev = list.reduce((s,c)=>s+c.total,0);
+  const totComm = list.reduce((s,c)=>s+(+c.comm||0),0);
+  const totStudents = list.reduce((s,c)=>s+(+c.students||0),0);
+  const csRev=document.getElementById('cs-rev'); if(csRev)csRev.textContent=fmtN(totRev);
+  const csComm=document.getElementById('cs-comm'); if(csComm)csComm.textContent=fmtN(totComm);
+  const csSt=document.getElementById('cs-students'); if(csSt)csSt.textContent=totStudents+' คน';
+  const csCt=document.getElementById('cs-count'); if(csCt)csCt.textContent=list.length+' คอร์ส';
+  listEl.innerHTML = list.length===0
+    ? '<div style="text-align:center;padding:20px;color:#aaa">ยังไม่มีคอร์สที่บันทึก</div>'
+    : list.map(c=>`<div class="course-list-item">
+        <div class="cli-info">
+          <div class="cli-name">${c.code?`[${c.code}] `:''}${c.name}</div>
+          <div class="cli-detail">📅 ${c.date||'–'} | 👩‍🎓 ${c.students||0} คน × ${fmtN(c.price||0)} | 👩‍🏫 ${c.teacher||'–'} | คอม: ${fmtN(c.comm||0)}${c.note?' | '+c.note:''}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="cli-rev">${fmtN(c.total)}</div>
+          <button onclick="window.deleteCourse('${c.id}')" style="background:#fee2e2;border:none;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px;color:#dc2626">🗑️</button>
+        </div>
+      </div>`).join('');
+}
+
+function startCourseSync() {
+  onValue(ref(db, 'courses'), (snap) => {
+    courses = snap.val() || {};
+    if (document.getElementById('p-course')?.classList.contains('active')) renderCourseList();
+  });
+}
+
 // ═══ LINE DAILY SUMMARY ═══
 const LINE_KEY = 'ba_line_daily_cfg';
 
@@ -1088,50 +1421,81 @@ function buildDailyMsg(d, dateLabel){
   const revA = dd.svc.map(sv=>totalRevFromSvc(sv));
   const totRev = revA.reduce((a,b)=>a+b,0);
   const haein = haeinTotal(dd.haein||{});
+  const otherRev = (dd.other||[]).reduce((a,e)=>a+(+e.a||0),0);
   const totExp = (dd.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);
-  const profit = totRev + haein - totExp;
+  const totGross = totRev + haein + otherRev;
+  const profit = totGross - totExp;
   const ch = dd.channels||{};
-  const chTotal = CHANNELS.reduce((s,k)=>s+(+ch[k]||0),0);
+  const chSum = CHANNELS.reduce((s,k)=>s+(+ch[k]||0),0);
 
-  let msg = `💙 สรุปยอด The Beauty Arts & HAE-IN\n`;
+  const LINE = '─'.repeat(28);
+  let msg = `💙 สรุปยอดประจำวัน\n`;
   msg += `📅 ${dateLabel}\n`;
-  msg += `${'─'.repeat(30)}\n`;
+  msg += `${LINE}\n`;
 
-  // รายรับแต่ละช่าง
-  const hasArtistRev = revA.some(r=>r>0);
-  if(hasArtistRev){
-    msg += `👩‍🎨 รายรับแต่ละช่าง:\n`;
-    ARTISTS.forEach((name,i)=>{if(revA[i]>0) msg+=`  • ${name}: ${fmtN(revA[i])}\n`;});
+  // ══ รายรับร้านหลัก ══
+  if(revA.some(r=>r>0)){
+    msg += `🏪 ร้าน The Beauty Arts\n`;
+    ARTISTS.forEach((name,i)=>{
+      if(revA[i]<=0) return;
+      const sv=dd.svc[i]||{};
+      const details=[];
+      if(sv.tat>0) details.push(`สัก ${fmtN(sv.tat)}`);
+      if(sv.laser>0) details.push(`เลเซอร์ ${fmtN(sv.laser)}`);
+      if(sv.lash>0) details.push(`ขนตา ${fmtN(sv.lash)}`);
+      if(sv.hair>0) details.push(`ผม ${fmtN(sv.hair)}`);
+      if(sv.nail>0) details.push(`เล็บ ${fmtN(sv.nail)}`);
+      if(sv.item>0) details.push(`ขายของ ${fmtN(sv.item)}`);
+      if(sv.chalacol>0) details.push(`ชลาชล ${sv.chalacol}ครั้ง`);
+      msg+=`  👩 ${name}: ${fmtN(revA[i])}`;
+      if(details.length) msg+=` (${details.join(', ')})`;
+      msg+=`\n`;
+    });
+    msg+=`  รวม: ${fmtN(totRev)}\n`;
   }
 
-  // HAE-IN
+  // ══ HAE-IN ══
   if(haein>0){
-    msg += `💜 HAE-IN: ${fmtN(haein)}\n`;
+    msg += `💜 HAE-IN\n`;
     const hi=dd.haein||{};
     if(hi.sadryi>0) msg+=`  • สระ-ไดร์: ${fmtN(hi.sadryi)}\n`;
     if(hi.henna>0) msg+=`  • Henna: ${fmtN(hi.henna)}\n`;
     if(hi.product>0) msg+=`  • ขายสินค้า: ${fmtN(hi.product)}\n`;
+    msg+=`  รวม: ${fmtN(haein)}\n`;
   }
 
-  msg += `${'─'.repeat(30)}\n`;
-  msg += `💰 รายรับรวม: ${fmtN(totRev+haein)}\n`;
-
-  // ช่องทางรับเงิน
-  if(chTotal>0){
-    msg += `💳 ช่องทางรับเงิน:\n`;
-    const chMap = {cash:'💵 เงินสด',transfer:'📲 โอน/PromptPay',tap:'📡 Tap To Pay',credit:'💳 เครดิต',deposit:'🔖 มัดจำ'};
-    CHANNELS.forEach(k=>{if(ch[k]>0) msg+=`  • ${chMap[k]}: ${fmtN(ch[k])}\n`;});
+  // ══ รายรับอื่นๆ ══
+  if(otherRev>0){
+    msg += `💚 บริการพิเศษ\n`;
+    (dd.other||[]).filter(e=>e.n||e.a).forEach(e=>{
+      msg+=`  • ${e.n||'–'}: ${fmtN(e.a)}${e.w?` (${e.w})`:''}\n`;
+    });
+    msg+=`  รวม: ${fmtN(otherRev)}\n`;
   }
 
-  // รายจ่าย
+  msg += `${LINE}\n`;
+  msg += `💰 รายรับรวมทั้งหมด: ${fmtN(totGross)}\n`;
+
+  // ══ ช่องทางรับเงิน ══
+  if(chSum>0){
+    msg += `\n💳 ช่องทางรับเงิน\n`;
+    const chMap={cash:'💵 เงินสด',transfer:'📲 โอน/แม่มณี',tap:'📡 Tap To Pay',credit:'💳 เครดิต',deposit:'🔖 มัดจำ'};
+    CHANNELS.forEach(k=>{if((ch[k]||0)>0) msg+=`  • ${chMap[k]}: ${fmtN(ch[k])}\n`;});
+  }
+
+  // ══ รายจ่าย ══
   if(totExp>0){
-    msg += `💸 รายจ่าย: ${fmtN(totExp)}\n`;
-    (dd.expenses||[]).filter(e=>e.n).forEach(e=>{msg+=`  • ${e.n}: ${fmtN(e.a)}\n`;});
+    msg += `\n💸 รายจ่ายประจำวัน\n`;
+    (dd.expenses||[]).filter(e=>e.n||e.a).forEach(e=>{
+      msg+=`  • ${e.n||'–'}: ${fmtN(e.a)}\n`;
+    });
+    msg+=`  รวม: ${fmtN(totExp)}\n`;
   }
 
-  msg += `${'─'.repeat(30)}\n`;
-  msg += `✅ กำไรสุทธิ: ${fmtN(profit)}`;
-  if(dd.note) msg += `\n📝 ${dd.note}`;
+  msg += `${LINE}\n`;
+  msg += `${profit>=0?'✅':'⚠️'} กำไรสุทธิ: ${fmtN(profit)}\n`;
+  msg += `  (รายรับ ${fmtN(totGross)} − รายจ่าย ${fmtN(totExp)})`;
+  if(dd.note) msg += `\n\n📝 หมายเหตุ: ${dd.note}`;
   return msg;
 }
 
@@ -1200,6 +1564,7 @@ async function init() {
   buildCal();
   await seedIfEmpty();
   startRealtimeSync();
+  startCourseSync();
   // เลือกวันปัจจุบันถ้าเป็นเดือนนี้
   const today = new Date();
   const adYear = curYear - 543;
