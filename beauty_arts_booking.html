@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Beauty Arts — ระบบจองคิว</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#F4F9F4;color:#1B3A2D;font-size:13px;}
+:root{
+  --green-dark:#1B5E3B;--green-mid:#2D7A57;--green-light:#52B788;--green-pale:#D8F3DC;--green-bg:#F4F9F4;
+  --gold:#B5934B;--gold-light:#E9D49F;--gold-pale:#FDF6E3;--brown:#6B4226;--brown-light:#C69C72;
+  --white:#FFFFFF;--border:#C8E6C9;--text-dark:#1B3A2D;--text-mid:#4A7C59;--text-light:#8AB49A;
+}
+header{background:var(--green-dark);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.hdr-left h1{font-size:17px;font-weight:700;letter-spacing:.3px;}
+.hdr-left p{font-size:11px;opacity:.75;margin-top:2px;}
+.hdr-btns{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
+.btn{padding:7px 14px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;transition:.15s;}
+.btn-gold{background:var(--gold);color:#fff;}.btn-gold:hover{background:#9a7d3e;}
+.btn-white{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);}.btn-white:hover{background:rgba(255,255,255,.25);}
+.btn-green{background:var(--green-mid);color:#fff;}.btn-green:hover{background:var(--green-dark);}
+.btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--text-dark);}.btn-outline:hover{border-color:var(--green-light);}
+.btn-red{background:#FFEBEE;color:#c62828;border:none;}.btn-red:hover{background:#c62828;color:#fff;}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:5px;}
+.tabs{background:var(--green-dark);display:flex;padding:0 20px;gap:2px;}
+.tab{padding:9px 16px;cursor:pointer;font-size:12px;font-weight:600;color:rgba(255,255,255,.5);border-bottom:3px solid transparent;transition:.15s;}
+.tab.active{color:#fff;border-bottom-color:var(--gold);}
+.tab:hover{color:#fff;}
+.panel{display:none;}.panel.active{display:block;}
+.container{max-width:1400px;margin:16px auto;padding:0 14px;}
+
+.fb-bar{display:flex;align-items:center;gap:8px;padding:7px 14px;background:#f0fdf4;border-bottom:1px solid var(--border);font-size:11px;color:var(--text-mid);}
+.fb-dot{width:8px;height:8px;border-radius:50%;background:#aaa;flex-shrink:0;}
+.fb-dot.ok{background:#22c55e;animation:pulse 2s infinite;}
+.fb-dot.err{background:#ef4444;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.schedule-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.date-nav{display:flex;align-items:center;gap:10px;}
+.date-nav-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:16px;color:var(--green-mid);display:flex;align-items:center;justify-content:center;}
+.date-nav-btn:hover{background:var(--green-pale);border-color:var(--green-light);}
+.date-display{font-size:15px;font-weight:700;color:var(--green-dark);}
+.date-sub{font-size:11px;color:var(--text-mid);}
+.today-btn{background:var(--green-pale);border:1.5px solid var(--green-light);color:var(--green-dark);border-radius:7px;padding:5px 12px;cursor:pointer;font-size:11px;font-weight:700;}
+.today-btn:hover{background:var(--green-light);color:#fff;}
+.grid-wrap{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(27,94,59,.1);overflow:auto;}
+.schedule-grid{display:grid;min-width:900px;}
+.grid-time-header{background:var(--green-dark);color:#fff;padding:10px 8px;text-align:center;font-size:11px;font-weight:700;position:sticky;top:0;z-index:10;border-right:1px solid rgba(255,255,255,.15);}
+.grid-staff-header{background:var(--green-dark);color:#fff;padding:10px 6px;text-align:center;font-size:12px;font-weight:700;position:sticky;top:0;z-index:10;border-right:1px solid rgba(255,255,255,.1);}
+.grid-staff-header.pro-col{background:var(--gold);}
+.grid-staff-header .staff-name{font-size:12px;}
+.grid-staff-header .staff-sub{font-size:9px;opacity:.8;margin-top:1px;}
+.grid-time-cell{background:#F4F9F4;border-right:1.5px solid var(--border);border-bottom:1px solid var(--border);padding:4px 8px;text-align:right;font-size:12px;font-weight:700;color:var(--green-mid);min-height:72px;display:flex;align-items:flex-start;justify-content:flex-end;padding-top:6px;}
+.grid-slot{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:72px;padding:4px;background:#fff;cursor:pointer;transition:.1s;position:relative;}
+.grid-slot:hover{background:var(--green-pale);}
+.grid-slot.pro-slot{background:#fffdf0;}
+.grid-slot.pro-slot:hover{background:#fdf6d8;}
+.booking-chip{border-radius:6px;padding:5px 7px;margin-bottom:3px;cursor:pointer;position:relative;border-left:3px solid transparent;}
+.booking-chip .bc-name{font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.booking-chip .bc-svc{font-size:10px;opacity:.8;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.booking-chip .bc-price{font-size:10px;font-weight:600;margin-top:2px;}
+.booking-chip .bc-dur{position:absolute;top:4px;right:6px;font-size:9px;opacity:.6;}
+.chip-จอง{background:#FFFDE7;border-left-color:#f59e0b;color:#78350f;}
+.chip-ยืนยัน{background:#E3F2FD;border-left-color:#1976D2;color:#0d47a1;}
+.chip-กำลังทำ{background:#FFF3E0;border-left-color:#E65100;color:#bf360c;}
+.chip-เสร็จแล้ว{background:var(--green-pale);border-left-color:var(--green-light);color:var(--green-dark);}
+.chip-ยกเลิก{background:#FFEBEE;border-left-color:#e53935;color:#b71c1c;opacity:.6;text-decoration:line-through;}
+.add-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--border);font-size:18px;position:absolute;inset:0;opacity:0;transition:.15s;}
+.grid-slot:hover .add-placeholder{opacity:1;color:var(--green-light);}
+.day-summary{display:flex;gap:12px;padding:10px 14px;background:var(--green-pale);border-top:1px solid var(--border);flex-wrap:wrap;}
+.sum-pill{background:#fff;border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--text-dark);font-weight:600;}
+.sum-pill span{color:var(--green-dark);}
+
+.filter-bar{background:#fff;border-radius:10px;padding:12px 16px;box-shadow:0 1px 4px rgba(27,94,59,.08);margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.filter-bar input,.filter-bar select{padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--text-dark);background:#fff;}
+.filter-bar input:focus,.filter-bar select:focus{outline:none;border-color:var(--green-light);}
+.tbl-wrap{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(27,94,59,.08);overflow:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{background:var(--green-dark);color:#fff;padding:10px;text-align:left;white-space:nowrap;}
+tbody tr:nth-child(even){background:#F4F9F4;}
+tbody tr:hover{background:var(--green-pale);}
+td{padding:8px 10px;border-bottom:1px solid var(--border);}
+.status-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+.dep-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+.dep-paid{background:#E8F5E9;color:#1B5E3B;}
+.dep-unpaid{background:#FFF3E0;color:#E65100;}
+
+.sum-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.sum-card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(27,94,59,.08);text-align:center;border-top:3px solid var(--green-light);}
+.sum-card.gold{border-top-color:var(--gold);}
+.sum-card.brown{border-top-color:var(--brown-light);}
+.sum-card.dark{border-top-color:var(--green-dark);}
+.sc-label{font-size:10px;color:var(--text-mid);text-transform:uppercase;font-weight:600;margin-bottom:4px;}
+.sc-val{font-size:18px;font-weight:700;color:var(--green-dark);}
+.sum-section{background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(27,94,59,.08);margin-bottom:14px;}
+.sum-section h3{font-size:13px;font-weight:700;color:var(--green-dark);margin-bottom:12px;padding-bottom:6px;border-bottom:2px solid var(--green-pale);}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+.bar-name{width:90px;font-size:11px;font-weight:600;color:var(--text-dark);flex-shrink:0;}
+.bar-track{flex:1;height:9px;background:var(--green-pale);border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;transition:.3s;}
+.bar-val{width:80px;font-size:11px;color:var(--text-dark);font-weight:600;text-align:right;}
+.no-data{text-align:center;padding:32px;color:var(--text-light);font-size:13px;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:14px;width:520px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 8px 40px rgba(27,94,59,.2);}
+.modal-hdr{background:var(--green-dark);color:#fff;padding:14px 18px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr h3{font-size:14px;font-weight:700;}
+.modal-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.modal-body{padding:18px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.f-field{display:flex;flex-direction:column;gap:3px;}
+.f-field.full{grid-column:1/-1;}
+.f-field label{font-size:11px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:.3px;}
+.f-field input,.f-field select,.f-field textarea{padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;color:var(--text-dark);}
+.f-field input:focus,.f-field select:focus,.f-field textarea:focus{outline:none;border-color:var(--green-light);}
+.f-field textarea{resize:vertical;min-height:55px;}
+.modal-footer{display:flex;gap:8px;padding:14px 18px;border-top:1px solid var(--green-pale);justify-content:flex-end;}
+.dur-selector{display:flex;gap:6px;}
+.dur-btn{flex:1;padding:7px;border:1.5px solid var(--border);border-radius:7px;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-mid);text-align:center;transition:.15s;}
+.dur-btn.active{background:var(--green-pale);border-color:var(--green-light);color:var(--green-dark);}
+.dur-btn:hover{border-color:var(--green-light);}
+/* ═══ Calendar ═══ */
+.cal-container{max-width:1000px;margin:0 auto;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+.cal-nav-title{font-size:20px;font-weight:700;color:var(--green-dark);}
+.cal-nav-btns{display:flex;align-items:center;gap:8px;}
+.cal-nav-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:18px;color:var(--green-mid);display:flex;align-items:center;justify-content:center;}
+.cal-nav-btn:hover{background:var(--green-pale);border-color:var(--green-light);}
+.cal-month-stats{display:flex;gap:10px;flex-wrap:wrap;}
+.cal-stat{background:#fff;border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:12px;color:var(--text-dark);font-weight:600;}
+.cal-stat span{color:var(--green-dark);}
+.cal-wrap{background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(27,94,59,.1);overflow:hidden;}
+.cal-dow-row{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-dow{background:var(--green-dark);color:#fff;text-align:center;padding:10px 4px;font-size:12px;font-weight:700;}
+.cal-dow:nth-child(1){background:#c62828;}
+.cal-dow:nth-child(7){background:#1565c0;}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:110px;padding:8px 6px;cursor:pointer;transition:.12s;position:relative;background:#fff;vertical-align:top;}
+.cal-cell:hover{background:var(--green-pale);}
+.cal-cell.today{background:#E8F5E9;border:2px solid var(--green-light);}
+.cal-cell.empty{background:#fafafa;cursor:default;pointer-events:none;}
+.cal-cell.selected{background:#D8F3DC;border:2px solid var(--green-mid);}
+.cal-cell.sun .cal-day-num{color:#c62828;}
+.cal-cell.sat .cal-day-num{color:#1565c0;}
+.cal-day-num{font-size:14px;font-weight:700;color:var(--green-dark);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;}
+.cal-today-dot{width:6px;height:6px;border-radius:50%;background:var(--green-light);display:inline-block;}
+.cal-bk-count{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;background:var(--green-pale);color:var(--green-dark);}
+.cal-bk-count.has{background:var(--green-dark);color:#fff;}
+.cal-chips{display:flex;flex-direction:column;gap:2px;margin-top:2px;}
+.cal-chip{font-size:10px;padding:2px 5px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;border-left:3px solid transparent;}
+.cal-chip.st-จอง{background:#FFFDE7;border-left-color:#f59e0b;color:#78350f;}
+.cal-chip.st-ยืนยัน{background:#E3F2FD;border-left-color:#1976D2;color:#0d47a1;}
+.cal-chip.st-กำลังทำ{background:#FFF3E0;border-left-color:#E65100;color:#bf360c;}
+.cal-chip.st-เสร็จแล้ว{background:var(--green-pale);border-left-color:var(--green-light);color:var(--green-dark);}
+.cal-chip.st-ยกเลิก{background:#FFEBEE;border-left-color:#e53935;color:#b71c1c;opacity:.6;text-decoration:line-through;}
+.cal-more{font-size:10px;color:var(--text-mid);font-weight:600;margin-top:2px;padding-left:2px;}
+.cal-rev{font-size:10px;color:var(--green-mid);font-weight:700;margin-top:3px;}
+.dep-toggle{display:flex;gap:8px;}
+/* ═══ LINE Settings ═══ */
+.line-setup{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 12px rgba(27,94,59,.1);max-width:560px;margin:0 auto;}
+.line-setup h3{font-size:15px;font-weight:700;color:#06C755;margin-bottom:6px;}
+.line-setup p{font-size:12px;color:var(--text-mid);margin-bottom:16px;line-height:1.6;}
+.line-field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.line-field label{font-size:11px;font-weight:700;color:var(--green-dark);text-transform:uppercase;}
+.line-field input{padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;}
+.line-field input:focus{outline:none;border-color:#06C755;}
+.line-field .hint{font-size:11px;color:var(--text-light);margin-top:3px;}
+.line-status{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;margin-bottom:16px;display:none;}
+.line-status.ok{background:#E8F5E9;color:#1B5E3B;display:block;}
+.line-status.err{background:#FFEBEE;color:#c62828;display:block;}
+.line-preview{background:#f0fdf4;border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;color:var(--text-dark);white-space:pre-wrap;font-family:monospace;margin-top:16px;max-height:280px;overflow-y:auto;line-height:1.7;}
+.send-btn-wrap{margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.line-send-status{font-size:12px;font-weight:600;}
+.dep-opt{flex:1;padding:8px;border:1.5px solid var(--border);border-radius:7px;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-mid);text-align:center;transition:.15s;}
+.dep-opt.active-paid{background:#E8F5E9;border-color:#52B788;color:#1B5E3B;}
+.dep-opt.active-unpaid{background:#FFF3E0;border-color:#FB8C00;color:#E65100;}
+.dep-opt:hover{border-color:var(--green-light);}
+
+@media(max-width:768px){
+  .sum-cards{grid-template-columns:1fr 1fr;}
+  .hdr-left h1{font-size:14px;}
+  .form-grid{grid-template-columns:1fr;}
+  .f-field.full{grid-column:auto;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    <h1>🌿 The Beauty Arts & HAE-IN — ตารางจองคิว</h1>
+    <p id="today-label">กำลังโหลด...</p>
+  </div>
+  <div class="hdr-btns">
+    <button class="btn btn-gold" onclick="openBookingForm()">➕ จองคิวใหม่</button>
+    <button class="btn btn-white" onclick="showTab('tab-list')">📋 รายการทั้งหมด</button>
+    <button class="btn btn-white" onclick="showTab('tab-sum')">📊 สรุป</button>
+  </div>
+</header>
+
+<div class="fb-bar">
+  <div class="fb-dot" id="fb-dot"></div>
+  <span id="fb-msg">กำลังเชื่อมต่อ Firebase...</span>
+  <span style="margin-left:auto;color:#888" id="fb-sync"></span>
+</div>
+
+<div class="tabs">
+  <div class="tab" onclick="showTab('tab-cal')">🗓️ ปฏิทินรายเดือน</div>
+  <div class="tab active" onclick="showTab('tab-sched')">📅 ตารางรายวัน</div>
+  <div class="tab" onclick="showTab('tab-list')">📋 รายการทั้งหมด</div>
+  <div class="tab" onclick="showTab('tab-sum')">📊 สรุปรายเดือน</div>
+  <div class="tab" onclick="showTab('tab-line')" style="color:rgba(255,255,255,.5)">💬 ส่งไลน์</div>
+</div>
+
+<!-- CALENDAR -->
+<div id="tab-cal" class="panel">
+<div class="container">
+  <div class="cal-container">
+    <div class="cal-nav">
+      <div class="cal-nav-btns">
+        <button class="cal-nav-btn" onclick="calChangeMonth(-1)">‹</button>
+        <div class="cal-nav-title" id="cal-title"></div>
+        <button class="cal-nav-btn" onclick="calChangeMonth(1)">›</button>
+        <button class="today-btn" onclick="calGoToday()">เดือนนี้</button>
+      </div>
+      <div class="cal-month-stats" id="cal-stats"></div>
+    </div>
+    <div class="cal-wrap">
+      <div class="cal-dow-row">
+        <div class="cal-dow">อา</div><div class="cal-dow">จ</div><div class="cal-dow">อ</div>
+        <div class="cal-dow">พ</div><div class="cal-dow">พฤ</div><div class="cal-dow">ศ</div><div class="cal-dow">ส</div>
+      </div>
+      <div class="cal-days" id="cal-days"></div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--text-mid);align-items:center;">
+      <span>คลิกวันที่เพื่อดูตารางคิวรายวัน</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--green-dark);display:inline-block"></span>มีคิว</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#E8F5E9;border:1.5px solid var(--green-light);display:inline-block"></span>วันนี้</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#FFF3E0;border-left:3px solid #E65100;display:inline-block"></span>กำลังทำ</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SCHEDULE -->
+<div id="tab-sched" class="panel active">
+<div class="container">
+  <div class="schedule-header">
+    <div class="date-nav">
+      <button class="date-nav-btn" onclick="changeDay(-1)">‹</button>
+      <div>
+        <div class="date-display" id="sched-date-label"></div>
+        <div class="date-sub" id="sched-date-sub"></div>
+      </div>
+      <button class="date-nav-btn" onclick="changeDay(1)">›</button>
+      <button class="today-btn" onclick="goToday()">วันนี้</button>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-gold" onclick="openBookingForm(schedDate)">➕ เพิ่มจอง</button>
+      <button class="btn btn-white" onclick="sendLineSummary(schedDate)" style="background:#06C755;border:none;" title="ส่งสรุปคิวไปไลน์กลุ่ม">💬 ส่งไลน์</button>
+      <button class="btn btn-white" onclick="manualSyncToJune(schedDate)" style="background:#0c4a6e;border:none;" title="Sync คิวเสร็จแล้วเข้า june2569">📥 Sync → บันทึกรายวัน</button>
+    </div>
+  </div>
+  <div class="grid-wrap">
+    <div class="schedule-grid" id="sched-grid"></div>
+    <div class="day-summary" id="day-summary"></div>
+    <div id="sync-status-bar" style="display:none;padding:8px 14px;background:#e8f0fe;border-top:1px solid #c5d4f6;font-size:11px;color:#1a73e8;font-weight:600;"></div>
+  </div>
+</div>
+</div>
+
+<!-- LIST -->
+<div id="tab-list" class="panel">
+<div class="container">
+  <div class="filter-bar">
+    <input type="date" id="fl-date" oninput="renderList()">
+    <select id="fl-artist" onchange="renderList()"><option value="">ช่างทุกคน</option></select>
+    <select id="fl-status" onchange="renderList()">
+      <option value="">ทุกสถานะ</option>
+      <option>จอง</option><option>ยืนยัน</option><option>กำลังทำ</option><option>เสร็จแล้ว</option><option>ยกเลิก</option>
+    </select>
+    <select id="fl-shop" onchange="renderList()">
+      <option value="">ทุกร้าน</option><option>The Beauty Arts</option><option>HAE-IN</option>
+    </select>
+    <select id="fl-dep" onchange="renderList()">
+      <option value="">มัดจำทุกสถานะ</option>
+      <option value="จ่ายแล้ว">จ่ายมัดจำแล้ว</option>
+      <option value="ยังไม่จ่าย">ยังไม่จ่ายมัดจำ</option>
+    </select>
+    <input type="text" id="fl-name" placeholder="ค้นหาชื่อ..." oninput="renderList()" style="flex:1;min-width:150px">
+    <button class="btn btn-outline btn-sm" onclick="clearFilters()">ล้าง</button>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>เลขที่</th><th>วัน / เวลา</th><th>ชื่อลูกค้า</th><th>ร้าน</th>
+        <th>บริการ</th><th>ช่าง</th><th>ระยะเวลา</th><th>ราคา</th><th>มัดจำ ฿1,000</th>
+        <th>ช่องทาง</th><th>สถานะ</th><th></th><th>📅</th>
+      </tr></thead>
+      <tbody id="list-tbody"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- SUMMARY -->
+<div id="tab-sum" class="panel">
+<div class="container">
+  <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <select id="sum-month" onchange="renderSummary()" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
+      <option value="0">มกราคม</option><option value="1">กุมภาพันธ์</option><option value="2">มีนาคม</option>
+      <option value="3">เมษายน</option><option value="4">พฤษภาคม</option><option value="5" selected>มิถุนายน</option>
+      <option value="6">กรกฎาคม</option><option value="7">สิงหาคม</option><option value="8">กันยายน</option>
+      <option value="9">ตุลาคม</option><option value="10">พฤศจิกายน</option><option value="11">ธันวาคม</option>
+    </select>
+    <select id="sum-year" onchange="renderSummary()" style="padding:8px 12px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
+      <option value="2026">2026 (2569)</option>
+    </select>
+  </div>
+  <div class="sum-cards" id="sum-cards"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+    <div class="sum-section"><h3>💰 รายรับตามช่าง</h3><div id="sum-artists"></div></div>
+    <div class="sum-section"><h3>📲 ช่องทางการจอง</h3><div id="sum-channels"></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+    <div class="sum-section"><h3>🏠 แยกตามร้าน</h3><div id="sum-shops"></div></div>
+    <div class="sum-section"><h3>📋 สถานะ</h3><div id="sum-statuses"></div></div>
+  </div>
+</div>
+</div>
+
+<!-- LINE -->
+<div id="tab-line" class="panel">
+<div class="container">
+  <div class="line-setup">
+    <h3>💬 ตั้งค่าส่งสรุปคิวเข้าไลน์กลุ่ม</h3>
+    <p>ใส่ข้อมูล LINE Messaging API แล้วกดปุ่ม "ส่งสรุปคิววันนี้" ได้เลยค่ะ<br>
+    ข้อมูลนี้เก็บในเครื่องของคุณเท่านั้น ไม่ได้ส่งออกไปที่อื่น</p>
+
+    <div id="line-status-msg" class="line-status"></div>
+
+    <div class="line-field">
+      <label>Channel Access Token</label>
+      <input type="password" id="line-token" placeholder="ใส่ Channel Access Token จาก LINE Developers...">
+      <span class="hint">ได้จาก LINE Developers Console → Messaging API → Channel access token</span>
+    </div>
+    <div class="line-field">
+      <label>Group ID (ไลน์กลุ่มร้าน)</label>
+      <input type="text" id="line-group" placeholder="C xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+      <span class="hint">ได้จากการเพิ่ม Bot เข้ากลุ่มแล้วดู webhook event หรือใช้เครื่องมือดึง Group ID</span>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="btn btn-green" onclick="saveLineConfig()">💾 บันทึกการตั้งค่า</button>
+      <button class="btn btn-outline btn-sm" onclick="testLineConnection()">🔗 ทดสอบการเชื่อมต่อ</button>
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin-bottom:16px;">
+
+    <div style="font-size:13px;font-weight:700;color:var(--green-dark);margin-bottom:8px;">📋 ตัวอย่างข้อความที่จะส่ง (คิววันนี้)</div>
+    <div class="line-preview" id="line-preview">กำลังโหลด...</div>
+
+    <div class="send-btn-wrap">
+      <button class="btn" style="background:#06C755;color:#fff;font-size:14px;font-weight:700;" onclick="sendLineSummary(null, true)">
+        💬 ส่งสรุปคิววันนี้เข้ากลุ่ม
+      </button>
+      <select id="line-send-date" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
+        <option value="">คิววันนี้</option>
+        <option value="tomorrow">คิวพรุ่งนี้</option>
+      </select>
+      <span class="line-send-status" id="line-send-status"></span>
+    </div>
+
+    <div style="margin-top:20px;padding:12px;background:#fff8e1;border-radius:8px;border:1px solid #ffe082;font-size:11px;color:#5d4037;line-height:1.8;">
+      <strong>📌 วิธีขอ Group ID:</strong><br>
+      1. เพิ่ม LINE Bot เข้ากลุ่มไลน์ร้าน<br>
+      2. ใครสักคนพิมพ์ข้อความในกลุ่ม<br>
+      3. Bot จะรับ webhook — ดู Group ID จาก <code>event.source.groupId</code><br>
+      4. หรือพิมพ์ว่า "groupid" ในกลุ่ม ถ้า Bot รองรับคำสั่งนี้
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3 id="modal-title">➕ จองคิวใหม่</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="f-field"><label>วันที่นัด</label><input type="date" id="f-date"></div>
+        <div class="f-field"><label>เวลาเริ่ม</label>
+          <select id="f-time">
+            <option>11:00</option><option>12:00</option><option>13:00</option>
+            <option>14:00</option><option>15:00</option><option>16:00</option>
+            <option>17:00</option><option>18:00</option>
+          </select>
+        </div>
+        <div class="f-field full"><label>ระยะเวลา</label>
+          <div class="dur-selector">
+            <div class="dur-btn active" id="dur-1" onclick="setDur(1)">1 ชั่วโมง</div>
+            <div class="dur-btn" id="dur-2" onclick="setDur(2)">2 ชั่วโมง</div>
+            <div class="dur-btn" id="dur-3" onclick="setDur(3)">3 ชั่วโมง</div>
+          </div>
+        </div>
+        <div class="f-field"><label>ชื่อลูกค้า *</label><input type="text" id="f-name" placeholder="K. ชื่อ..."></div>
+        <div class="f-field"><label>เบอร์โทร</label><input type="tel" id="f-phone" placeholder="08x-xxx-xxxx"></div>
+        <div class="f-field"><label>ช่องทางจอง</label>
+          <select id="f-channel">
+            <option>Line</option><option>โทรศัพท์</option><option>Walk-in</option>
+            <option>Facebook</option><option>Instagram</option><option>TikTok</option>
+          </select>
+        </div>
+        <div class="f-field"><label>ร้าน</label>
+          <select id="f-shop" onchange="updateServices()">
+            <option>The Beauty Arts</option><option>HAE-IN</option>
+          </select>
+        </div>
+        <div class="f-field"><label>บริการ</label><select id="f-service"></select></div>
+        <div class="f-field"><label>ช่าง / PRO</label>
+          <select id="f-artist">
+            <option value="PRO">⭐ PRO (ยังไม่ระบุช่าง)</option>
+            <option>อ.หญิง</option><option>ช่างมด</option><option>ช่างบ๋อม</option>
+            <option>ช่างมะลิ</option><option>ช่างเจน</option><option>อั๋น</option>
+          </select>
+        </div>
+        <div class="f-field"><label>ราคา (฿)</label><input type="number" id="f-price" placeholder="0"></div>
+        <div class="f-field full"><label>มัดจำ ฿1,000</label>
+          <div class="dep-toggle">
+            <div class="dep-opt active-paid" id="dep-paid" onclick="setDeposit('จ่ายแล้ว')">✅ จ่ายมัดจำแล้ว</div>
+            <div class="dep-opt" id="dep-unpaid" onclick="setDeposit('ยังไม่จ่าย')">⏳ ยังไม่จ่ายมัดจำ</div>
+          </div>
+        </div>
+        <div class="f-field"><label>ช่องทางมัดจำ</label>
+          <select id="f-paych"><option>เงินสด</option><option>โอน/แม่มณี</option><option>Tap To Pay</option><option>เครดิตการ์ด</option></select>
+        </div>
+        <div class="f-field"><label>สถานะ</label>
+          <select id="f-status"><option>จอง</option><option>ยืนยัน</option><option>กำลังทำ</option><option>เสร็จแล้ว</option><option>ยกเลิก</option></select>
+        </div>
+        <div class="f-field full"><label>หมายเหตุ</label><textarea id="f-note" placeholder="เพิ่มเติม..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-red btn-sm" id="del-btn" style="display:none;margin-right:auto" onclick="deleteBooking()">🗑️ ลบ</button>
+      <button class="btn btn-sm" id="gcal-btn" style="display:none;background:#e8f0fe;border:1px solid #c5d4f6;color:#1a73e8;font-weight:700" onclick="openGcalFromModal()">📅 เพิ่มใน Google Calendar</button>
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn btn-green" onclick="saveBooking()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, remove, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBuTHvh-4KJzrmjbmmu0RQaiW3RGzFrbGQ",
+  authDomain: "the-beauty-arts.firebaseapp.com",
+  databaseURL: "https://the-beauty-arts-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "the-beauty-arts",
+  storageBucket: "the-beauty-arts.firebasestorage.app",
+  messagingSenderId: "656894086617",
+  appId: "1:656894086617:web:f25b283061a97f4a401dc8"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getDatabase(fbApp);
+const ROOT = "bookings";
+
+const STAFF = ['ช่างมด','ช่างบ๋อม','ช่างมะลิ','ช่างเจน','อั๋น','อ.หญิง'];
+const PRO_COL = 'PRO';
+const ALL_ARTISTS = [PRO_COL, ...STAFF];
+// เวลาเริ่มต้นที่ 11:00
+const HOURS = [11,12,13,14,15,16,17,18];
+// เพิ่มบริการ: เติมคิ้ว เติมปาก เติมขอบตา เติมผม
+const SERVICES_BA = [
+  'สักคิ้ว','เติมคิ้ว',
+  'สักปาก','เติมปาก',
+  'สักขอบตา','เติมขอบตา',
+  'สักผม','เติมผม',
+  'สลายฝ้า กระ','เลเซอร์',
+  'กันคิ้ว','ทำเล็บ','ขนตา','BB Glow'
+];
+const SERVICES_HI = ['สระ-ไดร์','Henna','ขายสินค้า'];
+const MONTH_TH = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const DAY_TH = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const STATUS_BG = {จอง:'#FFFDE7',ยืนยัน:'#E3F2FD',กำลังทำ:'#FFF3E0',เสร็จแล้ว:'#E8F5E9',ยกเลิก:'#FFEBEE'};
+const STAFF_COLORS = ['#2D7A57','#52B788','#B5934B','#6B4226','#1B5E3B','#C69C72'];
+const DEPOSIT_AMOUNT = 1000;
+
+let bookings = {};
+let schedDate = todayStr();
+let editingId = null;
+let dur = 1;
+let depositStatus = 'จ่ายแล้ว'; // default
+
+function todayStr() {
+  const t = new Date();
+  return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+}
+function fmt(n) { return n ? '฿'+Number(n).toLocaleString('th-TH') : '–'; }
+function fmtDate(s) {
+  if (!s) return '–';
+  const d = new Date(s+'T00:00:00');
+  return `${DAY_TH[d.getDay()]}ที่ ${d.getDate()} ${MONTH_TH[d.getMonth()]} ${d.getFullYear()+543}`;
+}
+function genId() { return 'BA-'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,5).toUpperCase(); }
+function timeToH(t) { return parseInt((t||'11:00').split(':')[0]); }
+function hToTime(h) { return String(h).padStart(2,'0')+':00'; }
+function bkList() { return Object.values(bookings); }
+
+function setFb(ok, msg) {
+  document.getElementById('fb-dot').className = 'fb-dot '+(ok?'ok':'err');
+  document.getElementById('fb-msg').textContent = msg;
+}
+function setSync() {
+  document.getElementById('fb-sync').textContent = 'ซิงค์ล่าสุด '+new Date().toLocaleTimeString('th-TH');
+}
+
+function startSync() {
+  onValue(ref(db, ROOT), (snap) => {
+    bookings = snap.val() || {};
+    setFb(true, '🔥 เชื่อมต่อ Firebase — ข้อมูลซิงค์ทุกอุปกรณ์');
+    setSync();
+    updateHeader();
+    buildSchedGrid();
+    const ap = document.querySelector('.panel.active');
+    if (ap?.id === 'tab-cal') buildCalendar();
+    if (ap?.id === 'tab-list') renderList();
+    if (ap?.id === 'tab-sum') renderSummary();
+  }, (err) => {
+    setFb(false, '❌ Firebase ขาดการเชื่อมต่อ: '+err.message);
+  });
+}
+
+async function fbSet(id, data) { await set(ref(db, `${ROOT}/${id}`), data); setSync(); }
+async function fbRemove(id) { await remove(ref(db, `${ROOT}/${id}`)); setSync(); }
+
+function updateHeader() {
+  document.getElementById('today-label').textContent =
+    `วันนี้: ${fmtDate(todayStr())} | รายการทั้งหมด ${bkList().length} รายการ`;
+}
+
+// ═══ Duration ═══
+window.setDur = function(d) {
+  dur = d;
+  [1,2,3].forEach(n => document.getElementById('dur-'+n).classList.toggle('active', n===d));
+};
+
+// ═══ Deposit toggle ═══
+window.setDeposit = function(status) {
+  depositStatus = status;
+  const paid = document.getElementById('dep-paid');
+  const unpaid = document.getElementById('dep-unpaid');
+  paid.className = 'dep-opt' + (status==='จ่ายแล้ว' ? ' active-paid' : '');
+  unpaid.className = 'dep-opt' + (status==='ยังไม่จ่าย' ? ' active-unpaid' : '');
+};
+
+// ═══ Tabs ═══
+window.showTab = function(id) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['tab-cal','tab-sched','tab-list','tab-sum','tab-line'].indexOf(id);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  if (id==='tab-cal') buildCalendar();
+  if (id==='tab-list') renderList();
+  if (id==='tab-sum') renderSummary();
+  if (id==='tab-line') {
+    const cfg = loadLineConfig();
+    document.getElementById('line-token').value = cfg.token || '';
+    document.getElementById('line-group').value = cfg.group || '';
+    if (cfg.token && cfg.group) {
+      const el = document.getElementById('line-status-msg');
+      el.className = 'line-status ok';
+      el.textContent = '✅ โหลดการตั้งค่าแล้ว';
+    }
+    updateLinePreview();
+    document.getElementById('line-send-date').addEventListener('change', updateLinePreview);
+  }
+};
+
+// ═══ Calendar ═══
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function calDateStr(y,m,d) {
+  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
+window.calChangeMonth = function(delta) {
+  calMonth += delta;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  buildCalendar();
+};
+window.calGoToday = function() {
+  calYear = new Date().getFullYear(); calMonth = new Date().getMonth();
+  buildCalendar();
+};
+
+function buildCalendar() {
+  const MONTH_TH_CAL = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  document.getElementById('cal-title').textContent = `${MONTH_TH_CAL[calMonth]} ${calYear+543}`;
+
+  const firstDow = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const todayFull = todayStr();
+
+  // gather bookings this month
+  const monthBks = bkList().filter(b => {
+    if (!b.date) return false;
+    const d = new Date(b.date+'T00:00:00');
+    return d.getFullYear()===calYear && d.getMonth()===calMonth;
+  });
+  const activeBks = monthBks.filter(b=>b.status!=='ยกเลิก');
+
+  // stats
+  const totalRev = activeBks.reduce((s,b)=>s+(+b.price||0),0);
+  const paidDep = activeBks.filter(b=>b.depositStatus==='จ่ายแล้ว').length;
+  const unpaidDep = activeBks.filter(b=>b.depositStatus==='ยังไม่จ่าย').length;
+  document.getElementById('cal-stats').innerHTML = `
+    <span class="cal-stat">📋 <span>${activeBks.length}</span> คิว</span>
+    <span class="cal-stat">💰 <span>${fmt(totalRev)}</span></span>
+    <span class="cal-stat">✅ มัดจำแล้ว <span>${paidDep}</span></span>
+    <span class="cal-stat">⏳ รอมัดจำ <span>${unpaidDep}</span></span>`;
+
+  // build day map
+  const dayMap = {};
+  monthBks.forEach(b => {
+    const d = parseInt(b.date.slice(8));
+    if (!dayMap[d]) dayMap[d] = [];
+    dayMap[d].push(b);
+  });
+
+  let html = '';
+  // empty cells before first day
+  for (let i=0; i<firstDow; i++) html += `<div class="cal-cell empty"></div>`;
+
+  for (let d=1; d<=daysInMonth; d++) {
+    const dateStr = calDateStr(calYear, calMonth, d);
+    const dow = new Date(calYear, calMonth, d).getDay();
+    const isToday = dateStr === todayFull;
+    const isSun = dow===0, isSat = dow===6;
+    const dayBks = dayMap[d] || [];
+    const activeDayBks = dayBks.filter(b=>b.status!=='ยกเลิก');
+    const dayRev = activeDayBks.reduce((s,b)=>s+(+b.price||0),0);
+    const hasData = activeDayBks.length > 0;
+
+    const cls = ['cal-cell', isToday?'today':'', isSun?'sun':'', isSat?'sat':''].filter(Boolean).join(' ');
+    const countCls = hasData ? 'cal-bk-count has' : 'cal-bk-count';
+
+    // show up to 3 chips
+    const showBks = dayBks.slice(0,3);
+    const moreCount = dayBks.length - showBks.length;
+    const chipsHtml = showBks.map(b =>
+      `<div class="cal-chip st-${b.status}">${b.time||''} ${b.name}</div>`
+    ).join('');
+
+    html += `<div class="${cls}" onclick="window._calDayClick('${dateStr}')">
+      <div class="cal-day-num">
+        <span>${d}${isToday?'&nbsp;<span class="cal-today-dot"></span>':''}</span>
+        ${dayBks.length>0 ? `<span class="${countCls}">${dayBks.length}</span>` : ''}
+      </div>
+      ${dayRev>0 ? `<div class="cal-rev">฿${dayRev.toLocaleString('th-TH')}</div>` : ''}
+      <div class="cal-chips">
+        ${chipsHtml}
+        ${moreCount>0 ? `<div class="cal-more">+${moreCount} เพิ่มเติม</div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // fill remaining cells
+  const totalCells = firstDow + daysInMonth;
+  const remainder = totalCells % 7;
+  if (remainder > 0) {
+    for (let i=0; i<7-remainder; i++) html += `<div class="cal-cell empty"></div>`;
+  }
+
+  document.getElementById('cal-days').innerHTML = html;
+}
+
+window._calDayClick = function(dateStr) {
+  schedDate = dateStr;
+  showTab('tab-sched');
+};
+
+// ═══ Schedule Grid ═══
+function buildSchedGrid() {
+  document.getElementById('sched-date-label').textContent = fmtDate(schedDate);
+  document.getElementById('sched-date-sub').textContent = schedDate === todayStr() ? '⬤ วันนี้' : '';
+
+  const dayBks = bkList().filter(b => b.date === schedDate);
+  const cols = ALL_ARTISTS;
+  const grid = document.getElementById('sched-grid');
+  grid.style.gridTemplateColumns = `80px repeat(${cols.length}, 1fr)`;
+
+  let html = `<div class="grid-time-header">เวลา</div>`;
+  cols.forEach(name => {
+    const isPro = name === PRO_COL;
+    const bkCount = dayBks.filter(b => (b.artist||PRO_COL) === name).length;
+    html += `<div class="grid-staff-header ${isPro?'pro-col':''}">
+      <div class="staff-name">${isPro ? '⭐ PRO' : name}</div>
+      <div class="staff-sub">${isPro ? 'ยังไม่ระบุช่าง' : bkCount > 0 ? bkCount+' คิว' : ''}</div>
+    </div>`;
+  });
+
+  HOURS.forEach(h => {
+    html += `<div class="grid-time-cell">${hToTime(h)}</div>`;
+    cols.forEach(name => {
+      const isPro = name === PRO_COL;
+      const slotBks = dayBks.filter(b => (b.artist||PRO_COL) === name && timeToH(b.time) === h);
+      const spanBks = dayBks.filter(b => {
+        const bh = timeToH(b.time), bd = b.duration||1;
+        return (b.artist||PRO_COL) === name && bh < h && bh + bd > h;
+      });
+      html += `<div class="grid-slot ${isPro?'pro-slot':''}" onclick="window._slotClick('${hToTime(h)}','${name}')">`;
+      if (spanBks.length > 0) html += `<div style="font-size:9px;color:#aaa;padding:2px 4px;">↕ ต่อ</div>`;
+      slotBks.forEach(b => {
+        const depIcon = b.depositStatus==='จ่ายแล้ว' ? '✅' : '⏳';
+        html += `<div class="booking-chip chip-${b.status}" onclick="event.stopPropagation();window._editBk('${b.id}')">
+          <span class="bc-dur">${b.duration||1}ชม.</span>
+          <div class="bc-name">${b.name}</div>
+          <div class="bc-svc">${b.service||''}</div>
+          <div class="bc-price">${b.price ? fmt(b.price) : ''} ${depIcon}</div>
+          <div style="margin-top:3px">
+            <button onclick="window._gcal('${b.id}',event)" title="เพิ่มใน Google Calendar"
+              style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:1px 5px;font-size:9px;cursor:pointer;color:#1a73e8;font-weight:700">
+              📅 GCal
+            </button>
+          </div>
+        </div>`;
+      });
+      if (!slotBks.length && !spanBks.length) html += `<div class="add-placeholder">+</div>`;
+      html += `</div>`;
+    });
+  });
+
+  grid.innerHTML = html;
+
+  const totalRev = dayBks.reduce((s,b)=>s+(+b.price||0),0);
+  const paidDep = dayBks.filter(b=>b.depositStatus==='จ่ายแล้ว').length;
+  const unpaidDep = dayBks.filter(b=>b.depositStatus==='ยังไม่จ่าย').length;
+  const proCount = dayBks.filter(b=>!b.artist||b.artist===PRO_COL).length;
+  document.getElementById('day-summary').innerHTML = `
+    <span class="sum-pill">📋 <span>${dayBks.length}</span> คิว</span>
+    <span class="sum-pill">💰 รายรับ <span>${fmt(totalRev)}</span></span>
+    <span class="sum-pill" style="background:#E8F5E9;border-color:#52B788">✅ มัดจำแล้ว <span>${paidDep} คิว</span></span>
+    <span class="sum-pill" style="background:#FFF3E0;border-color:#FB8C00">⏳ รอมัดจำ <span>${unpaidDep} คิว</span></span>
+    ${proCount>0?`<span class="sum-pill" style="background:#FDF6E3;border-color:#E9D49F">⭐ PRO <span>${proCount}</span> (รอระบุช่าง)</span>`:''}`;
+}
+
+// ═══ Google Calendar Link ═══
+function gcalUrl(b) {
+  if (!b.date || !b.time) return '#';
+  // parse start datetime
+  const [y,mo,d] = b.date.split('-').map(Number);
+  const [h,mi] = (b.time||'11:00').split(':').map(Number);
+  const dur = b.duration||1;
+  // format YYYYMMDDTHHMMSS (local, no timezone suffix = floating)
+  const pad = n => String(n).padStart(2,'0');
+  const startDt = `${y}${pad(mo)}${pad(d)}T${pad(h)}${pad(mi)}00`;
+  const endH = h + dur;
+  const endDt = `${y}${pad(mo)}${pad(d)}T${pad(endH)}${pad(mi)}00`;
+  const title = encodeURIComponent(`[The Beauty Arts] ${b.name} — ${b.service||''}${b.artist&&b.artist!==PRO_COL?' ('+b.artist+')':''}`);
+  const details = encodeURIComponent(
+    `ร้าน: ${b.shop||'The Beauty Arts'}\nบริการ: ${b.service||'–'}\nช่าง: ${b.artist||'PRO'}\nราคา: ${b.price?'฿'+Number(b.price).toLocaleString('th-TH'):'–'}\nมัดจำ: ${b.depositStatus||'–'}\nช่องทาง: ${b.channel||'–'}\nโทร: ${b.phone||'–'}\nหมายเหตุ: ${b.note||'–'}`
+  );
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDt}/${endDt}&details=${details}`;
+}
+window._gcal = function(id, e) {
+  e.stopPropagation();
+  const b = bookings[id];
+  if (b) window.open(gcalUrl(b), '_blank');
+};
+
+window._slotClick = function(time, artist) { openBookingForm(schedDate, null, { time, artist: artist===PRO_COL?'PRO':artist }); };
+window._editBk = function(id) { openBookingForm(null, id); };
+window.changeDay = function(d) {
+  const dt = new Date(schedDate+'T00:00:00');
+  dt.setDate(dt.getDate()+d);
+  schedDate = dt.toISOString().slice(0,10);
+  buildSchedGrid();
+};
+window.goToday = function() { schedDate = todayStr(); buildSchedGrid(); };
+
+// ═══ Services ═══
+window.updateServices = function() {
+  const s = document.getElementById('f-shop').value;
+  document.getElementById('f-service').innerHTML = (s==='HAE-IN'?SERVICES_HI:SERVICES_BA).map(x=>`<option>${x}</option>`).join('');
+};
+
+// ═══ Modal ═══
+window.openBookingForm = function(date, id, pre) {
+  editingId = id || null;
+  dur = 1; window.setDur(1);
+  document.getElementById('modal-title').textContent = id ? '✏️ แก้ไขการจอง' : '➕ จองคิวใหม่';
+  document.getElementById('del-btn').style.display = id ? 'block' : 'none';
+  document.getElementById('gcal-btn').style.display = id ? 'block' : 'none';
+  if (id) {
+    const b = bookings[id];
+    if (b) {
+      document.getElementById('f-date').value = b.date||'';
+      document.getElementById('f-time').value = b.time||'11:00';
+      window.setDur(b.duration||1);
+      document.getElementById('f-name').value = b.name||'';
+      document.getElementById('f-phone').value = b.phone||'';
+      document.getElementById('f-channel').value = b.channel||'Line';
+      document.getElementById('f-shop').value = b.shop||'The Beauty Arts';
+      window.updateServices();
+      document.getElementById('f-service').value = b.service||'';
+      document.getElementById('f-artist').value = b.artist||'PRO';
+      document.getElementById('f-price').value = b.price||'';
+      window.setDeposit(b.depositStatus||'จ่ายแล้ว');
+      document.getElementById('f-paych').value = b.payChannel||'โอน/แม่มณี';
+      document.getElementById('f-status').value = b.status||'จอง';
+      document.getElementById('f-note').value = b.note||'';
+    }
+  } else {
+    document.getElementById('f-date').value = date || schedDate || todayStr();
+    document.getElementById('f-time').value = pre?.time || '11:00';
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-phone').value = '';
+    document.getElementById('f-channel').value = 'Line';
+    document.getElementById('f-shop').value = 'The Beauty Arts';
+    window.updateServices();
+    document.getElementById('f-artist').value = pre?.artist || 'PRO';
+    document.getElementById('f-price').value = '';
+    window.setDeposit('จ่ายแล้ว');
+    document.getElementById('f-paych').value = 'โอน/แม่มณี';
+    document.getElementById('f-status').value = 'จอง';
+    document.getElementById('f-note').value = '';
+  }
+  document.getElementById('modal').classList.add('open');
+  setTimeout(()=>document.getElementById('f-name').focus(),100);
+};
+
+window.openGcalFromModal = function() {
+  if (!editingId) return;
+  const b = bookings[editingId];
+  if (b) window.open(gcalUrl(b), '_blank');
+};
+
+window.closeModal = function() { document.getElementById('modal').classList.remove('open'); editingId=null; };
+
+window.saveBooking = async function() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('กรุณากรอกชื่อลูกค้า'); return; }
+  const id = editingId || genId();
+  const bk = {
+    id,
+    date: document.getElementById('f-date').value,
+    time: document.getElementById('f-time').value,
+    duration: dur,
+    name,
+    phone: document.getElementById('f-phone').value,
+    channel: document.getElementById('f-channel').value,
+    shop: document.getElementById('f-shop').value,
+    service: document.getElementById('f-service').value,
+    artist: document.getElementById('f-artist').value,
+    price: +document.getElementById('f-price').value||0,
+    deposit: DEPOSIT_AMOUNT,
+    depositStatus: depositStatus,
+    payChannel: document.getElementById('f-paych').value,
+    status: document.getElementById('f-status').value,
+    note: document.getElementById('f-note').value,
+    createdAt: editingId ? (bookings[editingId]?.createdAt||new Date().toISOString()) : new Date().toISOString()
+  };
+  await fbSet(id, bk);
+  window.closeModal();
+};
+
+window.deleteBooking = async function() {
+  if (!editingId || !confirm('ลบรายการนี้?')) return;
+  await fbRemove(editingId);
+  window.closeModal();
+};
+
+// ═══ List ═══
+window.clearFilters = function() {
+  ['fl-date','fl-name'].forEach(id=>document.getElementById(id).value='');
+  ['fl-artist','fl-status','fl-shop','fl-dep'].forEach(id=>document.getElementById(id).value='');
+  renderList();
+};
+
+function renderList() {
+  const fD=document.getElementById('fl-date').value,
+        fA=document.getElementById('fl-artist').value,
+        fS=document.getElementById('fl-status').value,
+        fSh=document.getElementById('fl-shop').value,
+        fDep=document.getElementById('fl-dep').value,
+        fN=document.getElementById('fl-name').value.toLowerCase();
+  const filtered = bkList().filter(b=>{
+    if(fD&&b.date!==fD) return false;
+    if(fA&&(b.artist||PRO_COL)!==fA) return false;
+    if(fS&&b.status!==fS) return false;
+    if(fSh&&b.shop!==fSh) return false;
+    if(fDep&&b.depositStatus!==fDep) return false;
+    if(fN&&!b.name.toLowerCase().includes(fN)) return false;
+    return true;
+  }).sort((a,b)=>((b.date||'')+(b.time||'')).localeCompare((a.date||'')+(a.time||'')));
+  document.getElementById('list-tbody').innerHTML = filtered.length===0
+    ? '<tr><td colspan="13" style="text-align:center;padding:24px;color:#aaa">ไม่พบรายการ</td></tr>'
+    : filtered.map(b=>`<tr>
+        <td style="font-size:10px;color:#aaa">${b.id}</td>
+        <td>${b.date?fmtDate(b.date):'–'}<br><span style="font-size:10px;color:var(--green-mid)">${b.time||''} (${b.duration||1}ชม.)</span></td>
+        <td><strong>${b.name}</strong>${b.phone?'<br><span style="font-size:10px;color:#aaa">'+b.phone+'</span>':''}</td>
+        <td style="font-size:11px;color:${b.shop==='HAE-IN'?'#6d28d9':'var(--green-dark)'};font-weight:600">${b.shop}</td>
+        <td>${b.service||'–'}</td>
+        <td style="color:${(b.artist||PRO_COL)===PRO_COL?'#B5934B':'var(--green-dark)'};font-weight:600">${(b.artist||PRO_COL)===PRO_COL?'⭐ PRO':b.artist}</td>
+        <td style="text-align:center">${b.duration||1} ชม.</td>
+        <td style="font-weight:600">${fmt(b.price)}</td>
+        <td><span class="dep-badge ${b.depositStatus==='จ่ายแล้ว'?'dep-paid':'dep-unpaid'}">${b.depositStatus==='จ่ายแล้ว'?'✅ จ่ายแล้ว':'⏳ ยังไม่จ่าย'}</span></td>
+        <td style="font-size:11px">${b.channel||'–'}</td>
+        <td><span class="status-badge" style="background:${STATUS_BG[b.status]||'#eee'}">${b.status}</span></td>
+        <td><button onclick="window._editBk('${b.id}')" style="background:var(--green-pale);border:none;border-radius:5px;padding:3px 10px;cursor:pointer;font-size:10px;color:var(--green-dark);font-weight:600">แก้ไข</button></td>
+        <td><button onclick="window._gcal('${b.id}',event)" style="background:#e8f0fe;border:1px solid #c5d4f6;border-radius:5px;padding:3px 10px;cursor:pointer;font-size:10px;color:#1a73e8;font-weight:700;white-space:nowrap">📅 GCal</button></td>
+      </tr>`).join('');
+}
+
+// ═══ Summary ═══
+function renderSummary() {
+  const m=+document.getElementById('sum-month').value, y=+document.getElementById('sum-year').value;
+  const allMb=bkList().filter(b=>{if(!b.date)return false;const d=new Date(b.date);return d.getFullYear()===y&&d.getMonth()===m;});
+  const mb=allMb.filter(b=>b.status!=='ยกเลิก');
+  const rev=mb.reduce((s,b)=>s+(+b.price||0),0);
+  const paidDep=mb.filter(b=>b.depositStatus==='จ่ายแล้ว').length;
+  const unpaidDep=mb.filter(b=>b.depositStatus==='ยังไม่จ่าย').length;
+  const hiRev=mb.filter(b=>b.shop==='HAE-IN').reduce((s,b)=>s+(+b.price||0),0);
+  document.getElementById('sum-cards').innerHTML=`
+    <div class="sum-card"><div class="sc-label">รายรับรวม</div><div class="sc-val">${fmt(rev)}</div></div>
+    <div class="sum-card gold"><div class="sc-label">💜 HAE-IN</div><div class="sc-val">${fmt(hiRev)}</div></div>
+    <div class="sum-card dark"><div class="sc-label">คิวทั้งหมด</div><div class="sc-val">${mb.length}</div></div>
+    <div class="sum-card brown"><div class="sc-label">✅ มัดจำแล้ว / ⏳ รอมัดจำ</div><div class="sc-val" style="font-size:14px">${paidDep} / ${unpaidDep}</div></div>`;
+  const bar=(label,val,max,color)=>`<div class="bar-row"><span class="bar-name">${label}</span><div class="bar-track"><div class="bar-fill" style="width:${max?Math.round(val/max*100):0}%;background:${color||'var(--green-light)'}"></div></div><span class="bar-val">${typeof val==='number'&&val>999?fmt(val):val+' คิว'}</span></div>`;
+  const byA={};mb.forEach(b=>{const a=b.artist||PRO_COL;byA[a]=(byA[a]||0)+(+b.price||0);});
+  const maxA=Math.max(...Object.values(byA),1);
+  document.getElementById('sum-artists').innerHTML=ALL_ARTISTS.map((a,i)=>bar(a===PRO_COL?'⭐ PRO':a,byA[a]||0,maxA,a===PRO_COL?'#B5934B':STAFF_COLORS[i-1]||'var(--green-light)')).join('');
+  const byCh={};allMb.forEach(b=>{byCh[b.channel]=(byCh[b.channel]||0)+1;});
+  const maxCh=Math.max(...Object.values(byCh),1);
+  const chCol={'Line':'#06C755','โทรศัพท์':'#2196F3','Walk-in':'#FF9800','Facebook':'#1877F2','Instagram':'#E1306C','TikTok':'#010101'};
+  document.getElementById('sum-channels').innerHTML=Object.entries(byCh).sort((a,b)=>b[1]-a[1]).map(([ch,cnt])=>bar(ch,cnt,maxCh,chCol[ch]||'var(--green-light)')).join('')||'<div class="no-data" style="padding:12px">ยังไม่มีข้อมูล</div>';
+  document.getElementById('sum-shops').innerHTML=[bar('The Beauty Arts',rev-hiRev,rev||1,'var(--green-mid)'),bar('HAE-IN',hiRev,rev||1,'#6d28d9')].join('');
+  const bySt={};allMb.forEach(b=>{bySt[b.status]=(bySt[b.status]||0)+1;});
+  const maxSt=Math.max(...Object.values(bySt),1);
+  const stCol={จอง:'#f59e0b',ยืนยัน:'#2196F3',กำลังทำ:'#FF9800',เสร็จแล้ว:'var(--green-light)',ยกเลิก:'#e53935'};
+  document.getElementById('sum-statuses').innerHTML=['จอง','ยืนยัน','กำลังทำ','เสร็จแล้ว','ยกเลิก'].map(s=>bar(s,bySt[s]||0,maxSt,stCol[s])).join('');
+}
+
+// ═══ Auto Status Update ═══
+// ทุก 1 นาที: ยืนยัน → กำลังทำ เมื่อถึงเวลา, กำลังทำ → เสร็จแล้ว เมื่อครบเวลา
+async function autoUpdateStatus() {
+  const now = new Date();
+  const todayDate = todayStr();
+  let changed = 0;
+
+  for (const b of bkList()) {
+    // เฉพาะคิววันนี้ที่สถานะ ยืนยัน หรือ กำลังทำ
+    if (b.date !== todayDate) continue;
+    if (b.status !== 'ยืนยัน' && b.status !== 'กำลังทำ') continue;
+    if (!b.time) continue;
+
+    const [h, m] = b.time.split(':').map(Number);
+    const startMs = new Date(b.date + 'T' + b.time + ':00').getTime();
+    const endMs = startMs + (b.duration || 1) * 60 * 60 * 1000;
+    const nowMs = now.getTime();
+
+    let newStatus = null;
+    if (b.status === 'ยืนยัน' && nowMs >= startMs) {
+      newStatus = 'กำลังทำ';
+    } else if (b.status === 'กำลังทำ' && nowMs >= endMs) {
+      newStatus = 'เสร็จแล้ว';
+    }
+
+    if (newStatus) {
+      const updated = { ...b, status: newStatus };
+      bookings[b.id] = updated;
+      await fbSet(b.id, updated);
+      changed++;
+      console.log(`[AutoStatus] ${b.name} → ${newStatus}`);
+    }
+  }
+
+  if (changed > 0) {
+    buildSchedGrid();
+    const ap = document.querySelector('.panel.active');
+    if (ap?.id === 'tab-cal') buildCalendar();
+    if (ap?.id === 'tab-list') renderList();
+    showToast(`🔄 อัปเดตสถานะ ${changed} คิวอัตโนมัติ`);
+    // auto sync คิวที่เพิ่งเสร็จเข้า june2569
+    await syncDoneBookingsToJune(todayDate);
+  }
+}
+
+// ═══ Sync เสร็จแล้ว → june2569 ═══
+// แปลง service ชื่อ → field ใน svc ของ june2569
+const ARTIST_MAP = {
+  'อ.หญิง':0,'ช่างมด':1,'ช่างบ๋อม':2,'ช่างมะลิ':3,'ช่างเจน':4,'อั๋น':5,'ช่างอั๋น':5
+};
+const SVC_MAP = {
+  'สักคิ้ว':'tat','เติมคิ้ว':'tat',
+  'สักปาก':'tat','เติมปาก':'tat',
+  'สักขอบตา':'tat','เติมขอบตา':'tat',
+  'สักผม':'hair','เติมผม':'hair',
+  'กันคิ้ว':'tat',
+  'ขนตา':'lash','BB Glow':'lash',
+  'ทำเล็บ':'nail',
+  'เลเซอร์':'laser','สลายฝ้า กระ':'laser',
+  'สระ-ไดร์':'hair','Henna':'hair','ขายสินค้า':'item'
+};
+// แปลงช่องทางจอง → channels key ใน june2569
+const PAYCH_MAP = {
+  'เงินสด':'cash',
+  'โอน/แม่มณี':'transfer','โอน':'transfer','PromptPay':'transfer',
+  'Tap To Pay':'tap',
+  'เครดิตการ์ด':'credit'
+};
+const JUNE_ROOT = 'june2569';
+const EMPTY_SVC = () => ({tat:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0});
+
+async function syncDoneBookingsToJune(dateStr) {
+  // ดึง bookings เสร็จแล้ว ของวันนั้น ที่เป็นร้านหลัก (ไม่รวม HAE-IN ที่จัดการแยก)
+  const doneBks = bkList().filter(b =>
+    b.date === dateStr && b.status === 'เสร็จแล้ว' && b.price > 0
+  );
+  if (doneBks.length === 0) return;
+
+  // ดึงข้อมูลวันนั้นจาก june2569
+  const dayNum = parseInt(dateStr.slice(8)); // วันที่ 1-30
+  if (dayNum < 1 || dayNum > 30) return;
+
+  const snapRef = ref(db, `${JUNE_ROOT}/${dayNum}`);
+  const snap = await get(snapRef);
+  const existing = snap.val() || {
+    svc: Array(6).fill(null).map(EMPTY_SVC),
+    commR2: Array(6).fill(0),
+    channels: {cash:0,transfer:0,tap:0,credit:0,deposit:0},
+    haein: {sadryi:0,henna:0,product:0,channel:'transfer'},
+    expenses: [], note: '', absent: Array(5).fill(false)
+  };
+
+  // normalize svc array
+  if (!existing.svc) existing.svc = Array(6).fill(null).map(EMPTY_SVC);
+  existing.svc = existing.svc.map(s => ({...EMPTY_SVC(),...(s||{})}));
+  if (!existing.channels) existing.channels = {cash:0,transfer:0,tap:0,credit:0,deposit:0};
+
+  // เก็บ booking id ที่ sync แล้ว (ป้องกัน double-count)
+  const syncedIds = new Set((existing._syncedBkIds || '').split(',').filter(Boolean));
+  let anyNew = false;
+
+  for (const b of doneBks) {
+    if (syncedIds.has(b.id)) continue; // เคย sync แล้ว ข้ามไป
+
+    const aIdx = ARTIST_MAP[b.artist];
+    const svcKey = SVC_MAP[b.service];
+    const price = +b.price || 0;
+    const payKey = PAYCH_MAP[b.payChannel] || 'cash';
+
+    // เพิ่มยอดเข้า svc ของช่าง
+    if (aIdx !== undefined && svcKey && price > 0) {
+      existing.svc[aIdx][svcKey] = (existing.svc[aIdx][svcKey] || 0) + price;
+    }
+
+    // เพิ่มยอดเข้า channels
+    if (price > 0) {
+      existing.channels[payKey] = (existing.channels[payKey] || 0) + price;
+    }
+
+    // เพิ่มมัดจำเข้า deposit (ถ้าจ่ายแล้ว)
+    if (b.depositStatus === 'จ่ายแล้ว') {
+      existing.channels.deposit = (existing.channels.deposit || 0) + 1000;
+    }
+
+    syncedIds.add(b.id);
+    anyNew = true;
+  }
+
+  if (!anyNew) return;
+
+  // บันทึก id ที่ sync แล้วไว้ใน node
+  existing._syncedBkIds = [...syncedIds].join(',');
+
+  await set(snapRef, existing);
+  console.log(`[SyncJune] วันที่ ${dayNum} sync สำเร็จ`);
+  showToast(`📥 Sync ${[...syncedIds].length} คิว → june2569 วันที่ ${dayNum} แล้วค่ะ`);
+
+  // แสดงในแถบสถานะ
+  const bar = document.getElementById('sync-status-bar');
+  if (bar) {
+    const synced = doneBks.filter(b => syncedIds.has(b.id));
+    const totalSyncedPrice = synced.reduce((s,b) => s+(+b.price||0), 0);
+    bar.style.display = 'block';
+    bar.innerHTML = `📥 Sync ล่าสุด: ${synced.length} คิวเสร็จแล้ว รวม ฿${totalSyncedPrice.toLocaleString('th-TH')} → บันทึกใน june2569 วันที่ ${dayNum} แล้วค่ะ &nbsp;|&nbsp; <span style="color:#555">ซิงค์ล่าสุด ${new Date().toLocaleTimeString('th-TH')}</span>`;
+  }
+}
+
+// ═══ Manual Sync Button ═══
+window.manualSyncToJune = async function(dateStr) {
+  dateStr = dateStr || schedDate || todayStr();
+  showToast('⏳ กำลัง sync เข้า june2569...');
+  await syncDoneBookingsToJune(dateStr);
+};
+
+// ═══ Toast Notification ═══
+function showToast(msg) {
+  let t = document.getElementById('auto-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'auto-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1B5E3B;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:opacity .4s;pointer-events:none;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3000);
+}
+
+// ═══ Countdown Clock ═══
+// แสดงเวลานับถอยหลังใน fb-bar
+function startClock() {
+  const el = document.createElement('span');
+  el.id = 'auto-clock';
+  el.style.cssText = 'margin-left:12px;font-size:11px;color:#4A7C59;font-weight:600;';
+  document.getElementById('fb-sync').after(el);
+
+  setInterval(() => {
+    const now = new Date();
+    const nextMin = 60 - now.getSeconds();
+    el.textContent = `⏱ อัปเดตสถานะอัตโนมัติใน ${nextMin} วินาที`;
+  }, 1000);
+
+  // รันทันทีครั้งแรก แล้วทุก 1 นาที
+  autoUpdateStatus();
+  setInterval(autoUpdateStatus, 60 * 1000);
+}
+
+// ═══ LINE Messaging API ═══
+const LINE_STORAGE_KEY = 'ba_line_config';
+
+function loadLineConfig() {
+  try {
+    const raw = localStorage.getItem(LINE_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { token: '', group: '' };
+  } catch { return { token: '', group: '' }; }
+}
+
+function buildLineMessage(dateStr) {
+  const cfg = loadLineConfig();
+  const MONTH_TH_L = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const DAY_TH_L = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+  const d = new Date(dateStr + 'T00:00:00');
+  const dateLabel = `${DAY_TH_L[d.getDay()]}. ${d.getDate()} ${MONTH_TH_L[d.getMonth()]} ${d.getFullYear()+543}`;
+
+  const dayBks = bkList()
+    .filter(b => b.date === dateStr && b.status !== 'ยกเลิก')
+    .sort((a,b) => (a.time||'').localeCompare(b.time||''));
+
+  const totalRev = dayBks.reduce((s,b) => s + (+b.price||0), 0);
+  const paidDep = dayBks.filter(b => b.depositStatus === 'จ่ายแล้ว').length;
+  const unpaid = dayBks.filter(b => b.depositStatus === 'ยังไม่จ่าย').length;
+
+  const STATUS_ICON = { จอง:'📌', ยืนยัน:'✅', กำลังทำ:'🔥', เสร็จแล้ว:'✔️', ยกเลิก:'❌' };
+
+  let msg = `🌿 The Beauty Arts\n`;
+  msg += `📅 สรุปคิว ${dateLabel}\n`;
+  msg += `${'─'.repeat(26)}\n`;
+
+  if (dayBks.length === 0) {
+    msg += `ไม่มีคิววันนี้ค่ะ\n`;
+  } else {
+    dayBks.forEach((b, i) => {
+      const icon = STATUS_ICON[b.status] || '📌';
+      const artist = b.artist && b.artist !== 'PRO' ? b.artist : '⭐ PRO';
+      const dep = b.depositStatus === 'จ่ายแล้ว' ? '💰มัดจำแล้ว' : '⏳รอมัดจำ';
+      msg += `${icon} ${b.time||'?'} — ${b.name}\n`;
+      msg += `   🎨 ${b.service||'–'}  👩 ${artist}\n`;
+      if (b.price) msg += `   💵 ฿${Number(b.price).toLocaleString('th-TH')}  ${dep}\n`;
+      if (i < dayBks.length - 1) msg += `\n`;
+    });
+  }
+
+  msg += `${'─'.repeat(26)}\n`;
+  msg += `📊 รวม ${dayBks.length} คิว`;
+  if (totalRev > 0) msg += `  |  💰 ฿${totalRev.toLocaleString('th-TH')}`;
+  if (unpaid > 0) msg += `\n⏳ รอมัดจำ ${unpaid} คิว`;
+
+  return msg;
+}
+
+window.saveLineConfig = function() {
+  const token = document.getElementById('line-token').value.trim();
+  const group = document.getElementById('line-group').value.trim();
+  localStorage.setItem(LINE_STORAGE_KEY, JSON.stringify({ token, group }));
+  const el = document.getElementById('line-status-msg');
+  el.className = 'line-status ok';
+  el.textContent = '✅ บันทึกการตั้งค่าแล้ว (เก็บในเครื่องนี้เท่านั้น)';
+  updateLinePreview();
+};
+
+window.testLineConnection = async function() {
+  const cfg = loadLineConfig();
+  if (!cfg.token) { alert('กรุณาใส่ Channel Access Token ก่อนค่ะ'); return; }
+  const el = document.getElementById('line-status-msg');
+  el.className = 'line-status ok'; el.textContent = '🔗 กำลังทดสอบ...';
+  try {
+    const res = await fetch('https://api.line.me/v2/bot/info', {
+      headers: { Authorization: 'Bearer ' + cfg.token }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      el.textContent = `✅ เชื่อมต่อสำเร็จ! Bot: ${data.displayName}`;
+    } else {
+      el.className = 'line-status err';
+      el.textContent = `❌ Token ไม่ถูกต้อง (${res.status})`;
+    }
+  } catch(e) {
+    el.className = 'line-status err';
+    el.textContent = '❌ เชื่อมต่อไม่ได้ — อาจถูก CORS บล็อก ลองทดสอบผ่าน Postman';
+  }
+};
+
+function updateLinePreview() {
+  const selVal = document.getElementById('line-send-date')?.value;
+  let dateStr = todayStr();
+  if (selVal === 'tomorrow') {
+    const t = new Date(); t.setDate(t.getDate() + 1);
+    dateStr = t.toISOString().slice(0,10);
+  }
+  const pre = document.getElementById('line-preview');
+  if (pre) pre.textContent = buildLineMessage(dateStr);
+}
+
+window.sendLineSummary = async function(dateStr, fromLineTab) {
+  const cfg = loadLineConfig();
+  if (!cfg.token || !cfg.group) {
+    showToast('⚠️ กรุณาตั้งค่า Token และ Group ID ในแท็บ 💬 ส่งไลน์ก่อนค่ะ');
+    showTab('tab-line');
+    return;
+  }
+
+  // เลือกวันที่
+  if (!dateStr) {
+    const selVal = document.getElementById('line-send-date')?.value;
+    if (selVal === 'tomorrow') {
+      const t = new Date(); t.setDate(t.getDate() + 1);
+      dateStr = t.toISOString().slice(0,10);
+    } else {
+      dateStr = schedDate || todayStr();
+    }
+  }
+
+  const msg = buildLineMessage(dateStr);
+  const statusEl = document.getElementById('line-send-status');
+  if (statusEl) { statusEl.style.color = '#888'; statusEl.textContent = '⏳ กำลังส่ง...'; }
+  showToast('⏳ กำลังส่งข้อความไปไลน์...');
+
+  try {
+    const res = await fetch('https://api.line.me/v2/bot/message/push', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + cfg.token
+      },
+      body: JSON.stringify({
+        to: cfg.group,
+        messages: [{ type: 'text', text: msg }]
+      })
+    });
+
+    if (res.ok) {
+      if (statusEl) { statusEl.style.color = '#1B5E3B'; statusEl.textContent = '✅ ส่งสำเร็จ!'; }
+      showToast('✅ ส่งสรุปคิวเข้าไลน์กลุ่มแล้วค่ะ');
+    } else {
+      const err = await res.json().catch(()=>({}));
+      const errMsg = err.message || res.status;
+      if (statusEl) { statusEl.style.color = '#c62828'; statusEl.textContent = `❌ ส่งไม่สำเร็จ: ${errMsg}`; }
+      showToast(`❌ ส่งไม่สำเร็จ: ${errMsg}`);
+    }
+  } catch(e) {
+    if (statusEl) { statusEl.style.color = '#c62828'; statusEl.textContent = '❌ เกิดข้อผิดพลาด (network)'; }
+    showToast('❌ เกิดข้อผิดพลาด ตรวจสอบการเชื่อมต่อ');
+  }
+};
+const artSel = document.getElementById('fl-artist');
+ALL_ARTISTS.forEach(a => { artSel.innerHTML += `<option value="${a}">${a===PRO_COL?'PRO (ไม่ระบุช่าง)':a}</option>`; });
+
+document.getElementById('modal').addEventListener('click', e => { if(e.target===document.getElementById('modal')) window.closeModal(); });
+
+window.updateServices();
+buildSchedGrid();
+buildCalendar();
+showTab('tab-cal');
+startSync();
+startClock();
+</script>
+</body>
+</html>
