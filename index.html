@@ -390,6 +390,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
     </div>
   </div>
   <div class="summary-row" id="payroll-cards"></div>
+  <div id="an-comm-detail"></div>
   <div class="table-wrap">
     <table>
       <thead><tr>
@@ -742,7 +743,8 @@ async function seedIfEmpty() {
     3:{svc:[empty(),empty(),{...empty(),brow:5900,lip:5000},{...empty(),lip:4990},empty(),empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:0,tap:9890,credit:4000,deposit:0},haein:{sadryi:0,henna:0,product:2400,channel:'transfer'},expenses:[{n:'CAP CUT PRO',a:289},{n:'น้ำดื่ม',a:1125}],note:'บ๋อม: สักคิ้ว 5,900 + สักปาก 5,000 | มะลิ: สักปาก 4,990 | HAE-IN: ขายสินค้า 2,400 | มด: หยุด',absent:[true,false,false,false,false]},
     4:{svc:[empty(),{...empty(),hair:7950},{...empty(),hair:7950},empty(),{...empty(),lash:2290},empty()],commR2:Array(6).fill(0),channels:{cash:16090,transfer:1100,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:1900,product:0,channel:'transfer'},expenses:[],note:'มด: สักผม 7,950 | บ๋อม: สักผม 7,950 | เจน: ขนตา 2,290 | HAE-IN: Henna 1,900 | มะลิ+เจน+อั๋น: หยุด',absent:[false,false,true,true,true]},
     5:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:300},empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:300,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'เงินสำรองจ่าย',a:1492}],note:'เจน: ทำเล็บ ฿300 (โอน/แม่มณี) | บ๋อม: หยุด',absent:[false,true,false,false,false]},
-    6:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:499},empty()],commR2:[0,590,590,0,0,0],channels:{cash:0,transfer:499,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'กระดาษ 120 แกรม',a:436},{n:'พัสดุจากจีน',a:3295}],note:'เจน: ทำเล็บ ฿499 (แม่มณี) | มด+บ๋อม: คอมรอบ2 คนละ ฿590 | มะลิ: หยุด',absent:[false,false,true,false,false]}
+    6:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:499},empty()],commR2:[0,590,590,0,0,0],channels:{cash:0,transfer:499,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'กระดาษ 120 แกรม',a:436},{n:'พัสดุจากจีน',a:3295}],note:'เจน: ทำเล็บ ฿499 (แม่มณี) | มด+บ๋อม: คอมรอบ2 คนละ ฿590 | มะลิ: หยุด',absent:[false,false,true,false,false]},
+    7:{svc:[empty(),{...empty(),brow:3900},empty(),empty(),empty(),empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:2900,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'ข้อของใช้ในโลตัส',a:603}],other:[],note:'มด: สักคิ้ว ฿3,900 (แม่มณี ฿2,900 + มัดจำ ฿1,000) | มะลิ+เจน: หยุด',absent:[false,false,true,true,false]}
   };
   // Firebase ต้องการ string key — แต่เราต้องการ number key
   // ใช้ path แยกต่างหากสำหรับแต่ละวัน เพื่อไม่ให้ Firebase แปลงเป็น Array
@@ -815,6 +817,49 @@ function selectDay(d) {
   const dd = getDay(d);
   document.getElementById('artist-inputs').innerHTML = ARTISTS.map((name,i) => {
     const sv = dd.svc[i] || {brow:0,eye:0,lip:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0};
+
+    // ═══ การ์ดพิเศษสำหรับช่างอั๋น (index 5) ═══
+    if (i === 5) {
+      // นับจำนวนบริการวันนี้จากทุกช่าง (ไม่นับ nail, lash)
+      let todaySvcCount = 0;
+      (dd.svc||[]).forEach(s => {
+        ['brow','eye','lip','hair','laser','item','chalacol'].forEach(k=>{
+          if((s[k]||0)>0) todaySvcCount++;
+        });
+      });
+      (dd.other||[]).forEach(item=>{
+        if(AN_COMM_PRICES.has(+item.a||0)) todaySvcCount++;
+      });
+      const anComm = todaySvcCount * AN_COMM_PER_SVC;
+      const laserComm = (sv.laser||0)*0.2;
+      return `<div class="artist-card" style="border-color:#9333ea">
+        <h4><span class="av" style="background:${COLORS[i]}">${name.charAt(name.length-1)}</span>${name} <span style="font-size:10px;color:#9333ea;font-weight:600">(ผู้จัดการ)</span></h4>
+        <table class="svc-table">
+          <tr><th>บริการ</th><th>ยอด (฿)</th><th>คอม</th></tr>
+          <tr style="background:#fff7ed"><td>⚡ เลเซอร์</td>
+            <td><input type="number" id="svc-${i}-laser" value="${sv.laser||0}" min="0" oninput="window._updateArtist(${i})"></td>
+            <td id="comm-${i}-laser" style="color:#92400e;font-size:10px">${(sv.laser||0)>0?fmt(laserComm):'–'}</td></tr>
+          <tr style="background:#faf5ff"><td>🎯 จำนวนบริการวันนี้</td>
+            <td colspan="2" style="text-align:center;font-weight:700;color:#7c3aed;font-size:13px">
+              ${todaySvcCount} ครั้ง × ฿200 = ${fmtN(anComm)}
+            </td></tr>
+        </table>
+        <div class="svc-comm-preview" id="comm-preview-${i}">
+          คอมรวม: ${fmtN(laserComm + anComm)}
+          <span style="font-size:10px;color:#888"> (เลเซอร์ + บริการ)</span>
+        </div>
+        <input type="hidden" id="svc-${i}-brow" value="0">
+        <input type="hidden" id="svc-${i}-eye" value="0">
+        <input type="hidden" id="svc-${i}-lip" value="0">
+        <input type="hidden" id="svc-${i}-lash" value="0">
+        <input type="hidden" id="svc-${i}-hair" value="0">
+        <input type="hidden" id="svc-${i}-nail" value="0">
+        <input type="hidden" id="svc-${i}-item" value="0">
+        <input type="hidden" id="svc-${i}-chalacol" value="0">
+        <input type="hidden" id="r2-${i}" value="0">
+      </div>`;
+    }
+
     return `<div class="artist-card">
       <h4><span class="av" style="background:${COLORS[i]}">${name.charAt(name.length-1)}</span>${name}</h4>
       <table class="svc-table">
@@ -1146,13 +1191,25 @@ window.calcPayroll = function() {
   const commOther=totOther.map(t=>t*0.10);
   const commItem=totItem.map(t=>calcItemComm(t));
   const commChalacol=totChalacol.map(t=>t*CHALACOL_RATE);
-  // คอมอั๋น: นับจาก other income ที่ราคาตรงกับ AN_COMM_PRICES × 200
+  // คอมอั๋น: นับจำนวนบริการที่มียอด (ยกเว้น เล็บ ขนตา) × ฿200
+  // นับแยกตามวัน: ถ้าช่างคนใดมียอด brow/eye/lip/hair/laser/item/chalacol > 0 นับ 1 บริการ
   let anServiceCount = 0;
+  let anDailyDetails = []; // สำหรับแสดงรายละเอียด
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
-    (dd.other||[]).forEach(item=>{
-      if(AN_COMM_PRICES.has(+item.a||0)) anServiceCount++;
+    let dayCount = 0;
+    (dd.svc||[]).forEach((sv,artistIdx)=>{
+      // นับ brow, eye, lip, hair, laser, item, chalacol (ไม่นับ nail, lash)
+      ['brow','eye','lip','hair','laser','item','chalacol'].forEach(k=>{
+        if((sv[k]||0) > 0) dayCount++;
+      });
     });
+    // นับจาก other income ที่ราคาตรง price list
+    (dd.other||[]).forEach(item=>{
+      if(AN_COMM_PRICES.has(+item.a||0)) dayCount++;
+    });
+    if(dayCount > 0) anDailyDetails.push({d, count: dayCount});
+    anServiceCount += dayCount;
   }
   const anExtraComm = anServiceCount * AN_COMM_PER_SVC;
   const totalComm=ARTISTS.map((_,i)=>{
@@ -1187,7 +1244,7 @@ window.calcPayroll = function() {
       <td style="color:#9d174d">${totItem[i]>0?fmtN(totItem[i]):'–'}<br><span style="color:#16a34a;font-size:10px">${commItem[i]>0?'+'+fmtN(commItem[i]):''}</span></td>
       <td style="color:#065f46;font-weight:600">${totChalacol[i]>0?`${totChalacol[i]} ครั้ง`:'–'}<br><span style="color:#16a34a;font-size:10px">${commChalacol[i]>0?'+'+fmtN(commChalacol[i]):''}</span></td>
       <td style="color:#6d28d9;font-weight:600">${i>=1?fmtN(haeinPP):'–'}</td>
-      <td style="font-weight:700">${fmtN(totalComm[i])}${i===5&&anExtraComm>0?`<br><span style="font-size:10px;color:#f59e0b">+คอมอั๋น ${anServiceCount}×฿200=${fmtN(anExtraComm)}</span>`:''}</td>
+      <td style="font-weight:700">${fmtN(totalComm[i])}${i===5&&anExtraComm>0?`<br><span style="font-size:10px;color:#f59e0b">🎯 คอมบริการ: ${anServiceCount} ครั้ง×฿200=${fmtN(anExtraComm)}</span>`:''}</td>
       <td>${fmtN(bases[i])}</td>
       <td style="font-weight:700;color:#16a34a;font-size:13px">${fmtN(totPay[i])}</td>
     </tr>`;
@@ -1196,6 +1253,20 @@ window.calcPayroll = function() {
     <td colspan="11" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว</td>
     <td>${fmtN(salMo)}</td><td style="font-weight:700;color:#16a34a">${fmtN(salMo)}</td></tr>`;
 
+  // แสดงรายละเอียดคอมอั๋นแต่ละวัน
+  const anDetailEl = document.getElementById('an-comm-detail');
+  if(anDetailEl) {
+    if(anDailyDetails.length > 0) {
+      anDetailEl.innerHTML = `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:8px">🎯 รายละเอียดคอมอั๋น (${anServiceCount} บริการ × ฿200 = ${fmtN(anExtraComm)})</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${anDailyDetails.map(({d,count})=>`<span style="background:#fff;border:1px solid #fde68a;border-radius:5px;padding:3px 10px;font-size:11px;color:#92400e">${d}/06 — ${count} บริการ (${fmtN(count*AN_COMM_PER_SVC)})</span>`).join('')}
+        </div>
+      </div>`;
+    } else {
+      anDetailEl.innerHTML = '';
+    }
+  }
   document.getElementById('pr-tfoot').innerHTML=`<tr><td>รวม</td>
     <td style="text-align:center">${absentDays.reduce((a,b)=>a+b,0)} วัน</td><td></td>
     <td>${fmtN(totTat.reduce((a,b)=>a+b,0))}</td>
