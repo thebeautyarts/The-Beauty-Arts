@@ -734,6 +734,26 @@ async function saveToFirebase(day, dayData) {
   } catch(e) { setBadge('❌ บันทึกไม่สำเร็จ','rgba(239,68,68,0.4)'); console.error(e); }
 }
 
+window.forceSeed = async function() {
+  if (!confirm('โหลดข้อมูลตัวอย่างวันที่ 1-9 มิถุนายน?\n(จะเขียนทับข้อมูลเดิม)')) return;
+  const empty = () => ({brow:0,eye:0,lip:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0});
+  const SEED = {
+    1:{svc:[empty(),empty(),empty(),{...empty(),brow:3900,lip:4990},empty(),empty()],commR2:[0,0,0,499,0,0],channels:{cash:0,transfer:7890,tap:0,credit:0,deposit:1000},haein:{sadryi:590,henna:0,product:0,channel:'transfer'},expenses:[{n:'หน้ากากอนามัย',a:1750},{n:'กระดาษทำใบเซอร์',a:665},{n:'เลาดิไอน้ำ',a:654},{n:'ตลับยา',a:213},{n:'ลูกซิป',a:118},{n:'ค้าเตอบัด ก้านยาว L',a:497},{n:'ทีซู่',a:507},{n:'อโรมา',a:419},{n:'ชิ้นวางของ',a:127},{n:'Line แพ็กเกจ',a:1906},{n:'ข้อความเพิ่ม',a:1700},{n:'DTAC 081',a:663},{n:'DTAC 082',a:747.93},{n:'Al Pro',a:375},{n:'YouTube',a:399},{n:'ค่าไฟฟ้า',a:15268.49}],other:[],note:'ช่างมะลิ: สักคิ้ว 3,900 + สักปาก 4,990 | HAE-IN: สระ-ไดร์ ฿590',absent:[false,false,false,false,false]},
+    2:{svc:[empty(),{...empty(),brow:9900},empty(),{...empty(),brow:100},empty(),empty()],commR2:[0,499,0,0,0,0],channels:{cash:8900,transfer:100,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:10000,product:1200,channel:'transfer'},expenses:[{n:'ค่าแฟ',a:108}],other:[],note:'มด: สักคิ้ว 9,900 | มะลิ: กันคิ้ว 100 | HAE-IN: Henna 10,000 + ขายสินค้า 1,200',absent:[false,false,false,false,false]},
+    3:{svc:[empty(),empty(),{...empty(),brow:5900,lip:5000},{...empty(),lip:4990},empty(),empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:0,tap:9890,credit:4000,deposit:0},haein:{sadryi:0,henna:0,product:2400,channel:'transfer'},expenses:[{n:'CAP CUT PRO',a:289},{n:'น้ำดื่ม',a:1125}],other:[],note:'บ๋อม: สักคิ้ว 5,900 + สักปาก 5,000 | มะลิ: สักปาก 4,990 | HAE-IN: ขายสินค้า 2,400 | มด: หยุด',absent:[true,false,false,false,false]},
+    4:{svc:[empty(),{...empty(),hair:7950},{...empty(),hair:7950},empty(),{...empty(),lash:2290},empty()],commR2:Array(6).fill(0),channels:{cash:16090,transfer:1100,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:1900,product:0,channel:'transfer'},expenses:[],other:[],note:'มด: สักผม 7,950 | บ๋อม: สักผม 7,950 | เจน: ขนตา 2,290 | HAE-IN: Henna 1,900 | มะลิ+เจน+อั๋น: หยุด',absent:[false,false,true,true,true]},
+    5:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:300},empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:300,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[],other:[],note:'เจน: ทำเล็บ ฿300 (โอน/แม่มณี) | บ๋อม: หยุด',absent:[false,true,false,false,false]},
+    6:{svc:[empty(),empty(),empty(),empty(),{...empty(),nail:499},empty()],commR2:[0,590,590,0,0,0],channels:{cash:0,transfer:499,tap:0,credit:0,deposit:0},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'กระดาษ 120 แกรม',a:436},{n:'พัสดุจากจีน',a:3295}],other:[],note:'เจน: ทำเล็บ ฿499 (แม่มณี) | มด+บ๋อม: คอมรอบ2 คนละ ฿590 | มะลิ: หยุด',absent:[false,false,true,false,false]},
+    7:{svc:[empty(),{...empty(),brow:3900},empty(),empty(),empty(),empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:2900,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'ข้อของใช้ในโลตัส',a:603}],other:[],note:'มด: สักคิ้ว ฿3,900 | มะลิ+เจน: หยุด',absent:[false,false,true,true,false]},
+    8:{svc:[empty(),{...empty(),brow:3900,lip:4990,hair:11400},{...empty(),hair:11400},empty(),empty(),empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:0,tap:29690,credit:0,deposit:2000},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[],other:[],note:'มด: สักคิ้ว 3,900 + สักปาก 4,990 + สักผม 11,400 (50%) | บ๋อม: สักผม 11,400 (50%) | มะลิ: หยุด',absent:[false,false,true,false,false]},
+    9:{svc:[empty(),empty(),empty(),{...empty(),brow:5900,lip:9900},{...empty(),nail:399},empty()],commR2:Array(6).fill(0),channels:{cash:0,transfer:15199,tap:0,credit:0,deposit:1000},haein:{sadryi:0,henna:0,product:0,channel:'transfer'},expenses:[{n:'เครดิต Flow 2500 เครดิต',a:950},{n:'ค่าน้ำ',a:274}],other:[],note:'มะลิ: สักคิ้ว 5,900 + สักปาก 9,900 | เจน: ทำเล็บ 399',absent:[false,false,false,false,false]}
+  };
+  for (const [day, dayData] of Object.entries(SEED)) {
+    await set(ref(db, getRoot() + '/' + day), dayData);
+  }
+  alert('✅ โหลดข้อมูลตัวอย่างเสร็จแล้ว!');
+};
+
 async function seedIfEmpty() {
   // Seed ข้อมูลตัวอย่างเฉพาะ มิถุนายน 2569 เท่านั้น
   // seed สำหรับทุกเดือน
