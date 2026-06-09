@@ -244,7 +244,10 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
   <div class="fb-status" id="fb-status">
     <div class="fb-dot" id="fb-dot"></div>
     <span id="fb-msg">กำลังเชื่อมต่อ Firebase...</span>
-    <span style="margin-left:auto;color:#888;font-size:11px" id="fb-last-sync"></span>
+    <span style="margin-left:auto;display:flex;align-items:center;gap:10px">
+      <span style="color:#555;font-size:11px" id="fb-last-sync"></span>
+      <button onclick="window.forceSeed()" style="background:#0c4a6e;color:white;border:none;border-radius:5px;padding:4px 12px;font-size:11px;cursor:pointer;font-weight:600">🔄 โหลดข้อมูลตัวอย่าง</button>
+    </span>
   </div>
 
 <!-- ===== TAB 1: ENTRY ===== -->
