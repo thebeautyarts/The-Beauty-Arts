@@ -1463,57 +1463,51 @@ startHolidaySync();
 
 // ════ LINE Message Generator ════
 window.genLineMsg = function(mode) {
-  const todayStr = (()=>{const t=new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');})();
-  const tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate()+1);
-  const tmrStr = tomorrowDate.toISOString().slice(0,10);
-  const fmtTH = (s)=>{if(!s)return'–';const d=new Date(s+'T00:00:00');const days=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];const months=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];return`วัน${days[d.getDay()]}ที่ ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()+543}`;};
+  const t = new Date();
+  const todayStr = t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  const tmr = new Date(t); tmr.setDate(tmr.getDate()+1);
+  const tmrStr = tmr.getFullYear()+'-'+String(tmr.getMonth()+1).padStart(2,'0')+'-'+String(tmr.getDate()).padStart(2,'0');
+  const days=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+  const months=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const fmtTH = s => { const d=new Date(s+'T00:00:00'); return 'วัน'+days[d.getDay()]+'ที่ '+d.getDate()+' '+months[d.getMonth()]+' '+(d.getFullYear()+543); };
   const LINE = '─'.repeat(28);
+  const NL = '\n';
   let msg = '';
 
   if (mode==='today'||mode==='both') {
     const bks = bkList().filter(b=>b.date===todayStr&&b.status!=='ยกเลิก').sort((a,b)=>(a.time||'').localeCompare(b.time||''));
     const totRev = bks.reduce((s,b)=>s+(+b.price||0),0);
-    msg += `💙 สรุปคิววันนี้
-📅 ${fmtTH(todayStr)}
-${LINE}
-`;
-    if (!bks.length) { msg += `ไม่มีคิววันนี้
-`; }
-    else {
+    msg += '💙 สรุปคิววันนี้'+NL+'📅 '+fmtTH(todayStr)+NL+LINE+NL;
+    if (!bks.length) {
+      msg += 'ไม่มีคิววันนี้'+NL;
+    } else {
       bks.forEach(b=>{
         const ic = b.status==='เสร็จแล้ว'?'✅':b.status==='กำลังทำ'?'🔄':b.status==='ยืนยัน'?'✔️':'📋';
-        msg += `${ic} ${b.time||'–'} น. — ${b.name}
-   บริการ: ${b.service||'–'} | ช่าง: ${b.artist||'PRO'}
-   ฿${(+b.price||0).toLocaleString('th-TH')} | ${b.status}
-`;
+        msg += ic+' '+(b.time||'–')+' น. — '+b.name+NL;
+        msg += '   บริการ: '+(b.service||'–')+' | ช่าง: '+(b.artist||'PRO')+NL;
+        msg += '   ฿'+(+b.price||0).toLocaleString('th-TH')+' | '+b.status+NL;
       });
-      msg += `${LINE}
-📊 รวม ${bks.length} คิว | 💰 ฿${totRev.toLocaleString('th-TH')}
-`;
+      msg += LINE+NL+'📊 รวม '+bks.length+' คิว | 💰 ฿'+totRev.toLocaleString('th-TH')+NL;
     }
   }
-  if (mode==='both') msg += '
-';
+
+  if (mode==='both') msg += NL;
+
   if (mode==='tomorrow'||mode==='both') {
     const bks = bkList().filter(b=>b.date===tmrStr&&b.status!=='ยกเลิก').sort((a,b)=>(a.time||'').localeCompare(b.time||''));
-    msg += `📅 นัดพรุ่งนี้
-${fmtTH(tmrStr)}
-${LINE}
-`;
-    if (!bks.length) { msg += `ไม่มีคิวพรุ่งนี้
-`; }
-    else {
+    msg += '📅 นัดพรุ่งนี้'+NL+fmtTH(tmrStr)+NL+LINE+NL;
+    if (!bks.length) {
+      msg += 'ไม่มีคิวพรุ่งนี้'+NL;
+    } else {
       bks.forEach(b=>{
-        msg += `🕐 ${b.time||'–'} น. — ${b.name}
-   บริการ: ${b.service||'–'} | ช่าง: ${b.artist||'PRO'}
-   ${b.depositStatus==='จ่ายแล้ว'?'✅ มัดจำแล้ว':'⏳ รอมัดจำ'}
-`;
+        msg += '🕐 '+(b.time||'–')+' น. — '+b.name+NL;
+        msg += '   บริการ: '+(b.service||'–')+' | ช่าง: '+(b.artist||'PRO')+NL;
+        msg += '   '+(b.depositStatus==='จ่ายแล้ว'?'✅ มัดจำแล้ว':'⏳ รอมัดจำ')+NL;
       });
-      msg += `${LINE}
-📋 พรุ่งนี้ ${bks.length} คิว
-`;
+      msg += LINE+NL+'📋 พรุ่งนี้ '+bks.length+' คิว'+NL;
     }
   }
+
   document.getElementById('line-text').value = msg;
 };
 
