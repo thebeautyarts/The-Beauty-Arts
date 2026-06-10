@@ -416,6 +416,31 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
 </div>
 
 <!-- MODAL -->
+<!-- ════ HOLIDAY MODAL ════ -->
+<div class="modal-overlay" id="holiday-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1001;align-items:center;justify-content:center;">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-hdr" style="background:#dc2626">
+      <h3>🏖️ ตั้งวันหยุดช่าง</h3>
+      <button class="modal-close" onclick="window.closeHolidayModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="f-field" style="margin-bottom:14px">
+        <label>วันที่หยุด</label>
+        <input type="date" id="hol-date" style="padding:8px;border:1.5px solid #fca5a5;border-radius:7px;font-size:13px;width:100%">
+      </div>
+      <div class="f-field">
+        <label>ช่างที่หยุด (เลือกได้หลายคน)</label>
+        <div id="hol-staff-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:#fee2e2;color:#dc2626;border:none;margin-right:auto;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer" onclick="window.clearHoliday()">🗑️ ล้างวันหยุด</button>
+      <button class="btn btn-outline btn-sm" onclick="window.closeHolidayModal()">ยกเลิก</button>
+      <button class="btn btn-green" onclick="window.saveHoliday()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-hdr">
@@ -818,10 +843,14 @@ window._gcal = function(id, e) {
 
 window._slotClick = function(time, artist) { openBookingForm(schedDate, null, { time, artist: artist===PRO_COL?'PRO':artist }); };
 window._editBk = function(id) { openBookingForm(null, id); };
-window.changeDay = function(d) {
-  const dt = new Date(schedDate+'T00:00:00');
-  dt.setDate(dt.getDate()+d);
-  schedDate = dt.toISOString().slice(0,10);
+window.changeDay = function(delta) {
+  // แยก year/month/day แล้วบวก/ลบ ป้องกัน timezone issue
+  const parts = schedDate.split('-').map(Number);
+  const dt = new Date(parts[0], parts[1]-1, parts[2]+delta);
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth()+1).padStart(2,'0');
+  const day = String(dt.getDate()).padStart(2,'0');
+  schedDate = y+'-'+m+'-'+day;
   buildSchedGrid();
 };
 window.goToday = function() { schedDate = todayStr(); buildSchedGrid(); };
@@ -995,18 +1024,21 @@ window.deleteBooking = async function() {
 let holidays = {}; // {date: [artistName, ...]}
 
 window.openHolidayModal = function() {
+  const el = document.getElementById('holiday-modal');
+  if (!el) { alert('Holiday modal not found'); return; }
   document.getElementById('hol-date').value = schedDate;
   const hols = holidays[schedDate] || [];
   document.getElementById('hol-staff-list').innerHTML = STAFF.map(name => `
     <label style="display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid ${hols.includes(name)?'#dc2626':'var(--border)'};border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:${hols.includes(name)?'#dc2626':'var(--text-dark)'}">
-      <input type="checkbox" value="${name}" ${hols.includes(name)?'checked':''} style="accent-color:#dc2626">
+      <input type="checkbox" value="${name}" ${hols.includes(name)?'checked':''} style="accent-color:#dc2626;width:16px;height:16px">
       ${name}
     </label>`).join('');
-  document.getElementById('holiday-modal').classList.add('open');
+  el.style.display = 'flex';
 };
 
 window.closeHolidayModal = function() {
-  document.getElementById('holiday-modal').classList.remove('open');
+  const el = document.getElementById('holiday-modal');
+  if (el) el.style.display = 'none';
 };
 
 window.saveHoliday = async function() {
