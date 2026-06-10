@@ -1329,6 +1329,72 @@ buildCalendar();
 showTab('tab-cal');
 startSync();
 startClock();
+
+// ════ LINE Message Generator ════
+window.genLineMsg = function(mode) {
+  const todayStr = (()=>{const t=new Date();return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');})();
+  const tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate()+1);
+  const tmrStr = tomorrowDate.toISOString().slice(0,10);
+  const fmtTH = (s)=>{if(!s)return'–';const d=new Date(s+'T00:00:00');const days=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];const months=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];return`วัน${days[d.getDay()]}ที่ ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()+543}`;};
+  const LINE = '─'.repeat(28);
+  let msg = '';
+
+  if (mode==='today'||mode==='both') {
+    const bks = bkList().filter(b=>b.date===todayStr&&b.status!=='ยกเลิก').sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+    const totRev = bks.reduce((s,b)=>s+(+b.price||0),0);
+    msg += `💙 สรุปคิววันนี้
+📅 ${fmtTH(todayStr)}
+${LINE}
+`;
+    if (!bks.length) { msg += `ไม่มีคิววันนี้
+`; }
+    else {
+      bks.forEach(b=>{
+        const ic = b.status==='เสร็จแล้ว'?'✅':b.status==='กำลังทำ'?'🔄':b.status==='ยืนยัน'?'✔️':'📋';
+        msg += `${ic} ${b.time||'–'} น. — ${b.name}
+   บริการ: ${b.service||'–'} | ช่าง: ${b.artist||'PRO'}
+   ฿${(+b.price||0).toLocaleString('th-TH')} | ${b.status}
+`;
+      });
+      msg += `${LINE}
+📊 รวม ${bks.length} คิว | 💰 ฿${totRev.toLocaleString('th-TH')}
+`;
+    }
+  }
+  if (mode==='both') msg += '
+';
+  if (mode==='tomorrow'||mode==='both') {
+    const bks = bkList().filter(b=>b.date===tmrStr&&b.status!=='ยกเลิก').sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+    msg += `📅 นัดพรุ่งนี้
+${fmtTH(tmrStr)}
+${LINE}
+`;
+    if (!bks.length) { msg += `ไม่มีคิวพรุ่งนี้
+`; }
+    else {
+      bks.forEach(b=>{
+        msg += `🕐 ${b.time||'–'} น. — ${b.name}
+   บริการ: ${b.service||'–'} | ช่าง: ${b.artist||'PRO'}
+   ${b.depositStatus==='จ่ายแล้ว'?'✅ มัดจำแล้ว':'⏳ รอมัดจำ'}
+`;
+      });
+      msg += `${LINE}
+📋 พรุ่งนี้ ${bks.length} คิว
+`;
+    }
+  }
+  document.getElementById('line-text').value = msg;
+};
+
+window.copyLineMsg = function() {
+  const ta = document.getElementById('line-text');
+  if (!ta.value) window.genLineMsg('both');
+  navigator.clipboard.writeText(ta.value).then(()=>{
+    const el=document.getElementById('line-copy-msg');
+    el.textContent='✅ Copy แล้ว! วางในไลน์ได้เลย';
+    setTimeout(()=>el.textContent='',3000);
+  }).catch(()=>{ ta.select(); document.execCommand('copy'); });
+};
 </script>
 </body>
 </html>
