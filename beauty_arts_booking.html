@@ -312,7 +312,7 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
 <div class="container">
   <div class="schedule-header">
     <div class="date-nav">
-      <button class="date-nav-btn" onclick="changeDay(-1)">‹</button>
+      <button class="date-nav-btn" onclick="window.changeDay(-1)">‹</button>
       <div>
         <div class="date-display" id="sched-date-label"></div>
         <div class="date-sub" id="sched-date-sub"></div>
@@ -322,6 +322,7 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
     </div>
     <div style="display:flex;gap:8px;">
       <button class="btn btn-gold" onclick="openBookingForm(schedDate)">➕ เพิ่มจอง</button>
+      <button class="btn btn-white" onclick="openHolidayModal()" style="background:#fee2e2;color:#dc2626;border:none">🏖️ วันหยุดช่าง</button>
       <button class="btn btn-white" onclick="sendLineSummary(schedDate)" style="background:#06C755;border:none;" title="ส่งสรุปคิวไปไลน์กลุ่ม">💬 ส่งไลน์</button>
       <button class="btn btn-white" onclick="manualSyncToJune(schedDate)" style="background:#0c4a6e;border:none;" title="Sync คิวเสร็จแล้วเข้า june2569">📥 Sync → บันทึกรายวัน</button>
     </div>
@@ -750,7 +751,11 @@ function buildSchedGrid() {
         const bh = timeToH(b.time), bd = b.duration||1;
         return (b.artist||PRO_COL) === name && bh < h && bh + bd > h;
       });
-      html += `<div class="grid-slot ${isPro?'pro-slot':''}" onclick="window._slotClick('${hToTime(h)}','${name}')">`;
+      const isHoliday = !isPro && (holidays[schedDate]||[]).includes(name);
+      if (isHoliday) {
+        html += `<div class="grid-slot holiday"></div>`;
+      } else {
+        html += `<div class="grid-slot ${isPro?'pro-slot':''}" onclick="window._slotClick('${hToTime(h)}','${name}')">`; 
       if (spanBks.length > 0) html += `<div style="font-size:9px;color:#aaa;padding:2px 4px;">↕ ต่อ</div>`;
       slotBks.forEach(b => {
         const depIcon = b.depositStatus==='จ่ายแล้ว' ? '✅' : '⏳';
@@ -769,6 +774,7 @@ function buildSchedGrid() {
       });
       if (!slotBks.length && !spanBks.length) html += `<div class="add-placeholder">+</div>`;
       html += `</div>`;
+      } // end if !isHoliday
     });
   });
 
@@ -903,8 +909,80 @@ window.saveBooking = async function() {
     createdAt: editingId ? (bookings[editingId]?.createdAt||new Date().toISOString()) : new Date().toISOString()
   };
   await fbSet(id, bk);
+  // ═══ Sync to revenue system when status = เสร็จแล้ว ═══
+  if (bk.status === 'เสร็จแล้ว') {
+    await syncToRevenue(bk);
+  }
   window.closeModal();
 };
+
+// ═══ Sync booking to revenue system ═══
+const SERVICE_TO_SVC = {
+  'สักคิ้ว':'brow','เติมคิ้ว':'brow',
+  'สักปาก':'lip','เติมปาก':'lip',
+  'สักขอบตา':'eye','เติมขอบตา':'eye',
+  'สักผม':'hair','เติมผม':'hair',
+  'เลเซอร์':'laser','สลายฝ้า กระ':'laser',
+  'ทำเล็บ':'nail','กันคิ้ว':'nail',
+  'ขนตา':'lash','BB Glow':'item'
+};
+const ARTIST_IDX = {'อ.หญิง':0,'ช่างมด':1,'ช่างบ๋อม':2,'ช่างมะลิ':3,'ช่างเจน':4,'อั๋น':5};
+const CHANNEL_MAP = {'เงินสด':'cash','โอน/แม่มณี':'transfer','Tap To Pay':'tap','เครดิตการ์ด':'credit'};
+const MONTH_SHORT = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+
+async function syncToRevenue(bk) {
+  try {
+    const d = new Date(bk.date+'T00:00:00');
+    const day = d.getDate();
+    const monthKey = MONTH_SHORT[d.getMonth()] + (d.getFullYear()+543);
+    const dbPath = monthKey + '/' + day;
+    
+    // ดึงข้อมูลวันนั้น
+    const snap = await get(ref(db, dbPath));
+    const empty = {brow:0,eye:0,lip:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0};
+    let dayData = snap.val() || {
+      svc: Array(6).fill(null).map(()=>({...empty})),
+      commR2: Array(6).fill(0),
+      channels: {cash:0,transfer:0,tap:0,credit:0,deposit:0},
+      haein: {sadryi:0,henna:0,product:0,channel:'transfer'},
+      expenses: [], other: [], note: '', absent: Array(5).fill(false)
+    };
+    
+    // normalize svc array
+    if (!Array.isArray(dayData.svc)) dayData.svc = Object.values(dayData.svc);
+    dayData.svc = dayData.svc.map(s => s || {...empty});
+    
+    const price = +bk.price || 0;
+    const svcKey = SERVICE_TO_SVC[bk.service] || null;
+    const artistIdx = ARTIST_IDX[bk.artist] ?? -1;
+    
+    if (bk.shop === 'HAE-IN') {
+      // HAE-IN → haein section
+      if (bk.service === 'สระ-ไดร์') dayData.haein.sadryi = (dayData.haein.sadryi||0) + price;
+      else if (bk.service === 'Henna') dayData.haein.henna = (dayData.haein.henna||0) + price;
+      else dayData.haein.product = (dayData.haein.product||0) + price;
+    } else if (svcKey && artistIdx >= 0) {
+      // ร้านหลัก → svc ของช่างนั้น
+      if (!dayData.svc[artistIdx]) dayData.svc[artistIdx] = {...empty};
+      dayData.svc[artistIdx][svcKey] = (dayData.svc[artistIdx][svcKey]||0) + price;
+    } else if (svcKey === null && price > 0) {
+      // บริการไม่ตรง → other income
+      if (!Array.isArray(dayData.other)) dayData.other = [];
+      dayData.other.push({n: bk.service + ' (' + bk.name + ')', a: price, w: bk.artist||''});
+    }
+    
+    // อัปเดต channel
+    const chKey = CHANNEL_MAP[bk.payChannel] || 'transfer';
+    if (!dayData.channels) dayData.channels = {cash:0,transfer:0,tap:0,credit:0,deposit:0};
+    dayData.channels[chKey] = (dayData.channels[chKey]||0) + price;
+    
+    // บันทึก
+    await set(ref(db, dbPath), dayData);
+    console.log('✅ Synced to revenue:', dbPath, bk.service, price);
+  } catch(e) {
+    console.error('❌ Sync error:', e);
+  }
+}
 
 window.deleteBooking = async function() {
   if (!editingId || !confirm('ลบรายการนี้?')) return;
@@ -913,6 +991,58 @@ window.deleteBooking = async function() {
 };
 
 // ═══ List ═══
+// ═══ Holiday Functions ═══
+let holidays = {}; // {date: [artistName, ...]}
+
+window.openHolidayModal = function() {
+  document.getElementById('hol-date').value = schedDate;
+  const hols = holidays[schedDate] || [];
+  document.getElementById('hol-staff-list').innerHTML = STAFF.map(name => `
+    <label style="display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid ${hols.includes(name)?'#dc2626':'var(--border)'};border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:${hols.includes(name)?'#dc2626':'var(--text-dark)'}">
+      <input type="checkbox" value="${name}" ${hols.includes(name)?'checked':''} style="accent-color:#dc2626">
+      ${name}
+    </label>`).join('');
+  document.getElementById('holiday-modal').classList.add('open');
+};
+
+window.closeHolidayModal = function() {
+  document.getElementById('holiday-modal').classList.remove('open');
+};
+
+window.saveHoliday = async function() {
+  const date = document.getElementById('hol-date').value;
+  const checked = [...document.querySelectorAll('#hol-staff-list input:checked')].map(el=>el.value);
+  if (checked.length > 0) {
+    holidays[date] = checked;
+    await set(ref(db, 'holidays/' + date.replace(/-/g,'_')), checked);
+  } else {
+    delete holidays[date];
+    await remove(ref(db, 'holidays/' + date.replace(/-/g,'_')));
+  }
+  window.closeHolidayModal();
+  buildSchedGrid();
+};
+
+window.clearHoliday = async function() {
+  const date = document.getElementById('hol-date').value;
+  delete holidays[date];
+  await remove(ref(db, 'holidays/' + date.replace(/-/g,'_')));
+  window.closeHolidayModal();
+  buildSchedGrid();
+};
+
+function startHolidaySync() {
+  onValue(ref(db, 'holidays'), snap => {
+    const val = snap.val() || {};
+    holidays = {};
+    Object.keys(val).forEach(k => {
+      const date = k.replace(/_/g,'-');
+      holidays[date] = Array.isArray(val[k]) ? val[k] : Object.values(val[k]);
+    });
+    buildSchedGrid();
+  });
+}
+
 window.clearFilters = function() {
   ['fl-date','fl-name'].forEach(id=>document.getElementById(id).value='');
   ['fl-artist','fl-status','fl-shop','fl-dep'].forEach(id=>document.getElementById(id).value='');
@@ -1329,6 +1459,7 @@ buildCalendar();
 showTab('tab-cal');
 startSync();
 startClock();
+startHolidaySync();
 
 // ════ LINE Message Generator ════
 window.genLineMsg = function(mode) {
