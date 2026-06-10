@@ -798,8 +798,9 @@ function buildSchedGrid() {
           </div>
         </div>`;
       });
-      if (!slotBks.length && !spanBks.length) html += `<div class="add-placeholder">+</div>`;
-      html += `</div>`;
+        if (!slotBks.length) html += `<div class="add-placeholder">+</div>`;
+        html += `</div>`;
+      } // end else (not span)
     });
   });
 
