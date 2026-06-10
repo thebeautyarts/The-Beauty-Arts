@@ -53,6 +53,8 @@ header{background:var(--green-dark);color:#fff;padding:12px 20px;display:flex;al
 .grid-staff-header .staff-sub{font-size:9px;opacity:.8;margin-top:1px;}
 .grid-time-cell{background:#F4F9F4;border-right:1.5px solid var(--border);border-bottom:1px solid var(--border);padding:4px 8px;text-align:right;font-size:12px;font-weight:700;color:var(--green-mid);min-height:72px;display:flex;align-items:flex-start;justify-content:flex-end;padding-top:6px;}
 .grid-slot{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:72px;padding:4px;background:#fff;cursor:pointer;transition:.1s;position:relative;}
+.grid-slot.holiday{background:repeating-linear-gradient(-45deg,#fee2e2,#fee2e2 4px,#fff 4px,#fff 10px);cursor:not-allowed;pointer-events:none;}
+.grid-slot.holiday::after{content:'🏖️ หยุด';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:#dc2626;font-weight:700;white-space:nowrap;}
 .grid-slot:hover{background:var(--green-pale);}
 .grid-slot.pro-slot{background:#fffdf0;}
 .grid-slot.pro-slot:hover{background:#fdf6d8;}
@@ -315,7 +317,7 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
         <div class="date-display" id="sched-date-label"></div>
         <div class="date-sub" id="sched-date-sub"></div>
       </div>
-      <button class="date-nav-btn" onclick="changeDay(1)">›</button>
+      <button class="date-nav-btn" onclick="window.changeDay(1)">›</button>
       <button class="today-btn" onclick="goToday()">วันนี้</button>
     </div>
     <div style="display:flex;gap:8px;">
@@ -395,51 +397,19 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
 <!-- LINE -->
 <div id="tab-line" class="panel">
 <div class="container">
-  <div class="line-setup">
-    <h3>💬 ตั้งค่าส่งสรุปคิวเข้าไลน์กลุ่ม</h3>
-    <p>ใส่ข้อมูล LINE Messaging API แล้วกดปุ่ม "ส่งสรุปคิววันนี้" ได้เลยค่ะ<br>
-    ข้อมูลนี้เก็บในเครื่องของคุณเท่านั้น ไม่ได้ส่งออกไปที่อื่น</p>
-
-    <div id="line-status-msg" class="line-status"></div>
-
-    <div class="line-field">
-      <label>Channel Access Token</label>
-      <input type="password" id="line-token" placeholder="ใส่ Channel Access Token จาก LINE Developers...">
-      <span class="hint">ได้จาก LINE Developers Console → Messaging API → Channel access token</span>
+  <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(27,94,59,.1);margin-bottom:16px">
+    <h3 style="font-size:14px;font-weight:700;color:var(--green-dark);margin-bottom:6px">💬 สรุปส่งไลน์</h3>
+    <p style="font-size:12px;color:#888;margin-bottom:16px">กด Copy แล้วนำไปวางในไลน์กลุ่มได้เลยครับ</p>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn btn-green" onclick="genLineMsg('today')">📋 สรุปวันนี้</button>
+      <button class="btn btn-gold" onclick="genLineMsg('tomorrow')">📅 นัดพรุ่งนี้</button>
+      <button class="btn" style="background:#0ea5e9;color:white;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer" onclick="genLineMsg('both')">💬 ทั้งสรุป + นัด</button>
     </div>
-    <div class="line-field">
-      <label>Group ID (ไลน์กลุ่มร้าน)</label>
-      <input type="text" id="line-group" placeholder="C xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
-      <span class="hint">ได้จากการเพิ่ม Bot เข้ากลุ่มแล้วดู webhook event หรือใช้เครื่องมือดึง Group ID</span>
+    <div style="position:relative">
+      <textarea id="line-text" readonly style="width:100%;min-height:280px;padding:12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;resize:vertical;background:#f9fafb;line-height:1.7;color:#1B3A2D" placeholder="กดปุ่มด้านบนเพื่อสร้างข้อความ..."></textarea>
+      <button onclick="copyLineMsg()" style="position:absolute;top:8px;right:8px;background:var(--green-dark);color:white;border:none;border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-weight:600">📋 Copy</button>
     </div>
-    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
-      <button class="btn btn-green" onclick="saveLineConfig()">💾 บันทึกการตั้งค่า</button>
-      <button class="btn btn-outline btn-sm" onclick="testLineConnection()">🔗 ทดสอบการเชื่อมต่อ</button>
-    </div>
-
-    <hr style="border:none;border-top:1px solid var(--border);margin-bottom:16px;">
-
-    <div style="font-size:13px;font-weight:700;color:var(--green-dark);margin-bottom:8px;">📋 ตัวอย่างข้อความที่จะส่ง (คิววันนี้)</div>
-    <div class="line-preview" id="line-preview">กำลังโหลด...</div>
-
-    <div class="send-btn-wrap">
-      <button class="btn" style="background:#06C755;color:#fff;font-size:14px;font-weight:700;" onclick="sendLineSummary(null, true)">
-        💬 ส่งสรุปคิววันนี้เข้ากลุ่ม
-      </button>
-      <select id="line-send-date" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
-        <option value="">คิววันนี้</option>
-        <option value="tomorrow">คิวพรุ่งนี้</option>
-      </select>
-      <span class="line-send-status" id="line-send-status"></span>
-    </div>
-
-    <div style="margin-top:20px;padding:12px;background:#fff8e1;border-radius:8px;border:1px solid #ffe082;font-size:11px;color:#5d4037;line-height:1.8;">
-      <strong>📌 วิธีขอ Group ID:</strong><br>
-      1. เพิ่ม LINE Bot เข้ากลุ่มไลน์ร้าน<br>
-      2. ใครสักคนพิมพ์ข้อความในกลุ่ม<br>
-      3. Bot จะรับ webhook — ดู Group ID จาก <code>event.source.groupId</code><br>
-      4. หรือพิมพ์ว่า "groupid" ในกลุ่ม ถ้า Bot รองรับคำสั่งนี้
-    </div>
+    <div id="line-copy-msg" style="color:#16a34a;font-size:12px;font-weight:600;margin-top:6px;text-align:right;height:18px"></div>
   </div>
 </div>
 </div>
@@ -484,7 +454,8 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
         <div class="f-field"><label>บริการ</label><select id="f-service"></select></div>
         <div class="f-field"><label>ช่าง / PRO</label>
           <select id="f-artist">
-            <option value="PRO">⭐ PRO (ยังไม่ระบุช่าง)</option>
+            <option value="PRO">⭐ PRO 1 (ยังไม่ระบุช่าง)</option>
+            <option value="PRO2">⭐ PRO 2 (ยังไม่ระบุช่าง)</option>
             <option>อ.หญิง</option><option>ช่างมด</option><option>ช่างบ๋อม</option>
             <option>ช่างมะลิ</option><option>ช่างเจน</option><option>อั๋น</option>
           </select>
@@ -496,7 +467,7 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
             <div class="dep-opt" id="dep-unpaid" onclick="setDeposit('ยังไม่จ่าย')">⏳ ยังไม่จ่ายมัดจำ</div>
           </div>
         </div>
-        <div class="f-field"><label>ช่องทางมัดจำ</label>
+        <div class="f-field"><label>ช่องทางชำระเงิน</label>
           <select id="f-paych"><option>เงินสด</option><option>โอน/แม่มณี</option><option>Tap To Pay</option><option>เครดิตการ์ด</option></select>
         </div>
         <div class="f-field"><label>สถานะ</label>
@@ -533,7 +504,8 @@ const ROOT = "bookings";
 
 const STAFF = ['ช่างมด','ช่างบ๋อม','ช่างมะลิ','ช่างเจน','อั๋น','อ.หญิง'];
 const PRO_COL = 'PRO';
-const ALL_ARTISTS = [PRO_COL, ...STAFF];
+const PRO2_COL = 'PRO2';
+const ALL_ARTISTS = [PRO_COL, PRO2_COL, ...STAFF];
 // เวลาเริ่มต้นที่ 11:00
 const HOURS = [11,12,13,14,15,16,17,18];
 // เพิ่มบริการ: เติมคิ้ว เติมปาก เติมขอบตา เติมผม
@@ -761,7 +733,7 @@ function buildSchedGrid() {
 
   let html = `<div class="grid-time-header">เวลา</div>`;
   cols.forEach(name => {
-    const isPro = name === PRO_COL;
+    const isPro = name === PRO_COL || name === PRO2_COL;
     const bkCount = dayBks.filter(b => (b.artist||PRO_COL) === name).length;
     html += `<div class="grid-staff-header ${isPro?'pro-col':''}">
       <div class="staff-name">${isPro ? '⭐ PRO' : name}</div>
@@ -772,7 +744,7 @@ function buildSchedGrid() {
   HOURS.forEach(h => {
     html += `<div class="grid-time-cell">${hToTime(h)}</div>`;
     cols.forEach(name => {
-      const isPro = name === PRO_COL;
+      const isPro = name === PRO_COL || name === PRO2_COL;
       const slotBks = dayBks.filter(b => (b.artist||PRO_COL) === name && timeToH(b.time) === h);
       const spanBks = dayBks.filter(b => {
         const bh = timeToH(b.time), bd = b.duration||1;
@@ -996,19 +968,19 @@ function renderSummary() {
     <div class="sum-card gold"><div class="sc-label">💜 HAE-IN</div><div class="sc-val">${fmt(hiRev)}</div></div>
     <div class="sum-card dark"><div class="sc-label">คิวทั้งหมด</div><div class="sc-val">${mb.length}</div></div>
     <div class="sum-card brown"><div class="sc-label">✅ มัดจำแล้ว / ⏳ รอมัดจำ</div><div class="sc-val" style="font-size:14px">${paidDep} / ${unpaidDep}</div></div>`;
-  const bar=(label,val,max,color)=>`<div class="bar-row"><span class="bar-name">${label}</span><div class="bar-track"><div class="bar-fill" style="width:${max?Math.round(val/max*100):0}%;background:${color||'var(--green-light)'}"></div></div><span class="bar-val">${typeof val==='number'&&val>999?fmt(val):val+' คิว'}</span></div>`;
-  const byA={};mb.forEach(b=>{const a=b.artist||PRO_COL;byA[a]=(byA[a]||0)+(+b.price||0);});
+  const bar=(label,rev,cnt,max,color)=>`<div class="bar-row"><span class="bar-name">${label}</span><div class="bar-track"><div class="bar-fill" style="width:${max?Math.round(rev/max*100):0}%;background:${color||'var(--green-light)'}"></div></div><span class="bar-val">${rev>0?fmt(rev)+'<span style="font-size:9px;color:#aaa"> ('+cnt+')</span>':cnt+' คิว'}</span></div>`;
+  const byA={};const byACnt={};mb.forEach(b=>{const a=b.artist||PRO_COL;byA[a]=(byA[a]||0)+(+b.price||0);byACnt[a]=(byACnt[a]||0)+1;});
   const maxA=Math.max(...Object.values(byA),1);
-  document.getElementById('sum-artists').innerHTML=ALL_ARTISTS.map((a,i)=>bar(a===PRO_COL?'⭐ PRO':a,byA[a]||0,maxA,a===PRO_COL?'#B5934B':STAFF_COLORS[i-1]||'var(--green-light)')).join('');
+  document.getElementById('sum-artists').innerHTML=ALL_ARTISTS.map((a,i)=>bar(a===PRO_COL?'⭐ PRO1':a===PRO2_COL?'⭐ PRO2':a,byA[a]||0,byACnt[a]||0,maxA,a===PRO_COL||a===PRO2_COL?'#B5934B':STAFF_COLORS[i-2]||'var(--green-light)')).join('');
   const byCh={};allMb.forEach(b=>{byCh[b.channel]=(byCh[b.channel]||0)+1;});
   const maxCh=Math.max(...Object.values(byCh),1);
   const chCol={'Line':'#06C755','โทรศัพท์':'#2196F3','Walk-in':'#FF9800','Facebook':'#1877F2','Instagram':'#E1306C','TikTok':'#010101'};
-  document.getElementById('sum-channels').innerHTML=Object.entries(byCh).sort((a,b)=>b[1]-a[1]).map(([ch,cnt])=>bar(ch,cnt,maxCh,chCol[ch]||'var(--green-light)')).join('')||'<div class="no-data" style="padding:12px">ยังไม่มีข้อมูล</div>';
-  document.getElementById('sum-shops').innerHTML=[bar('The Beauty Arts',rev-hiRev,rev||1,'var(--green-mid)'),bar('HAE-IN',hiRev,rev||1,'#6d28d9')].join('');
+  document.getElementById('sum-channels').innerHTML=Object.entries(byCh).sort((a,b)=>b[1]-a[1]).map(([ch,cnt])=>bar(ch,0,cnt,maxCh,chCol[ch]||'var(--green-light)')).join('')||'<div class="no-data" style="padding:12px">ยังไม่มีข้อมูล</div>';
+  document.getElementById('sum-shops').innerHTML=[bar('The Beauty Arts',rev-hiRev,mb.filter(b=>b.shop!=='HAE-IN').length,rev||1,'var(--green-mid)'),bar('HAE-IN',hiRev,mb.filter(b=>b.shop==='HAE-IN').length,rev||1,'#6d28d9')].join('');
   const bySt={};allMb.forEach(b=>{bySt[b.status]=(bySt[b.status]||0)+1;});
   const maxSt=Math.max(...Object.values(bySt),1);
   const stCol={จอง:'#f59e0b',ยืนยัน:'#2196F3',กำลังทำ:'#FF9800',เสร็จแล้ว:'var(--green-light)',ยกเลิก:'#e53935'};
-  document.getElementById('sum-statuses').innerHTML=['จอง','ยืนยัน','กำลังทำ','เสร็จแล้ว','ยกเลิก'].map(s=>bar(s,bySt[s]||0,maxSt,stCol[s])).join('');
+  document.getElementById('sum-statuses').innerHTML=['จอง','ยืนยัน','กำลังทำ','เสร็จแล้ว','ยกเลิก'].map(s=>bar(s,0,bySt[s]||0,maxSt,stCol[s])).join('');
 }
 
 // ═══ Auto Status Update ═══
