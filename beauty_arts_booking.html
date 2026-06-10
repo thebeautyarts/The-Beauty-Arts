@@ -754,8 +754,9 @@ function buildSchedGrid() {
       const isHoliday = !isPro && (holidays[schedDate]||[]).includes(name);
       if (isHoliday) {
         html += `<div class="grid-slot holiday"></div>`;
-      } else {
-        html += `<div class="grid-slot ${isPro?'pro-slot':''}" onclick="window._slotClick('${hToTime(h)}','${name}')">`; 
+        continue;
+      }
+      html += `<div class="grid-slot ${isPro?'pro-slot':''}" onclick="window._slotClick('${hToTime(h)}','${name}')">`; 
       if (spanBks.length > 0) html += `<div style="font-size:9px;color:#aaa;padding:2px 4px;">↕ ต่อ</div>`;
       slotBks.forEach(b => {
         const depIcon = b.depositStatus==='จ่ายแล้ว' ? '✅' : '⏳';
@@ -774,7 +775,6 @@ function buildSchedGrid() {
       });
       if (!slotBks.length && !spanBks.length) html += `<div class="add-placeholder">+</div>`;
       html += `</div>`;
-      } // end if !isHoliday
     });
   });
 
