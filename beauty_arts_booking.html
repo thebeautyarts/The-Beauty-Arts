@@ -1129,21 +1129,58 @@ function renderList() {
 // ═══ Summary ═══
 function renderSummary() {
   const m=+document.getElementById('sum-month').value, y=+document.getElementById('sum-year').value;
-  const allMb=bkList().filter(b=>{if(!b.date)return false;const d=new Date(b.date);return d.getFullYear()===y&&d.getMonth()===m;});
-  const mb=allMb.filter(b=>b.status!=='ยกเลิก');
-  const rev=mb.reduce((s,b)=>s+(+b.price||0),0);
-  const paidDep=mb.filter(b=>b.depositStatus==='จ่ายแล้ว').length;
-  const unpaidDep=mb.filter(b=>b.depositStatus==='ยังไม่จ่าย').length;
-  const hiRev=mb.filter(b=>b.shop==='HAE-IN').reduce((s,b)=>s+(+b.price||0),0);
+  // ทุกคิวในเดือนนั้น (ไม่นับยกเลิก)
+  const allMb=bkList().filter(b=>{if(!b.date)return false;const d=new Date(b.date);return d.getFullYear()===y&&d.getMonth()===m&&b.status!=='ยกเลิก';});
+  // นับรายรับเฉพาะ "เสร็จแล้ว" เท่านั้น
+  const doneMb=allMb.filter(b=>b.status==='เสร็จแล้ว');
+  const rev=doneMb.reduce((s,b)=>s+(+b.price||0),0);
+  const hiRev=doneMb.filter(b=>b.shop==='HAE-IN').reduce((s,b)=>s+(+b.price||0),0);
+  const doneCount=doneMb.length;
+  const totalCount=allMb.length;
+  const paidDep=allMb.filter(b=>b.depositStatus==='จ่ายแล้ว').length;
+  const unpaidDep=allMb.filter(b=>b.depositStatus==='ยังไม่จ่าย').length;
+
   document.getElementById('sum-cards').innerHTML=`
-    <div class="sum-card"><div class="sc-label">รายรับรวม</div><div class="sc-val">${fmt(rev)}</div></div>
+    <div class="sum-card"><div class="sc-label">รายรับรวม (เสร็จแล้ว)</div><div class="sc-val">${fmt(rev)}</div></div>
     <div class="sum-card gold"><div class="sc-label">💜 HAE-IN</div><div class="sc-val">${fmt(hiRev)}</div></div>
-    <div class="sum-card dark"><div class="sc-label">คิวทั้งหมด</div><div class="sc-val">${mb.length}</div></div>
+    <div class="sum-card dark"><div class="sc-label">✅ เสร็จแล้ว / คิวทั้งหมด</div><div class="sc-val" style="font-size:15px">${doneCount} / ${totalCount}</div></div>
     <div class="sum-card brown"><div class="sc-label">✅ มัดจำแล้ว / ⏳ รอมัดจำ</div><div class="sc-val" style="font-size:14px">${paidDep} / ${unpaidDep}</div></div>`;
-  const bar=(label,rev,cnt,max,color)=>`<div class="bar-row"><span class="bar-name">${label}</span><div class="bar-track"><div class="bar-fill" style="width:${max?Math.round(rev/max*100):0}%;background:${color||'var(--green-light)'}"></div></div><span class="bar-val">${rev>0?fmt(rev)+'<span style="font-size:9px;color:#aaa"> ('+cnt+')</span>':cnt+' คิว'}</span></div>`;
-  const byA={};const byACnt={};mb.forEach(b=>{const a=b.artist||PRO_COL;byA[a]=(byA[a]||0)+(+b.price||0);byACnt[a]=(byACnt[a]||0)+1;});
-  const maxA=Math.max(...Object.values(byA),1);
-  document.getElementById('sum-artists').innerHTML=ALL_ARTISTS.map((a,i)=>bar(a===PRO_COL?'⭐ PRO1':a===PRO2_COL?'⭐ PRO2':a,byA[a]||0,byACnt[a]||0,maxA,a===PRO_COL||a===PRO2_COL?'#B5934B':STAFF_COLORS[i-2]||'var(--green-light)')).join('');
+
+  // bar แสดง: รายรับ (เสร็จแล้ว) / จำนวนคิวทั้งหมด
+  const bar=(label,rev,doneC,totalC,max,color)=>{
+    const pct=max?Math.round(rev/max*100):0;
+    return `<div class="bar-row">
+      <span class="bar-name">${label}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color||'var(--green-light)'}"></div></div>
+      <span class="bar-val" style="width:130px">
+        ${rev>0?fmt(rev):'฿0'}
+        <span style="font-size:9px;color:#aaa;display:block">${doneC}เสร็จ/${totalC}คิว</span>
+      </span>
+    </div>`;
+  };
+
+  // รวม PRO1+PRO2 เป็น PRO เดียว + แยกช่างแต่ละคน
+  const byA={rev:{},done:{},total:{}};
+  allMb.forEach(b=>{
+    let a = b.artist||PRO_COL;
+    if (a===PRO2_COL) a=PRO_COL; // รวม PRO2 เข้า PRO
+    byA.total[a]=(byA.total[a]||0)+1;
+    if (b.status==='เสร็จแล้ว') {
+      byA.rev[a]=(byA.rev[a]||0)+(+b.price||0);
+      byA.done[a]=(byA.done[a]||0)+1;
+    }
+  });
+  // แสดงเฉพาะ PRO (รวม) + STAFF
+  const displayArtists=[PRO_COL,...STAFF];
+  const maxA=Math.max(...displayArtists.map(a=>byA.rev[a]||0),1);
+  document.getElementById('sum-artists').innerHTML=displayArtists.map((a,i)=>bar(
+    a===PRO_COL?'⭐ PRO':a,
+    byA.rev[a]||0,
+    byA.done[a]||0,
+    byA.total[a]||0,
+    maxA,
+    a===PRO_COL?'#B5934B':STAFF_COLORS[i-1]||'var(--green-light)'
+  )).join('');
   const byCh={};allMb.forEach(b=>{byCh[b.channel]=(byCh[b.channel]||0)+1;});
   const maxCh=Math.max(...Object.values(byCh),1);
   const chCol={'Line':'#06C755','โทรศัพท์':'#2196F3','Walk-in':'#FF9800','Facebook':'#1877F2','Instagram':'#E1306C','TikTok':'#010101'};
