@@ -847,15 +847,7 @@ function selectDay(d) {
     // ═══ การ์ดพิเศษสำหรับช่างอั๋น (index 5) ═══
     if (i === 5) {
       // นับจำนวนบริการวันนี้จากทุกช่าง (ไม่นับ nail, lash)
-      let todaySvcCount = 0;
-      (dd.svc||[]).forEach(s => {
-        ['brow','eye','lip','hair','laser','facial','item','chalacol'].forEach(k=>{
-          if((s[k]||0)>0) todaySvcCount++;
-        });
-      });
-      (dd.other||[]).forEach(item=>{
-        if(AN_COMM_PRICES.has(+item.a||0)) todaySvcCount++;
-      });
+      let todaySvcCount = countDaySvc(dd);
       const anComm = todaySvcCount * AN_COMM_PER_SVC;
       const laserComm = (sv.laser||0)*0.2;
       return `<div class="artist-card" style="border-color:#9333ea">
@@ -1226,17 +1218,7 @@ window.calcPayroll = function() {
   let anDailyDetails = []; // สำหรับแสดงรายละเอียด
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
-    let dayCount = 0;
-    (dd.svc||[]).forEach((sv,artistIdx)=>{
-      // นับ brow, eye, lip, hair, laser, item, chalacol (ไม่นับ nail, lash)
-      ['brow','eye','lip','hair','laser','facial','item','chalacol'].forEach(k=>{
-        if((sv[k]||0) > 0) dayCount++;
-      });
-    });
-    // นับจาก other income ที่ราคาตรง price list
-    (dd.other||[]).forEach(item=>{
-      if(AN_COMM_PRICES.has(+item.a||0)) dayCount++;
-    });
+    let dayCount = countDaySvc(dd);
     if(dayCount > 0) anDailyDetails.push({d, count: dayCount});
     anServiceCount += dayCount;
   }
@@ -1427,6 +1409,39 @@ window.exportYearlyCSV = async function() {
 
 // ═══ คอมอั๋น constants ═══
 const AN_COMM_PRICES = new Set([2900,3900,4900,5900,7900,4990,9900,12900,15900,18900]);
+
+// ═══ นับจำนวนบริการในวันนั้นสำหรับคอมอั๋น ═══
+// กฎพิเศษ: สักผม (hair) ถ้าหลายช่างมียอดเท่ากัน = ลูกค้า 1 คน ใช้หลายช่างช่วยกัน → นับ 1 บริการต่อกลุ่ม
+function countDaySvc(dd) {
+  let count = 0;
+  const svcArr = dd.svc || [];
+
+  // นับบริการทั่วไป (ไม่รวม hair): brow, eye, lip, laser, facial, item, chalacol
+  svcArr.forEach(sv => {
+    ['brow','eye','lip','laser','facial','item','chalacol'].forEach(k=>{
+      if((sv[k]||0) > 0) count++;
+    });
+  });
+
+  // นับ hair แบบกลุ่ม — ยอดเท่ากัน = 1 บริการ/กลุ่ม, ยอดไม่ตรงใคร = 1 บริการของตัวเอง
+  const hairVals = svcArr.map(sv => sv.hair||0).filter(v => v > 0);
+  if (hairVals.length > 0) {
+    const valCounts = {};
+    hairVals.forEach(v => { valCounts[v] = (valCounts[v]||0) + 1; });
+    Object.values(valCounts).forEach(c => {
+      // ถ้ามีหลายคนยอดเท่ากัน (c>=2) = กลุ่มเดียว = 1 บริการ
+      // ถ้ามีคนเดียว (c===1) = 1 บริการของตัวเอง
+      count += 1; // แต่ละกลุ่มยอดที่ไม่ซ้ำ = 1 บริการ เสมอ (ไม่ว่าจะมีกี่คนในกลุ่มนั้น)
+    });
+  }
+
+  // นับจาก other income ที่ราคาตรง price list
+  (dd.other||[]).forEach(item=>{
+    if(AN_COMM_PRICES.has(+item.a||0)) count++;
+  });
+
+  return count;
+}
 const AN_COMM_PER_SVC = 200;
 
 // ═══ COURSE FUNCTIONS ═══
