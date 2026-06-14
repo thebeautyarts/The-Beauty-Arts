@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Beauty Arts — สาขาขอนแก่น</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf6f0;color:#2d1b0e;font-size:13px;}
+:root{
+  --rose:#b5456b;--rose-mid:#d4698a;--rose-light:#f0b8cc;--rose-pale:#fde8f0;--rose-bg:#fdf6f0;
+  --gold:#c9853a;--gold-light:#e8c48a;--gold-pale:#fdf3e3;
+  --brown:#6b3320;--white:#fff;--border:#f0c8d8;--text-dark:#2d1b0e;--text-mid:#7c4a5a;
+}
+header{background:linear-gradient(135deg,#7c1d3c 0%,#b5456b 100%);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.hdr-left h1{font-size:17px;font-weight:700;letter-spacing:.3px;}
+.hdr-left p{font-size:11px;opacity:.75;margin-top:2px;}
+.hdr-badge{background:rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;}
+.tabs{background:#7c1d3c;display:flex;padding:0 20px;gap:2px;overflow-x:auto;}
+.tab{padding:9px 16px;cursor:pointer;font-size:12px;font-weight:600;color:rgba(255,255,255,.5);border-bottom:3px solid transparent;transition:.15s;white-space:nowrap;}
+.tab.active{color:#fff;border-bottom-color:var(--gold);}
+.tab:hover{color:#fff;}
+.panel{display:none;}.panel.active{display:block;}
+.container{max-width:1200px;margin:16px auto;padding:0 14px;}
+.btn{padding:7px 14px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;transition:.15s;}
+.btn-rose{background:var(--rose);color:#fff;}.btn-rose:hover{background:#8c2f4e;}
+.btn-gold{background:var(--gold);color:#fff;}.btn-gold:hover{background:#9e6828;}
+.btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--text-dark);}.btn-outline:hover{border-color:var(--rose-mid);}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:5px;}
+.btn-red{background:#ffebee;color:#c62828;border:none;}.btn-red:hover{background:#c62828;color:#fff;}
+
+/* ─── Firebase bar ─── */
+.fb-bar{display:flex;align-items:center;gap:8px;padding:7px 14px;background:#fff0f5;border-bottom:1px solid var(--border);font-size:11px;color:var(--text-mid);}
+.fb-dot{width:8px;height:8px;border-radius:50%;background:#aaa;flex-shrink:0;}
+.fb-dot.ok{background:#22c55e;animation:pulse 2s infinite;}
+.fb-dot.err{background:#ef4444;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ─── Booking Grid ─── */
+.schedule-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.date-nav{display:flex;align-items:center;gap:10px;}
+.date-nav-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:16px;color:var(--rose);display:flex;align-items:center;justify-content:center;}
+.date-nav-btn:hover{background:var(--rose-pale);}
+.date-display{font-size:15px;font-weight:700;color:#7c1d3c;}
+.date-sub{font-size:11px;color:var(--text-mid);}
+.today-btn{background:var(--rose-pale);border:1.5px solid var(--rose-light);color:#7c1d3c;border-radius:7px;padding:5px 12px;cursor:pointer;font-size:11px;font-weight:700;}
+.today-btn:hover{background:var(--rose-light);color:#fff;}
+.grid-wrap{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(124,29,60,.1);overflow:auto;}
+.schedule-grid{display:grid;grid-template-columns:70px 1fr;}
+.grid-time-header{background:#7c1d3c;color:#fff;padding:10px 8px;text-align:center;font-size:11px;font-weight:700;position:sticky;top:0;z-index:10;border-right:1px solid rgba(255,255,255,.15);}
+.grid-staff-header{background:#7c1d3c;color:#fff;padding:10px 6px;text-align:center;font-size:13px;font-weight:700;position:sticky;top:0;z-index:10;}
+.grid-time-cell{background:#fdf6f0;border-right:1.5px solid var(--border);border-bottom:1px solid var(--border);padding:4px 8px;text-align:right;font-size:12px;font-weight:700;color:var(--rose-mid);min-height:72px;display:flex;align-items:flex-start;justify-content:flex-end;padding-top:6px;}
+.grid-slot{border-bottom:1px solid var(--border);min-height:72px;padding:4px;background:#fff;cursor:pointer;transition:.1s;position:relative;}
+.grid-slot:hover{background:var(--rose-pale);}
+.grid-slot.holiday{background:repeating-linear-gradient(-45deg,#fee2e2,#fee2e2 4px,#fff 4px,#fff 10px);cursor:not-allowed;pointer-events:none;}
+.grid-slot.holiday::after{content:'🏖️ หยุด';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:#dc2626;font-weight:700;white-space:nowrap;}
+.grid-slot.blocked{background:repeating-linear-gradient(-45deg,#d1fae5,#d1fae5 4px,#fff 4px,#fff 10px);cursor:not-allowed;pointer-events:none;}
+.grid-slot.blocked::after{content:'🔒 ไม่ว่าง';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:#065f46;font-weight:700;white-space:nowrap;}
+.booking-card{background:linear-gradient(135deg,#fff0f5,#fff);border:1.5px solid var(--rose-light);border-radius:8px;padding:6px 8px;margin-bottom:4px;cursor:pointer;transition:.1s;position:relative;}
+.booking-card:hover{border-color:var(--rose);}
+.bc-name{font-size:12px;font-weight:700;color:#7c1d3c;}
+.bc-svc{font-size:10px;color:var(--text-mid);margin-top:2px;}
+.bc-time{font-size:10px;color:var(--rose-mid);font-weight:600;}
+.bc-status{display:inline-block;padding:1px 6px;border-radius:10px;font-size:9px;font-weight:700;margin-top:3px;}
+.st-confirm{background:#fff3cd;color:#856404;}
+.st-doing{background:#cff4fc;color:#0a5068;}
+.st-done{background:#d1e7dd;color:#0a3622;}
+.bc-amt{font-size:11px;font-weight:700;color:var(--gold);margin-top:2px;}
+
+/* ─── Modal ─── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.modal h3{font-size:15px;font-weight:700;color:#7c1d3c;margin-bottom:14px;}
+.form-field{margin-bottom:10px;}
+.form-field label{display:block;font-size:11px;font-weight:700;color:var(--text-mid);margin-bottom:4px;text-transform:uppercase;}
+.form-field input,.form-field select,.form-field textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{outline:none;border-color:var(--rose-mid);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.deposit-toggle{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;border:1.5px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;}
+.deposit-toggle.paid{background:#d1fae5;border-color:#6ee7b7;color:#065f46;}
+.deposit-toggle.unpaid{background:#fff;color:#888;}
+.gcal-link{display:block;font-size:11px;color:var(--rose);text-decoration:none;margin-top:6px;}
+.gcal-link:hover{text-decoration:underline;}
+
+/* ─── Calendar ─── */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-header{text-align:center;font-size:13px;font-weight:800;color:#0f172a;padding:6px 4px;}
+.cal-header.h-sun{color:#b91c1c;}.cal-header.h-sat{color:#6d28d9;}
+.cal-day{border:1.5px solid var(--border);border-radius:8px;padding:6px 5px;min-height:80px;cursor:pointer;transition:.15s;position:relative;background:#fff;}
+.cal-day:hover{filter:brightness(.96);}
+.cal-day.has-data{border:2px solid var(--rose);background:var(--rose-pale);}
+.cal-day.today-d{border:3px solid var(--gold)!important;box-shadow:0 0 0 3px var(--gold-light);}
+.cal-day.empty-day{background:#f8f8f8;cursor:default;opacity:.2;pointer-events:none;}
+.cal-day.is-sun{background:#fff1f1!important;border-color:#fca5a5;}
+.cal-day.is-sun .d-num{color:#b91c1c!important;}
+.cal-day.is-sat{background:#faf5ff!important;border-color:#d8b4fe;}
+.cal-day.is-sat .d-num{color:#6d28d9!important;}
+.d-num{font-weight:900;font-size:14px;color:#1e293b;margin-bottom:3px;}
+.d-rev{font-size:10px;color:#166534;font-weight:700;background:#dcfce7;border-radius:3px;padding:1px 3px;margin-top:2px;}
+.d-exp{font-size:10px;color:#991b1b;font-weight:700;background:#fee2e2;border-radius:3px;padding:1px 3px;margin-top:2px;}
+.d-profit{font-size:10px;color:#7c1d3c;font-weight:700;background:var(--rose-pale);border-radius:3px;padding:1px 3px;margin-top:2px;}
+
+/* ─── Summary Cards ─── */
+.sum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.sum-card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.07);text-align:center;border-top:3px solid var(--rose);}
+.sum-card.green{border-top-color:#22c55e;}.sum-card.red{border-top-color:#ef4444;}.sum-card.gold{border-top-color:var(--gold);}
+.sum-card .sc-label{font-size:11px;color:#475569;text-transform:uppercase;margin-bottom:5px;font-weight:600;}
+.sum-card .sc-val{font-size:18px;font-weight:700;color:#7c1d3c;}
+.sum-card.green .sc-val{color:#16a34a;}.sum-card.red .sc-val{color:#dc2626;}.sum-card.gold .sc-val{color:var(--gold);}
+
+/* ─── Revenue Entry ─── */
+.box{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:20px;margin-bottom:18px;}
+.box h3{font-size:14px;font-weight:700;color:#7c1d3c;margin-bottom:14px;}
+.section-label{font-size:12px;font-weight:700;color:#7c1d3c;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid var(--rose-pale);}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.svc-box{border:1px solid var(--border);border-radius:8px;padding:10px;background:var(--rose-pale);}
+.svc-box label{font-size:11px;font-weight:700;color:#7c1d3c;display:block;margin-bottom:4px;}
+.svc-box input{width:100%;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;text-align:right;}
+.svc-box input:focus{outline:none;border-color:var(--rose);}
+.svc-box .comm-preview{font-size:11px;color:#16a34a;font-weight:600;text-align:right;margin-top:4px;}
+.channel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.ch-card{border:1px solid #ddd;border-radius:8px;padding:10px;text-align:center;}
+.ch-card .ch-icon{font-size:18px;margin-bottom:4px;}
+.ch-card .ch-label{font-size:11px;font-weight:700;margin-bottom:5px;}
+.ch-card input{width:100%;padding:5px 7px;border:1px solid #ddd;border-radius:5px;font-size:12px;text-align:right;}
+.ch-card input:focus{outline:none;border-color:var(--rose);}
+.ch-cash{border-color:#86efac;background:#f0fdf4;}
+.ch-transfer{border-color:#93c5fd;background:#eff6ff;}
+.ch-tap{border-color:#c4b5fd;background:#faf5ff;}
+.ch-deposit{border-color:#fcd34d;background:#fffbeb;}
+.exp-box{border:1px solid #fee2e2;border-radius:8px;padding:12px;background:#fff5f5;margin-bottom:10px;}
+.exp-box h4{font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;}
+.exp-row{display:flex;gap:6px;margin-bottom:5px;}
+.exp-row input{flex:1;padding:5px 7px;border:1px solid #ddd;border-radius:5px;font-size:12px;}
+.exp-row input:last-child{flex:0 0 90px;text-align:right;}
+.add-exp{background:none;border:1px dashed #ddd;border-radius:5px;padding:3px 10px;font-size:11px;color:#aaa;cursor:pointer;}
+.add-exp:hover{border-color:#ef4444;color:#ef4444;}
+.other-box{border:1px solid #bbf7d0;border-radius:8px;padding:12px;background:#f0fdf4;margin-bottom:10px;}
+.other-box h4{font-size:12px;font-weight:700;color:#16a34a;margin-bottom:8px;}
+.other-row{display:flex;gap:6px;margin-bottom:5px;}
+.other-row input{flex:1;padding:5px 7px;border:1px solid #ddd;border-radius:5px;font-size:12px;}
+.other-row input:last-child{flex:0 0 90px;text-align:right;}
+.note-area{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:12px;resize:vertical;min-height:60px;font-family:inherit;}
+.btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.save-msg{font-size:12px;color:#16a34a;font-weight:600;}
+.comm-banner{background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--brown);margin-bottom:14px;}
+.comm-banner strong{color:var(--gold);}
+
+/* ─── Monthly Summary ─── */
+.month-sum-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;}
+.ms-card{background:#fff;border-radius:9px;padding:12px;box-shadow:0 1px 5px rgba(0,0,0,.07);text-align:center;}
+.ms-card .ms-label{font-size:10px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:4px;}
+.ms-card .ms-val{font-size:16px;font-weight:700;color:#7c1d3c;}
+.ms-card.green .ms-val{color:#16a34a;}.ms-card.red .ms-val{color:#dc2626;}.ms-card.gold .ms-val{color:var(--gold);}
+.table-wrap{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);overflow:hidden;margin-bottom:16px;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{background:#7c1d3c;color:#fff;padding:9px 8px;text-align:center;white-space:nowrap;}
+thead th:first-child{text-align:left;padding-left:14px;}
+tbody tr:nth-child(even){background:#fdf6f0;}
+tbody tr:hover{background:var(--rose-pale);cursor:pointer;}
+td{padding:8px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;color:#1e293b;}
+td:first-child{text-align:left;padding-left:14px;font-weight:600;}
+tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3c;color:#7c1d3c;}
+
+/* ─── Salary box ─── */
+.salary-box{background:var(--gold-pale);border:1.5px solid var(--gold-light);border-radius:10px;padding:14px;margin-bottom:16px;}
+.salary-box h4{font-size:13px;font-weight:700;color:var(--brown);margin-bottom:10px;}
+.salary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.s-field{display:flex;flex-direction:column;gap:4px;}
+.s-field label{font-size:11px;font-weight:600;color:#6b4226;}
+.s-field .s-val{font-size:15px;font-weight:700;color:var(--brown);}
+
+/* ─── Copy Panel ─── */
+.copy-panel{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:16px;margin-bottom:14px;}
+.copy-panel h3{font-size:14px;font-weight:700;color:#7c1d3c;margin-bottom:10px;}
+.copy-text{width:100%;min-height:160px;padding:10px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf6f0;}
+.copy-btns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+
+/* ─── Booking summary tab ─── */
+.bk-sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;}
+.bk-card{background:#fff;border-radius:9px;padding:12px;box-shadow:0 1px 5px rgba(0,0,0,.07);text-align:center;}
+.bk-card .bk-label{font-size:10px;color:#888;font-weight:600;margin-bottom:4px;}
+.bk-card .bk-val{font-size:16px;font-weight:700;color:#7c1d3c;}
+
+@media(max-width:768px){
+  .svc-grid{grid-template-columns:repeat(2,1fr);}
+  .channel-grid{grid-template-columns:repeat(2,1fr);}
+  .sum-row{grid-template-columns:repeat(2,1fr);}
+  .month-sum-grid{grid-template-columns:repeat(2,1fr);}
+  .salary-grid{grid-template-columns:repeat(2,1fr);}
+  .schedule-grid{grid-template-columns:60px 1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-left">
+    <h1>💗 The Beauty Arts — สาขาขอนแก่น</h1>
+    <p id="main-title">ระบบจองคิว & บันทึกรายได้ — ช่างไอซ์</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <span class="hdr-badge" id="sync-badge">💾 ซิงค์...</span>
+  </div>
+</header>
+
+<div class="fb-bar">
+  <div class="fb-dot" id="fb-dot"></div>
+  <span id="fb-msg">กำลังเชื่อมต่อ Firebase...</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('booking')">📅 จองคิว</div>
+  <div class="tab" onclick="switchTab('revenue')">💰 บันทึกรายได้</div>
+  <div class="tab" onclick="switchTab('monthly')">📊 สรุปรายเดือน</div>
+  <div class="tab" onclick="switchTab('calendar')">🗓️ ปฏิทิน</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TAB 1: BOOKING
+══════════════════════════════════════════════════════════════ -->
+<div class="panel active" id="p-booking">
+<div class="container">
+
+  <div class="schedule-header">
+    <div class="date-nav">
+      <button class="date-nav-btn" onclick="changeDate(-1)">‹</button>
+      <div>
+        <div class="date-display" id="booking-date-display">–</div>
+        <div class="date-sub" id="booking-date-sub">–</div>
+      </div>
+      <button class="date-nav-btn" onclick="changeDate(1)">›</button>
+      <button class="today-btn" onclick="goToday()">วันนี้</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-outline btn-sm" onclick="openHolidayModal()">🏖️ ตั้งวันหยุด</button>
+      <button class="btn btn-rose btn-sm" onclick="openBookingModal()">+ จองคิว</button>
+    </div>
+  </div>
+
+  <!-- Booking summary for the day -->
+  <div class="bk-sum-grid" id="bk-day-sum" style="display:none;">
+    <div class="bk-card"><div class="bk-label">นัดทั้งหมด</div><div class="bk-val" id="bk-count">0</div></div>
+    <div class="bk-card"><div class="bk-label">เสร็จแล้ว</div><div class="bk-val" id="bk-done">0</div></div>
+    <div class="bk-card"><div class="bk-label">รายได้ (เสร็จแล้ว)</div><div class="bk-val" id="bk-rev">฿0</div></div>
+  </div>
+
+  <div class="grid-wrap">
+    <div class="schedule-grid" id="main-grid">
+      <!-- headers -->
+      <div class="grid-time-header">เวลา</div>
+      <div class="grid-staff-header">👩‍🎨 ช่างไอซ์</div>
+      <!-- slots injected by JS -->
+    </div>
+  </div>
+
+  <!-- Today summary copy -->
+  <div class="copy-panel" style="margin-top:14px;">
+    <h3>📋 สรุปวันนี้ (คัดลอก)</h3>
+    <textarea class="copy-text" id="today-copy-text" readonly></textarea>
+    <div class="copy-btns">
+      <button class="btn btn-outline btn-sm" onclick="copyText('today-copy-text')">📋 คัดลอก</button>
+      <button class="btn btn-outline btn-sm" onclick="refreshCopyText()">🔄 รีเฟรช</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TAB 2: REVENUE
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="p-revenue">
+<div class="container">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#7c1d3c;">บันทึกรายได้ประจำวัน</div>
+      <div style="font-size:12px;color:var(--text-mid);">สาขาขอนแก่น — ช่างไอซ์</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input type="date" id="rev-date" style="padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;" onchange="loadDayRevenue()">
+      <button class="btn btn-rose btn-sm" onclick="saveDay()">💾 บันทึก</button>
+      <span class="save-msg" id="save-msg"></span>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="sum-row" id="rev-sum-cards">
+    <div class="sum-card"><div class="sc-label">รายรับรวม</div><div class="sc-val" id="rc-rev">฿0</div></div>
+    <div class="sum-card red"><div class="sc-label">รายจ่ายรวม</div><div class="sc-val" id="rc-exp">฿0</div></div>
+    <div class="sum-card green"><div class="sc-label">กำไรสุทธิ</div><div class="sc-val" id="rc-profit">฿0</div></div>
+    <div class="sum-card gold"><div class="sc-label">ค่าคอมมิชชั่น (20%)</div><div class="sc-val" id="rc-comm">฿0</div></div>
+  </div>
+
+  <!-- Services -->
+  <div class="box">
+    <h3>💅 รายการบริการ</h3>
+    <div class="comm-banner">💡 ทุกบริการ: ค่าคอมมิชชั่น <strong>20%</strong> ของยอดรับจริง</div>
+    <div class="svc-grid" id="svc-inputs">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+  <!-- Payment channels -->
+  <div class="box">
+    <h3>💳 ช่องทางชำระเงิน</h3>
+    <div class="channel-grid">
+      <div class="ch-card ch-cash"><div class="ch-icon">💵</div><div class="ch-label">เงินสด</div><input type="number" id="ch-cash" placeholder="0" oninput="calcRevSum()"></div>
+      <div class="ch-card ch-transfer"><div class="ch-icon">📲</div><div class="ch-label">โอน/แม่มณี</div><input type="number" id="ch-transfer" placeholder="0" oninput="calcRevSum()"></div>
+      <div class="ch-card ch-tap"><div class="ch-icon">📡</div><div class="ch-label">Tap To Pay</div><input type="number" id="ch-tap" placeholder="0" oninput="calcRevSum()"></div>
+      <div class="ch-card ch-deposit"><div class="ch-icon">🔖</div><div class="ch-label">มัดจำ</div><input type="number" id="ch-deposit" placeholder="0" oninput="calcRevSum()"></div>
+    </div>
+  </div>
+
+  <!-- Expenses -->
+  <div class="box">
+    <h3>💸 รายจ่ายประจำวัน</h3>
+    <div class="exp-box">
+      <div id="expenses-list"></div>
+      <button class="add-exp" onclick="addExpRow()">+ เพิ่มรายการ</button>
+    </div>
+  </div>
+
+  <!-- Other income -->
+  <div class="box">
+    <h3>💚 รายรับอื่นๆ</h3>
+    <div class="other-box">
+      <div id="other-list"></div>
+      <button class="add-exp" onclick="addOtherRow()" style="border-color:#86efac;color:#16a34a;">+ เพิ่มรายการ</button>
+    </div>
+  </div>
+
+  <!-- Note -->
+  <div class="box">
+    <h3>📝 หมายเหตุ</h3>
+    <textarea class="note-area" id="day-note" placeholder="บันทึกเพิ่มเติม..."></textarea>
+  </div>
+
+  <div class="btn-row" style="margin-bottom:20px;">
+    <button class="btn btn-rose" onclick="saveDay()">💾 บันทึกข้อมูล</button>
+    <button class="btn btn-outline" onclick="clearDay()">🗑️ ล้างข้อมูล</button>
+    <span class="save-msg" id="save-msg2"></span>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TAB 3: MONTHLY SUMMARY
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="p-monthly">
+<div class="container">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+    <div style="font-size:15px;font-weight:700;color:#7c1d3c;" id="monthly-title">สรุปรายเดือน</div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn btn-outline btn-sm" onclick="changeMonth(-1)">‹ เดือนก่อน</button>
+      <span id="month-label" style="font-weight:700;color:#7c1d3c;font-size:13px;"></span>
+      <button class="btn btn-outline btn-sm" onclick="changeMonth(1)">เดือนถัดไป ›</button>
+    </div>
+  </div>
+
+  <div class="month-sum-grid">
+    <div class="ms-card"><div class="ms-label">รายรับรวม</div><div class="ms-val" id="ms-rev">฿0</div></div>
+    <div class="ms-card red"><div class="ms-label">รายจ่ายรวม</div><div class="ms-val" id="ms-exp">฿0</div></div>
+    <div class="ms-card green"><div class="ms-label">กำไรสุทธิ</div><div class="ms-val" id="ms-profit">฿0</div></div>
+    <div class="ms-card gold"><div class="ms-label">คอมมิชชั่นรวม</div><div class="ms-val" id="ms-comm">฿0</div></div>
+    <div class="ms-card"><div class="ms-label">จำนวนวันทำงาน</div><div class="ms-val" id="ms-days">0 วัน</div></div>
+  </div>
+
+  <!-- Salary calculation -->
+  <div class="salary-box" id="salary-box">
+    <h4>💰 สรุปเงินเดือน ช่างไอซ์</h4>
+    <div class="salary-grid">
+      <div class="s-field"><label>ฐานเงินเดือน</label><div class="s-val">฿15,000</div></div>
+      <div class="s-field"><label>ค่าคอมมิชชั่น (20%)</label><div class="s-val" id="sal-comm">฿0</div></div>
+      <div class="s-field"><label>รวมรับ (ฐาน + คอม)</label><div class="s-val" id="sal-total">฿15,000</div></div>
+    </div>
+  </div>
+
+  <!-- Daily breakdown table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>วัน</th>
+          <th>รายรับรวม</th>
+          <th>รายจ่าย</th>
+          <th>รายรับอื่นๆ</th>
+          <th>กำไรสุทธิ</th>
+          <th>คอมมิชชั่น</th>
+          <th>ช่องทาง</th>
+        </tr>
+      </thead>
+      <tbody id="monthly-table-body"></tbody>
+      <tfoot>
+        <tr>
+          <td>รวม</td>
+          <td id="mft-rev">฿0</td>
+          <td id="mft-exp">฿0</td>
+          <td id="mft-other">฿0</td>
+          <td id="mft-profit">฿0</td>
+          <td id="mft-comm">฿0</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- Booking stats for the month -->
+  <div class="box">
+    <h3>📅 สถิติการจองคิว (เดือนนี้)</h3>
+    <div class="bk-sum-grid">
+      <div class="bk-card"><div class="bk-label">การจองทั้งหมด</div><div class="bk-val" id="mbk-total">0</div></div>
+      <div class="bk-card"><div class="bk-label">เสร็จแล้ว</div><div class="bk-val" id="mbk-done">0</div></div>
+      <div class="bk-card"><div class="bk-label">รายได้จากการจอง</div><div class="bk-val" id="mbk-rev">฿0</div></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TAB 4: CALENDAR
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="p-calendar">
+<div class="container">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+    <div style="font-size:15px;font-weight:700;color:#7c1d3c;" id="cal-title">ปฏิทิน</div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn btn-outline btn-sm" onclick="changeCalMonth(-1)">‹</button>
+      <span id="cal-month-label" style="font-weight:700;color:#7c1d3c;font-size:13px;"></span>
+      <button class="btn btn-outline btn-sm" onclick="changeCalMonth(1)">›</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="cal-grid" id="main-cal"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODALS
+══════════════════════════════════════════════════════════════ -->
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal">
+    <h3 id="bm-title">📅 จองคิว</h3>
+    <div class="form-row">
+      <div class="form-field">
+        <label>ชื่อลูกค้า</label>
+        <input type="text" id="bm-name" placeholder="ชื่อลูกค้า">
+      </div>
+      <div class="form-field">
+        <label>เบอร์โทร</label>
+        <input type="tel" id="bm-phone" placeholder="0812345678">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>บริการ</label>
+      <input type="text" id="bm-service" placeholder="เช่น สักคิ้ว, ทำเล็บ, ต่อขนตา...">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>เวลาเริ่ม</label>
+        <select id="bm-time"></select>
+      </div>
+      <div class="form-field">
+        <label>ระยะเวลา (ชม.)</label>
+        <select id="bm-duration">
+          <option value="1">1 ชั่วโมง</option>
+          <option value="1.5">1.5 ชั่วโมง</option>
+          <option value="2" selected>2 ชั่วโมง</option>
+          <option value="2.5">2.5 ชั่วโมง</option>
+          <option value="3">3 ชั่วโมง</option>
+          <option value="4">4 ชั่วโมง</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>ราคา (฿)</label>
+        <input type="number" id="bm-price" placeholder="0">
+      </div>
+      <div class="form-field">
+        <label>ช่องทางชำระเงิน</label>
+        <select id="bm-payment">
+          <option value="">— เลือก —</option>
+          <option value="เงินสด">💵 เงินสด</option>
+          <option value="โอน">📲 โอน/แม่มณี</option>
+          <option value="Tap To Pay">📡 Tap To Pay</option>
+          <option value="มัดจำ">🔖 มัดจำ</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field">
+      <label>มัดจำ ฿1,000</label>
+      <div class="deposit-toggle unpaid" id="deposit-toggle" onclick="toggleDeposit()">
+        <span id="deposit-icon">○</span> <span id="deposit-text">ยังไม่ชำระมัดจำ</span>
+      </div>
+    </div>
+    <div class="form-field">
+      <label>หมายเหตุ</label>
+      <textarea id="bm-note" rows="2" placeholder="ข้อมูลเพิ่มเติม..."></textarea>
+    </div>
+    <div class="form-field">
+      <label>สถานะ</label>
+      <select id="bm-status">
+        <option value="ยืนยัน">✅ ยืนยัน</option>
+        <option value="กำลังทำ">⚙️ กำลังทำ</option>
+        <option value="เสร็จแล้ว">🎉 เสร็จแล้ว</option>
+      </select>
+    </div>
+    <a class="gcal-link" id="gcal-link" href="#" target="_blank" style="display:none;">📅 เพิ่มใน Google Calendar</a>
+    <div class="modal-btns">
+      <button class="btn btn-rose" onclick="saveBooking()">💾 บันทึก</button>
+      <button class="btn btn-outline" onclick="closeModal('booking-modal')">ยกเลิก</button>
+      <button class="btn btn-red btn-sm" id="bm-delete-btn" onclick="deleteBooking()" style="display:none;margin-left:auto;">🗑️ ลบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Holiday Modal -->
+<div class="modal-overlay" id="holiday-modal">
+  <div class="modal">
+    <h3>🏖️ ตั้งวันหยุด</h3>
+    <p style="font-size:12px;color:#888;margin-bottom:12px;">วันที่: <strong id="holiday-date-label"></strong></p>
+    <div class="form-field">
+      <label>สาเหตุ / ชื่องาน</label>
+      <input type="text" id="holiday-reason" placeholder="เช่น วันหยุดนักขัตฤกษ์, ลาป่วย...">
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-rose" onclick="saveHoliday()">💾 ตั้งวันหยุด</button>
+      <button class="btn btn-outline btn-sm" onclick="removeHoliday()" style="color:#dc2626;">🗑️ ยกเลิกวันหยุด</button>
+      <button class="btn btn-outline" onclick="closeModal('holiday-modal')">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     FIREBASE + APP LOGIC
+══════════════════════════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, remove } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+// ── Firebase config (KK branch uses separate path) ──
+const firebaseConfig = {
+  apiKey: "AIzaSyCXR3UJ3bFq1Ia_T4D4BXy08nHHBCLhgbs",
+  authDomain: "the-beauty-arts.firebaseapp.com",
+  databaseURL: "https://the-beauty-arts-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "the-beauty-arts",
+  storageBucket: "the-beauty-arts.firebasestorage.app",
+  messagingSenderId: "656894086617",
+  appId: "1:656894086617:web:f25b283061a97f4a401dc8"
+};
+
+const app = initializeApp(firebaseConfig, 'kk');
+const db = getDatabase(app);
+
+// ── Constants ──
+const BASE_SALARY = 15000;
+const COMM_RATE = 0.20;
+const SERVICES = [
+  {key:'brow', label:'🎨 สักคิ้ว', icon:'🎨'},
+  {key:'lip', label:'💋 สักปาก', icon:'💋'},
+  {key:'eye', label:'👁️ สักตา', icon:'👁️'},
+  {key:'laser', label:'⚡ เลเซอร์', icon:'⚡'},
+  {key:'lash', label:'👁️ ขนตา', icon:'👁️'},
+  {key:'nail', label:'💅 เล็บ', icon:'💅'},
+  {key:'hair', label:'💇 ผม', icon:'💇'},
+  {key:'item', label:'🛍️ ขายสินค้า', icon:'🛍️'},
+  {key:'other_svc', label:'✨ บริการอื่นๆ', icon:'✨'},
+];
+const CHANNELS = ['cash','transfer','tap','deposit'];
+const MONTH_TH = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const MONTH_TH_L = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const DAY_TH = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+const DAY_TH_L = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const SLOT_TIMES = [];
+for(let h=11;h<=20;h++){SLOT_TIMES.push(`${String(h).padStart(2,'0')}:00`);if(h<20)SLOT_TIMES.push(`${String(h).padStart(2,'0')}:30`);}
+
+// ── State ──
+const today = new Date();
+let curBookingDate = new Date(today);
+let curRevDate = today.toISOString().slice(0,10);
+let curMonth = today.getMonth();
+let curYear = today.getFullYear() + 543;
+let calMonth = today.getMonth();
+let calYear = today.getFullYear() + 543;
+let monthData = {};
+let bookings = {};
+let holidays = {};
+let editingBookingId = null;
+let depositPaid = false;
+
+// ── Helpers ──
+const fmtN = n => '฿' + Math.round(n).toLocaleString('th-TH');
+const fmtNN = n => Math.round(n).toLocaleString('th-TH');
+function getMonthKey(m, y) {
+  const mn = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  return mn[m] + y;
+}
+function getDay(d) {
+  const mk = getMonthKey(curMonth, curYear);
+  const data = monthData[mk];
+  if (!data) return {};
+  if (Array.isArray(data)) return data[d] || {};
+  return data[d] || {};
+}
+function getTotalSvc(svc) {
+  if (!svc) return 0;
+  return SERVICES.reduce((s,sv) => s + (+svc[sv.key]||0), 0);
+}
+
+// ── Firebase paths ──
+function revPath(m, y) { return `kk_branch/revenue/${getMonthKey(m,y)}`; }
+function bookPath(dateStr) { return `kk_branch/bookings/${dateStr.replace(/-/g,'_')}`; }
+function holPath(dateStr) { return `kk_branch/holidays/${dateStr.replace(/-/g,'_')}`; }
+
+// ── Firebase status ──
+function fbOk(msg) {
+  document.getElementById('fb-dot').className='fb-dot ok';
+  document.getElementById('fb-msg').textContent = msg || '✅ เชื่อมต่อ Firebase สำเร็จ';
+  document.getElementById('sync-badge').textContent = '✅ ซิงค์แล้ว';
+}
+function fbErr(msg) {
+  document.getElementById('fb-dot').className='fb-dot err';
+  document.getElementById('fb-msg').textContent = msg || '❌ Firebase ขัดข้อง';
+  document.getElementById('sync-badge').textContent = '❌ ออฟไลน์';
+}
+
+// ══════════════════════════════════════════════════════════
+// BOOKING SYSTEM
+// ══════════════════════════════════════════════════════════
+
+function bookingDateStr(d) {
+  const ad = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${ad}-${m}-${dd}`;
+}
+
+function renderBookingHeader() {
+  const d = curBookingDate;
+  const thYear = d.getFullYear() + 543;
+  document.getElementById('booking-date-display').textContent =
+    `${DAY_TH_L[d.getDay()]}ที่ ${d.getDate()} ${MONTH_TH_L[d.getMonth()]} ${thYear}`;
+  document.getElementById('booking-date-sub').textContent =
+    `สาขาขอนแก่น · ช่างไอซ์`;
+}
+
+async function loadBookings() {
+  const ds = bookingDateStr(curBookingDate);
+  try {
+    const snap = await get(ref(db, bookPath(ds)));
+    bookings = snap.val() || {};
+    fbOk();
+  } catch(e) { fbErr('ไม่สามารถโหลดการจองได้'); bookings = {}; }
+
+  const hsnap = await get(ref(db, holPath(ds))).catch(()=>({val:()=>null}));
+  holidays[ds] = hsnap.val();
+
+  renderGrid();
+  renderDaySummary();
+  refreshCopyText();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('main-grid');
+  grid.innerHTML = `<div class="grid-time-header">เวลา</div><div class="grid-staff-header">👩‍🎨 ช่างไอซ์</div>`;
+
+  const ds = bookingDateStr(curBookingDate);
+  const isHoliday = !!holidays[ds];
+
+  SLOT_TIMES.forEach(time => {
+    const timeCell = document.createElement('div');
+    timeCell.className = 'grid-time-cell';
+    timeCell.textContent = time;
+    grid.appendChild(timeCell);
+
+    const slot = document.createElement('div');
+    const booksInSlot = Object.entries(bookings).filter(([id,b]) => b.time === time && !b._blocked);
+    const isBlocked = Object.values(bookings).some(b => b._blocked && isTimeBlocked(time, b));
+
+    if (isHoliday) {
+      slot.className = 'grid-slot holiday';
+    } else if (isBlocked) {
+      slot.className = 'grid-slot blocked';
+    } else {
+      slot.className = 'grid-slot';
+      slot.onclick = () => openBookingModal(null, time);
+    }
+
+    if (!isHoliday && !isBlocked) {
+      booksInSlot.forEach(([id,b]) => {
+        const card = document.createElement('div');
+        card.className = 'booking-card';
+        const stClass = b.status==='เสร็จแล้ว'?'st-done':b.status==='กำลังทำ'?'st-doing':'st-confirm';
+        card.innerHTML = `
+          <div class="bc-name">${b.name||'–'}</div>
+          <div class="bc-svc">${b.service||'–'}</div>
+          <div class="bc-time">⏱ ${b.time} · ${b.duration||1}ชม.</div>
+          ${b.price?`<div class="bc-amt">${fmtN(b.price)}</div>`:''}
+          <span class="bc-status ${stClass}">${b.status||'ยืนยัน'}</span>
+        `;
+        card.onclick = (e) => { e.stopPropagation(); openBookingModal(id); };
+        slot.appendChild(card);
+      });
+    }
+    grid.appendChild(slot);
+  });
+}
+
+function isTimeBlocked(time, b) {
+  if (!b._blocked) return false;
+  const startIdx = SLOT_TIMES.indexOf(b.time);
+  const slots = Math.ceil((+b.duration||1)*2);
+  const endIdx = startIdx + slots;
+  const tIdx = SLOT_TIMES.indexOf(time);
+  return tIdx > startIdx && tIdx < endIdx;
+}
+
+function renderDaySummary() {
+  const bList = Object.values(bookings).filter(b => !b._blocked);
+  const done = bList.filter(b => b.status === 'เสร็จแล้ว');
+  const rev = done.reduce((s,b) => s + (+b.price||0), 0);
+  document.getElementById('bk-count').textContent = bList.length;
+  document.getElementById('bk-done').textContent = done.length;
+  document.getElementById('bk-rev').textContent = fmtN(rev);
+  const sumEl = document.getElementById('bk-day-sum');
+  sumEl.style.display = bList.length > 0 ? 'grid' : 'none';
+}
+
+// Booking modal
+window.openBookingModal = function(id=null, defaultTime=null) {
+  editingBookingId = id;
+  depositPaid = false;
+  const b = id ? bookings[id] : null;
+  document.getElementById('bm-title').textContent = id ? '✏️ แก้ไขการจอง' : '📅 จองคิว';
+  document.getElementById('bm-name').value = b?.name || '';
+  document.getElementById('bm-phone').value = b?.phone || '';
+  document.getElementById('bm-service').value = b?.service || '';
+  document.getElementById('bm-price').value = b?.price || '';
+  document.getElementById('bm-payment').value = b?.payment || '';
+  document.getElementById('bm-note').value = b?.note || '';
+  document.getElementById('bm-status').value = b?.status || 'ยืนยัน';
+  depositPaid = b?.depositPaid || false;
+  updateDepositToggle();
+  document.getElementById('bm-delete-btn').style.display = id ? '' : 'none';
+
+  // Fill time select
+  const tSel = document.getElementById('bm-time');
+  tSel.innerHTML = SLOT_TIMES.map(t => `<option value="${t}" ${(b?.time||defaultTime||'11:00')===t?'selected':''}>${t}</option>`).join('');
+  document.getElementById('bm-duration').value = b?.duration || '2';
+
+  updateGCalLink();
+  document.getElementById('booking-modal').classList.add('open');
+};
+
+window.toggleDeposit = function() {
+  depositPaid = !depositPaid;
+  updateDepositToggle();
+};
+function updateDepositToggle() {
+  const el = document.getElementById('deposit-toggle');
+  el.className = 'deposit-toggle ' + (depositPaid ? 'paid' : 'unpaid');
+  document.getElementById('deposit-icon').textContent = depositPaid ? '✓' : '○';
+  document.getElementById('deposit-text').textContent = depositPaid ? '✅ ชำระมัดจำแล้ว ฿1,000' : 'ยังไม่ชำระมัดจำ';
+}
+
+function updateGCalLink() {
+  const ds = bookingDateStr(curBookingDate);
+  const time = document.getElementById('bm-time')?.value || '11:00';
+  const dur = +(document.getElementById('bm-duration')?.value || 2);
+  const name = document.getElementById('bm-name')?.value || 'ลูกค้า';
+  const svc = document.getElementById('bm-service')?.value || '';
+  const [h,m] = time.split(':').map(Number);
+  const startDt = ds.replace(/-/g,'') + 'T' + String(h).padStart(2,'0') + String(m).padStart(2,'0') + '00';
+  const endH = h + Math.floor(dur);
+  const endM = m + Math.round((dur % 1)*60);
+  const endDt = ds.replace(/-/g,'') + 'T' + String(endH).padStart(2,'0') + String(endM).padStart(2,'0') + '00';
+  const title = encodeURIComponent(`[KK] ${name} — ${svc}`);
+  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDt}/${endDt}`;
+  const link = document.getElementById('gcal-link');
+  link.href = gcalUrl;
+  link.style.display = '';
+}
+
+window.saveBooking = async function() {
+  const name = document.getElementById('bm-name').value.trim();
+  if (!name) { alert('กรุณาใส่ชื่อลูกค้า'); return; }
+  const id = editingBookingId || ('bk_' + Date.now());
+  const ds = bookingDateStr(curBookingDate);
+  const b = {
+    id, name,
+    phone: document.getElementById('bm-phone').value.trim(),
+    service: document.getElementById('bm-service').value.trim(),
+    time: document.getElementById('bm-time').value,
+    duration: +document.getElementById('bm-duration').value,
+    price: +document.getElementById('bm-price').value || 0,
+    payment: document.getElementById('bm-payment').value,
+    note: document.getElementById('bm-note').value.trim(),
+    status: document.getElementById('bm-status').value,
+    depositPaid,
+    dateStr: ds,
+    updatedAt: new Date().toISOString()
+  };
+  // Mark blocked slots
+  const startIdx = SLOT_TIMES.indexOf(b.time);
+  const slots = Math.ceil(b.duration * 2);
+  for (let i = startIdx+1; i < startIdx+slots && i < SLOT_TIMES.length; i++) {
+    b._blocked = false; // only main entry
+  }
+  await set(ref(db, bookPath(ds) + '/' + id), b);
+  bookings[id] = b;
+
+  // Sync to revenue if done
+  if (b.status === 'เสร็จแล้ว' && b.price > 0) {
+    syncBookingToRevenue(b, ds);
+  }
+
+  closeModal('booking-modal');
+  renderGrid();
+  renderDaySummary();
+  refreshCopyText();
+  fbOk('✅ บันทึกการจองแล้ว');
+};
+
+window.deleteBooking = async function() {
+  if (!editingBookingId) return;
+  if (!confirm('ลบการจองนี้?')) return;
+  const ds = bookingDateStr(curBookingDate);
+  await remove(ref(db, bookPath(ds) + '/' + editingBookingId));
+  delete bookings[editingBookingId];
+  closeModal('booking-modal');
+  renderGrid();
+  renderDaySummary();
+  refreshCopyText();
+};
+
+async function syncBookingToRevenue(b, ds) {
+  const parts = ds.split('-');
+  const adYear = parseInt(parts[0]);
+  const month = parseInt(parts[1])-1;
+  const day = parseInt(parts[2]);
+  const thYear = adYear + 543;
+  const mk = getMonthKey(month, thYear);
+  const dayPath = `kk_branch/revenue/${mk}/${day}`;
+  try {
+    const snap = await get(ref(db, dayPath));
+    const existing = snap.val() || {};
+    const existingSynced = existing._synced_bookings || [];
+    if (existingSynced.includes(b.id)) return; // already synced
+    const otherSvc = existing.other_svc || 0;
+    await set(ref(db, dayPath + '/other_svc'), otherSvc + b.price);
+    const synced = [...existingSynced, b.id];
+    await set(ref(db, dayPath + '/_synced_bookings'), synced);
+  } catch(e) { console.log('sync err', e); }
+}
+
+// Holiday modal
+window.openHolidayModal = function() {
+  const ds = bookingDateStr(curBookingDate);
+  document.getElementById('holiday-date-label').textContent = ds;
+  document.getElementById('holiday-reason').value = holidays[ds]?.reason || '';
+  document.getElementById('holiday-modal').classList.add('open');
+};
+window.saveHoliday = async function() {
+  const ds = bookingDateStr(curBookingDate);
+  const reason = document.getElementById('holiday-reason').value.trim();
+  const h = { date: ds, reason };
+  await set(ref(db, holPath(ds)), h);
+  holidays[ds] = h;
+  closeModal('holiday-modal');
+  renderGrid();
+};
+window.removeHoliday = async function() {
+  const ds = bookingDateStr(curBookingDate);
+  await remove(ref(db, holPath(ds)));
+  holidays[ds] = null;
+  closeModal('holiday-modal');
+  renderGrid();
+};
+
+// Copy text
+window.refreshCopyText = function() {
+  const d = curBookingDate;
+  const thY = d.getFullYear() + 543;
+  const dateLabel = `${DAY_TH_L[d.getDay()]}ที่ ${d.getDate()} ${MONTH_TH_L[d.getMonth()]} ${thY}`;
+  const bList = Object.values(bookings).filter(b => !b._blocked).sort((a,b) => a.time.localeCompare(b.time));
+  const done = bList.filter(b => b.status === 'เสร็จแล้ว');
+  const rev = done.reduce((s,b)=>s+(+b.price||0),0);
+  let txt = `💗 The Beauty Arts สาขาขอนแก่น\n📅 ${dateLabel}\n${'─'.repeat(28)}\n`;
+  if (bList.length === 0) { txt += '— ยังไม่มีการจองวันนี้ —'; }
+  else {
+    bList.forEach(b => {
+      const stIcon = b.status==='เสร็จแล้ว'?'✅':b.status==='กำลังทำ'?'⚙️':'📌';
+      txt += `${stIcon} ${b.time} | ${b.name}`;
+      if (b.service) txt += ` | ${b.service}`;
+      if (b.price) txt += ` | ${fmtN(b.price)}`;
+      txt += '\n';
+    });
+    txt += `${'─'.repeat(28)}\n`;
+    txt += `📊 รวม ${bList.length} นัด | เสร็จแล้ว ${done.length} | รายได้ ${fmtN(rev)}`;
+  }
+  document.getElementById('today-copy-text').value = txt;
+};
+
+window.copyText = function(id) {
+  const el = document.getElementById(id);
+  el.select();
+  document.execCommand('copy');
+  alert('คัดลอกแล้ว!');
+};
+
+window.changeDate = function(delta) {
+  curBookingDate.setDate(curBookingDate.getDate() + delta);
+  renderBookingHeader();
+  loadBookings();
+};
+window.goToday = function() {
+  curBookingDate = new Date();
+  renderBookingHeader();
+  loadBookings();
+};
+
+// ══════════════════════════════════════════════════════════
+// REVENUE SYSTEM
+// ══════════════════════════════════════════════════════════
+
+function buildServiceInputs() {
+  const cont = document.getElementById('svc-inputs');
+  cont.innerHTML = SERVICES.map(sv => `
+    <div class="svc-box">
+      <label>${sv.label}</label>
+      <input type="number" id="svc-${sv.key}" placeholder="0" oninput="calcRevSum()">
+      <div class="comm-preview" id="comm-${sv.key}">คอม: ฿0</div>
+    </div>
+  `).join('');
+}
+
+window.calcRevSum = function() {
+  let totRev = 0, totComm = 0;
+  SERVICES.forEach(sv => {
+    const v = +(document.getElementById('svc-'+sv.key)?.value||0);
+    const comm = v * COMM_RATE;
+    totRev += v; totComm += comm;
+    const el = document.getElementById('comm-'+sv.key);
+    if (el) el.textContent = `คอม: ${fmtN(comm)}`;
+  });
+  const otherRev = getOtherTotal();
+  const totExp = getExpTotal();
+  const grand = totRev + otherRev;
+  const profit = grand - totExp;
+  document.getElementById('rc-rev').textContent = fmtN(grand);
+  document.getElementById('rc-exp').textContent = fmtN(totExp);
+  document.getElementById('rc-profit').textContent = fmtN(profit);
+  document.getElementById('rc-comm').textContent = fmtN(totComm);
+};
+
+function getExpTotal() {
+  return [...document.querySelectorAll('.exp-amt')].reduce((s,el)=>s+(+el.value||0),0);
+}
+function getOtherTotal() {
+  return [...document.querySelectorAll('.other-amt')].reduce((s,el)=>s+(+el.value||0),0);
+}
+
+function getExpRows() {
+  return [...document.querySelectorAll('.exp-row')].map(row => ({
+    n: row.querySelector('.exp-name')?.value.trim()||'',
+    a: +(row.querySelector('.exp-amt')?.value||0)
+  })).filter(r=>r.n||r.a);
+}
+function getOtherRows() {
+  return [...document.querySelectorAll('.other-row')].map(row => ({
+    n: row.querySelector('.other-name')?.value.trim()||'',
+    a: +(row.querySelector('.other-amt')?.value||0)
+  })).filter(r=>r.n||r.a);
+}
+
+window.addExpRow = function(name='', amount='') {
+  const row = document.createElement('div');
+  row.className = 'exp-row';
+  row.innerHTML = `<input class="exp-name" placeholder="รายการ..." value="${name}">
+    <input class="exp-amt" type="number" placeholder="0" value="${amount}" oninput="calcRevSum()">
+    <button onclick="this.parentElement.remove();calcRevSum();" style="background:#fee2e2;border:none;border-radius:4px;padding:0 8px;cursor:pointer;font-size:13px;color:#dc2626;">✕</button>`;
+  document.getElementById('expenses-list').appendChild(row);
+};
+
+window.addOtherRow = function(name='', amount='') {
+  const row = document.createElement('div');
+  row.className = 'other-row';
+  row.innerHTML = `<input class="other-name" placeholder="รายการ..." value="${name}">
+    <input class="other-amt" type="number" placeholder="0" value="${amount}" oninput="calcRevSum()">
+    <button onclick="this.parentElement.remove();calcRevSum();" style="background:#fee2e2;border:none;border-radius:4px;padding:0 8px;cursor:pointer;font-size:13px;color:#dc2626;">✕</button>`;
+  document.getElementById('other-list').appendChild(row);
+};
+
+async function loadDayRevenue() {
+  const ds = document.getElementById('rev-date').value;
+  if (!ds) return;
+  const parts = ds.split('-');
+  const thY = parseInt(parts[0]) + 543;
+  const m = parseInt(parts[1]) - 1;
+  const d = parseInt(parts[2]);
+  const mk = getMonthKey(m, thY);
+  try {
+    const snap = await get(ref(db, `kk_branch/revenue/${mk}/${d}`));
+    const data = snap.val() || {};
+    SERVICES.forEach(sv => {
+      const el = document.getElementById('svc-'+sv.key);
+      if (el) el.value = data[sv.key] || '';
+    });
+    CHANNELS.forEach(ch => {
+      const el = document.getElementById('ch-'+ch);
+      if (el) el.value = data.channels?.[ch] || '';
+    });
+    // Expenses
+    document.getElementById('expenses-list').innerHTML = '';
+    (data.expenses||[{n:'',a:''}]).forEach(e => addExpRow(e.n, e.a||''));
+    // Other
+    document.getElementById('other-list').innerHTML = '';
+    (data.other||[{n:'',a:''}]).forEach(e => addOtherRow(e.n, e.a||''));
+    document.getElementById('day-note').value = data.note || '';
+    calcRevSum();
+  } catch(e) { console.log(e); }
+}
+window.loadDayRevenue = loadDayRevenue;
+
+window.saveDay = async function() {
+  const ds = document.getElementById('rev-date').value;
+  if (!ds) { alert('กรุณาเลือกวันที่'); return; }
+  const parts = ds.split('-');
+  const thY = parseInt(parts[0]) + 543;
+  const m = parseInt(parts[1]) - 1;
+  const d = parseInt(parts[2]);
+  const mk = getMonthKey(m, thY);
+  const svc = {};
+  SERVICES.forEach(sv => { svc[sv.key] = +(document.getElementById('svc-'+sv.key)?.value||0); });
+  const channels = {};
+  CHANNELS.forEach(ch => { channels[ch] = +(document.getElementById('ch-'+ch)?.value||0); });
+  const expenses = getExpRows();
+  const other = getOtherRows();
+  const note = document.getElementById('day-note').value.trim();
+  const data = { svc, channels, expenses, other, note, updatedAt: new Date().toISOString() };
+  try {
+    await set(ref(db, `kk_branch/revenue/${mk}/${d}`), data);
+    const msg1 = document.getElementById('save-msg');
+    const msg2 = document.getElementById('save-msg2');
+    if(msg1) { msg1.textContent='✅ บันทึกแล้ว!'; setTimeout(()=>msg1.textContent='',3000); }
+    if(msg2) { msg2.textContent='✅ บันทึกแล้ว!'; setTimeout(()=>msg2.textContent='',3000); }
+    fbOk('✅ บันทึกรายได้แล้ว');
+    // Refresh month data if same month
+    if (m === curMonth && thY === curYear) loadMonthData();
+  } catch(e) { fbErr('❌ บันทึกไม่สำเร็จ'); }
+};
+
+window.clearDay = function() {
+  if (!confirm('ล้างข้อมูลวันนี้?')) return;
+  SERVICES.forEach(sv => { const el=document.getElementById('svc-'+sv.key); if(el) el.value=''; });
+  CHANNELS.forEach(ch => { const el=document.getElementById('ch-'+ch); if(el) el.value=''; });
+  document.getElementById('expenses-list').innerHTML = '';
+  document.getElementById('other-list').innerHTML = '';
+  document.getElementById('day-note').value = '';
+  addExpRow(); addOtherRow();
+  calcRevSum();
+};
+
+// ══════════════════════════════════════════════════════════
+// MONTHLY SUMMARY
+// ══════════════════════════════════════════════════════════
+
+async function loadMonthData() {
+  const mk = getMonthKey(curMonth, curYear);
+  try {
+    const snap = await get(ref(db, `kk_branch/revenue/${mk}`));
+    let raw = snap.val() || {};
+    // handle firebase array
+    if (Array.isArray(raw)) {
+      const obj = {};
+      raw.forEach((v,i) => { if(v) obj[i] = v; });
+      raw = obj;
+    }
+    monthData[mk] = raw;
+    fbOk();
+  } catch(e) { monthData[mk] = {}; }
+  renderMonthly();
+  buildCal();
+}
+
+function getDayData(m, y, d) {
+  const mk = getMonthKey(m, y);
+  const data = monthData[mk];
+  if (!data) return {};
+  if (Array.isArray(data)) return data[d] || {};
+  return data[d] || {};
+}
+
+function renderMonthly() {
+  const mk = getMonthKey(curMonth, curYear);
+  const data = monthData[mk] || {};
+  document.getElementById('month-label').textContent = `${MONTH_TH_L[curMonth]} ${curYear}`;
+  document.getElementById('monthly-title').textContent = `สรุปรายเดือน — ${MONTH_TH_L[curMonth]} ${curYear}`;
+
+  let totRev=0, totExp=0, totOther=0, totComm=0, workDays=0;
+  const daysInMonth = new Date(curYear-543, curMonth+1, 0).getDate();
+  const tbody = document.getElementById('monthly-table-body');
+  tbody.innerHTML = '';
+
+  for (let d=1; d<=daysInMonth; d++) {
+    const dd = getDayData(curMonth, curYear, d);
+    const svcTot = getTotalSvc(dd.svc);
+    const exp = (dd.expenses||[]).reduce((s,e)=>s+(+e.a||0),0);
+    const other = (dd.other||[]).reduce((s,e)=>s+(+e.a||0),0);
+    const grand = svcTot + other;
+    const profit = grand - exp;
+    const comm = svcTot * COMM_RATE;
+    const chStr = CHANNELS.map(ch=>{
+      const v=+(dd.channels||{})[ch]||0;
+      if(!v) return '';
+      const icons={cash:'💵',transfer:'📲',tap:'📡',deposit:'🔖'};
+      return `${icons[ch]}${fmtNN(v)}`;
+    }).filter(Boolean).join(' ');
+
+    if (grand > 0 || exp > 0) {
+      workDays++;
+      totRev += grand; totExp += exp; totOther += other; totComm += comm;
+      const dt = new Date(curYear-543, curMonth, d);
+      const row = document.createElement('tr');
+      row.onclick = () => goToRevDate(d);
+      row.style.cursor = 'pointer';
+      row.innerHTML = `
+        <td>${DAY_TH[dt.getDay()]} ${d} ${MONTH_TH[curMonth]}</td>
+        <td>${fmtN(grand)}</td>
+        <td style="color:#dc2626;">${exp?fmtN(exp):'–'}</td>
+        <td style="color:#16a34a;">${other?fmtN(other):'–'}</td>
+        <td style="color:${profit>=0?'#0c4a6e':'#dc2626'}">${fmtN(profit)}</td>
+        <td style="color:var(--gold);">${fmtN(comm)}</td>
+        <td style="font-size:11px;">${chStr||'–'}</td>
+      `;
+      tbody.appendChild(row);
+    }
+  }
+
+  const totProfit = totRev - totExp;
+  document.getElementById('ms-rev').textContent = fmtN(totRev);
+  document.getElementById('ms-exp').textContent = fmtN(totExp);
+  document.getElementById('ms-profit').textContent = fmtN(totProfit);
+  document.getElementById('ms-comm').textContent = fmtN(totComm);
+  document.getElementById('ms-days').textContent = workDays + ' วัน';
+  document.getElementById('mft-rev').textContent = fmtN(totRev);
+  document.getElementById('mft-exp').textContent = fmtN(totExp);
+  document.getElementById('mft-other').textContent = fmtN(totOther);
+  document.getElementById('mft-profit').textContent = fmtN(totProfit);
+  document.getElementById('mft-comm').textContent = fmtN(totComm);
+
+  // Salary
+  document.getElementById('sal-comm').textContent = fmtN(totComm);
+  document.getElementById('sal-total').textContent = fmtN(BASE_SALARY + totComm);
+
+  // Booking stats
+  loadMonthBookings();
+}
+
+async function loadMonthBookings() {
+  // Count bookings for current month
+  let total=0, done=0, rev=0;
+  const daysInMonth = new Date(curYear-543, curMonth+1, 0).getDate();
+  for (let d=1; d<=daysInMonth; d++) {
+    const adY = curYear - 543;
+    const m = String(curMonth+1).padStart(2,'0');
+    const dd = String(d).padStart(2,'0');
+    const ds = `${adY}-${m}-${dd}`;
+    try {
+      const snap = await get(ref(db, bookPath(ds)));
+      const bks = snap.val() || {};
+      const list = Object.values(bks).filter(b=>!b._blocked);
+      total += list.length;
+      const donelist = list.filter(b=>b.status==='เสร็จแล้ว');
+      done += donelist.length;
+      rev += donelist.reduce((s,b)=>s+(+b.price||0),0);
+    } catch(e) {}
+  }
+  document.getElementById('mbk-total').textContent = total;
+  document.getElementById('mbk-done').textContent = done;
+  document.getElementById('mbk-rev').textContent = fmtN(rev);
+}
+
+function goToRevDate(d) {
+  const adY = curYear - 543;
+  const m = String(curMonth+1).padStart(2,'0');
+  const dd = String(d).padStart(2,'0');
+  document.getElementById('rev-date').value = `${adY}-${m}-${dd}`;
+  switchTab('revenue');
+  loadDayRevenue();
+}
+
+window.changeMonth = function(delta) {
+  curMonth += delta;
+  if (curMonth > 11) { curMonth = 0; curYear++; }
+  if (curMonth < 0) { curMonth = 11; curYear--; }
+  loadMonthData();
+};
+
+// ══════════════════════════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════════════════════════
+
+function buildCal() {
+  const mk = getMonthKey(calMonth, calYear);
+  const data = monthData[mk] || {};
+  document.getElementById('cal-month-label').textContent = `${MONTH_TH_L[calMonth]} ${calYear}`;
+  document.getElementById('cal-title').textContent = `ปฏิทิน — ${MONTH_TH_L[calMonth]} ${calYear}`;
+  const cal = document.getElementById('main-cal');
+  const daysInMonth = new Date(calYear-543, calMonth+1, 0).getDate();
+  const firstDay = new Date(calYear-543, calMonth, 1).getDay();
+  cal.innerHTML = DAY_TH.map((d,i) => `<div class="cal-header ${i===0?'h-sun':i===6?'h-sat':''}">${d}</div>`).join('');
+  for (let i=0; i<firstDay; i++) cal.innerHTML += `<div class="cal-day empty-day"></div>`;
+  for (let d=1; d<=daysInMonth; d++) {
+    const dt = new Date(calYear-543, calMonth, d);
+    const isSun = dt.getDay()===0, isSat = dt.getDay()===6;
+    const isToday = dt.toDateString()===new Date().toDateString();
+    const dd = data[d] || (Array.isArray(data) ? data[d] : {});
+    const svcTot = getTotalSvc(dd?.svc);
+    const exp = (dd?.expenses||[]).reduce((s,e)=>s+(+e.a||0),0);
+    const other = (dd?.other||[]).reduce((s,e)=>s+(+e.a||0),0);
+    const grand = svcTot + other;
+    const profit = grand - exp;
+    const hasData = grand>0||exp>0;
+    const cls = ['cal-day',
+      hasData?'has-data':'no-data',
+      isToday?'today-d':'',
+      isSun?'is-sun':isSat?'is-sat':''
+    ].filter(Boolean).join(' ');
+    cal.innerHTML += `<div class="${cls}" onclick="calDayClick(${d},${calMonth},${calYear})">
+      <div class="d-num">${d}</div>
+      ${grand>0?`<div class="d-rev">฿${fmtNN(grand)}</div>`:''}
+      ${exp>0?`<div class="d-exp">-฿${fmtNN(exp)}</div>`:''}
+      ${hasData?`<div class="d-profit">${fmtNN(profit)}</div>`:''}
+    </div>`;
+  }
+}
+
+window.calDayClick = function(d, m, y) {
+  const adY = y - 543;
+  const mm = String(m+1).padStart(2,'0');
+  const dd = String(d).padStart(2,'0');
+  const ds = `${adY}-${mm}-${dd}`;
+  document.getElementById('rev-date').value = ds;
+  switchTab('revenue');
+  loadDayRevenue();
+};
+
+window.changeCalMonth = function(delta) {
+  calMonth += delta;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  // Load data for this month if not loaded
+  const mk = getMonthKey(calMonth, calYear);
+  if (!monthData[mk]) {
+    get(ref(db, `kk_branch/revenue/${mk}`)).then(snap => {
+      let raw = snap.val() || {};
+      if (Array.isArray(raw)) { const obj={}; raw.forEach((v,i)=>{if(v)obj[i]=v;}); raw=obj; }
+      monthData[mk] = raw;
+      buildCal();
+    }).catch(()=>{ monthData[mk]={}; buildCal(); });
+  } else buildCal();
+};
+
+// ── Tab switcher ──
+window.switchTab = function(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const tabs = ['booking','revenue','monthly','calendar'];
+    t.classList.toggle('active', tabs[i]===tab);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('p-'+tab).classList.add('active');
+  if (tab==='monthly') { curMonth=today.getMonth(); curYear=today.getFullYear()+543; loadMonthData(); }
+  if (tab==='calendar') buildCal();
+};
+
+// ── Modal helpers ──
+window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); };
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); }));
+
+// ── Init ──
+async function init() {
+  // Set title
+  const thY = today.getFullYear() + 543;
+  document.getElementById('main-title').textContent =
+    `ระบบจองคิว & บันทึกรายได้ — ช่างไอซ์ — ${MONTH_TH_L[today.getMonth()]} ${thY}`;
+
+  // Set rev date to today
+  const adStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  document.getElementById('rev-date').value = adStr;
+
+  // Build service inputs
+  buildServiceInputs();
+  addExpRow(); addOtherRow();
+
+  // Load booking
+  renderBookingHeader();
+  await loadBookings();
+
+  // Preload month data
+  const mk = getMonthKey(curMonth, curYear);
+  try {
+    const snap = await get(ref(db, `kk_branch/revenue/${mk}`));
+    let raw = snap.val() || {};
+    if (Array.isArray(raw)) { const obj={}; raw.forEach((v,i)=>{if(v)obj[i]=v;}); raw=obj; }
+    monthData[mk] = raw;
+    fbOk();
+  } catch(e) { fbErr(); monthData[mk]={}; }
+
+  buildCal();
+  calcRevSum();
+
+  // Realtime listener for bookings
+  onValue(ref(db, bookPath(bookingDateStr(curBookingDate))), (snap) => {
+    bookings = snap.val() || {};
+    renderGrid();
+    renderDaySummary();
+    refreshCopyText();
+  });
+}
+
+init();
+</script>
+</body>
+</html>
