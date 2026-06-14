@@ -101,6 +101,8 @@ header{background:linear-gradient(135deg,#7c1d3c 0%,#b5456b 100%);color:#fff;pad
 .d-rev{font-size:10px;color:#166534;font-weight:700;background:#dcfce7;border-radius:3px;padding:1px 3px;margin-top:2px;}
 .d-exp{font-size:10px;color:#991b1b;font-weight:700;background:#fee2e2;border-radius:3px;padding:1px 3px;margin-top:2px;}
 .d-profit{font-size:10px;color:#7c1d3c;font-weight:700;background:var(--rose-pale);border-radius:3px;padding:1px 3px;margin-top:2px;}
+.d-bk{font-size:10px;color:#0369a1;font-weight:700;background:#e0f2fe;border-radius:3px;padding:1px 3px;margin-top:2px;}
+.cal-holiday{background:repeating-linear-gradient(-45deg,#fee2e2,#fee2e2 3px,#fff 3px,#fff 8px)!important;opacity:.85;}
 
 /* ─── Summary Cards ─── */
 .sum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
@@ -212,16 +214,38 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('booking')">📅 จองคิว</div>
+  <div class="tab active" onclick="switchTab('calendar')">🗓️ ปฏิทิน</div>
+  <div class="tab" onclick="switchTab('booking')">📅 จองคิว</div>
   <div class="tab" onclick="switchTab('revenue')">💰 บันทึกรายได้</div>
   <div class="tab" onclick="switchTab('monthly')">📊 สรุปรายเดือน</div>
-  <div class="tab" onclick="switchTab('calendar')">🗓️ ปฏิทิน</div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     TAB 1: BOOKING
+     TAB 1: CALENDAR (หน้าแรก)
 ══════════════════════════════════════════════════════════════ -->
-<div class="panel active" id="p-booking">
+<div class="panel active" id="p-calendar">
+<div class="container">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+    <div style="font-size:15px;font-weight:700;color:#7c1d3c;" id="cal-title">ปฏิทิน</div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn btn-outline btn-sm" onclick="changeCalMonth(-1)">‹</button>
+      <span id="cal-month-label" style="font-weight:700;color:#7c1d3c;font-size:13px;"></span>
+      <button class="btn btn-outline btn-sm" onclick="changeCalMonth(1)">›</button>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="cal-grid" id="main-cal"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TAB 2: BOOKING
+══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="p-booking">
 <div class="container">
 
   <div class="schedule-header">
@@ -307,11 +331,10 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
   <!-- Payment channels -->
   <div class="box">
     <h3>💳 ช่องทางชำระเงิน</h3>
-    <div class="channel-grid">
+    <div class="channel-grid" style="grid-template-columns:repeat(3,1fr);">
       <div class="ch-card ch-cash"><div class="ch-icon">💵</div><div class="ch-label">เงินสด</div><input type="number" id="ch-cash" placeholder="0" oninput="calcRevSum()"></div>
-      <div class="ch-card ch-transfer"><div class="ch-icon">📲</div><div class="ch-label">โอน/แม่มณี</div><input type="number" id="ch-transfer" placeholder="0" oninput="calcRevSum()"></div>
-      <div class="ch-card ch-tap"><div class="ch-icon">📡</div><div class="ch-label">Tap To Pay</div><input type="number" id="ch-tap" placeholder="0" oninput="calcRevSum()"></div>
-      <div class="ch-card ch-deposit"><div class="ch-icon">🔖</div><div class="ch-label">มัดจำ</div><input type="number" id="ch-deposit" placeholder="0" oninput="calcRevSum()"></div>
+      <div class="ch-card ch-transfer"><div class="ch-icon">📲</div><div class="ch-label">QR Code</div><input type="number" id="ch-qr" placeholder="0" oninput="calcRevSum()"></div>
+      <div class="ch-card ch-tap"><div class="ch-icon">💳</div><div class="ch-label">เครดิตการ์ด</div><input type="number" id="ch-credit" placeholder="0" oninput="calcRevSum()"></div>
     </div>
   </div>
 
@@ -424,30 +447,21 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     TAB 4: CALENDAR
-══════════════════════════════════════════════════════════════ -->
-<div class="panel" id="p-calendar">
-<div class="container">
-
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-    <div style="font-size:15px;font-weight:700;color:#7c1d3c;" id="cal-title">ปฏิทิน</div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="btn btn-outline btn-sm" onclick="changeCalMonth(-1)">‹</button>
-      <span id="cal-month-label" style="font-weight:700;color:#7c1d3c;font-size:13px;"></span>
-      <button class="btn btn-outline btn-sm" onclick="changeCalMonth(1)">›</button>
-    </div>
-  </div>
-
-  <div class="box">
-    <div class="cal-grid" id="main-cal"></div>
-  </div>
-
-</div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════════════
      MODALS
 ══════════════════════════════════════════════════════════════ -->
+
+<!-- Day Action Modal -->
+<div class="modal-overlay" id="day-action-modal">
+  <div class="modal" style="max-width:340px;text-align:center;">
+    <h3 id="dam-title">📅 เลือกการดำเนินการ</h3>
+    <p id="dam-date" style="font-size:13px;color:var(--text-mid);margin-bottom:20px;"></p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-rose" style="padding:14px;font-size:14px;" onclick="goFromCal('booking')">📅 ดูการจองคิว</button>
+      <button class="btn btn-gold" style="padding:14px;font-size:14px;" onclick="goFromCal('revenue')">💰 บันทึก / ดูรายได้</button>
+      <button class="btn btn-outline btn-sm" onclick="closeModal('day-action-modal')" style="margin-top:4px;">ยกเลิก</button>
+    </div>
+  </div>
+</div>
 
 <!-- Booking Modal -->
 <div class="modal-overlay" id="booking-modal">
@@ -494,9 +508,8 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
         <select id="bm-payment">
           <option value="">— เลือก —</option>
           <option value="เงินสด">💵 เงินสด</option>
-          <option value="โอน">📲 โอน/แม่มณี</option>
-          <option value="Tap To Pay">📡 Tap To Pay</option>
-          <option value="มัดจำ">🔖 มัดจำ</option>
+          <option value="QR Code">📲 QR Code</option>
+          <option value="เครดิตการ์ด">💳 เครดิตการ์ด</option>
         </select>
       </div>
     </div>
@@ -573,13 +586,11 @@ const SERVICES = [
   {key:'lip', label:'💋 สักปาก', icon:'💋'},
   {key:'eye', label:'👁️ สักตา', icon:'👁️'},
   {key:'laser', label:'⚡ เลเซอร์', icon:'⚡'},
-  {key:'lash', label:'👁️ ขนตา', icon:'👁️'},
-  {key:'nail', label:'💅 เล็บ', icon:'💅'},
   {key:'hair', label:'💇 ผม', icon:'💇'},
   {key:'item', label:'🛍️ ขายสินค้า', icon:'🛍️'},
   {key:'other_svc', label:'✨ บริการอื่นๆ', icon:'✨'},
 ];
-const CHANNELS = ['cash','transfer','tap','deposit'];
+const CHANNELS = ['cash','qr','credit'];
 const MONTH_TH = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 const MONTH_TH_L = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 const DAY_TH = ['อา','จ','อ','พ','พฤ','ศ','ส'];
@@ -598,6 +609,8 @@ let calYear = today.getFullYear() + 543;
 let monthData = {};
 let bookings = {};
 let holidays = {};
+let calHolidays = {};
+let calBookingCounts = {};
 let editingBookingId = null;
 let depositPaid = false;
 
@@ -1066,7 +1079,7 @@ window.saveDay = async function() {
 window.clearDay = function() {
   if (!confirm('ล้างข้อมูลวันนี้?')) return;
   SERVICES.forEach(sv => { const el=document.getElementById('svc-'+sv.key); if(el) el.value=''; });
-  CHANNELS.forEach(ch => { const el=document.getElementById('ch-'+ch); if(el) el.value=''; });
+  ['cash','qr','credit'].forEach(ch => { const el=document.getElementById('ch-'+ch); if(el) el.value=''; });
   document.getElementById('expenses-list').innerHTML = '';
   document.getElementById('other-list').innerHTML = '';
   document.getElementById('day-note').value = '';
@@ -1126,7 +1139,7 @@ function renderMonthly() {
     const chStr = CHANNELS.map(ch=>{
       const v=+(dd.channels||{})[ch]||0;
       if(!v) return '';
-      const icons={cash:'💵',transfer:'📲',tap:'📡',deposit:'🔖'};
+      const icons={cash:'💵',qr:'📲',credit:'💳'};
       return `${icons[ch]}${fmtNN(v)}`;
     }).filter(Boolean).join(' ');
 
@@ -1235,13 +1248,22 @@ function buildCal() {
     const grand = svcTot + other;
     const profit = grand - exp;
     const hasData = grand>0||exp>0;
+    // Booking count for this day
+    const adY = calYear - 543;
+    const mmStr = String(calMonth+1).padStart(2,'0');
+    const ddStr = String(d).padStart(2,'0');
+    const ds = `${adY}-${mmStr}-${ddStr}`;
+    const isHol = !!(calHolidays && calHolidays[ds.replace(/-/g,'_')]);
+    const bkCount = calBookingCounts[ds] || 0;
     const cls = ['cal-day',
-      hasData?'has-data':'no-data',
+      hasData?'has-data':'',
       isToday?'today-d':'',
-      isSun?'is-sun':isSat?'is-sat':''
+      isSun?'is-sun':isSat?'is-sat':'',
+      isHol?'cal-holiday':''
     ].filter(Boolean).join(' ');
     cal.innerHTML += `<div class="${cls}" onclick="calDayClick(${d},${calMonth},${calYear})">
-      <div class="d-num">${d}</div>
+      <div class="d-num">${d}${isHol?'<span style="font-size:9px;margin-left:2px;">🏖️</span>':''}</div>
+      ${bkCount>0?`<div class="d-bk">📅 ${bkCount}</div>`:''}
       ${grand>0?`<div class="d-rev">฿${fmtNN(grand)}</div>`:''}
       ${exp>0?`<div class="d-exp">-฿${fmtNN(exp)}</div>`:''}
       ${hasData?`<div class="d-profit">${fmtNN(profit)}</div>`:''}
@@ -1249,36 +1271,60 @@ function buildCal() {
   }
 }
 
+let _calSelectedDate = null;
+
 window.calDayClick = function(d, m, y) {
   const adY = y - 543;
   const mm = String(m+1).padStart(2,'0');
-  const dd = String(d).padStart(2,'0');
-  const ds = `${adY}-${mm}-${dd}`;
-  document.getElementById('rev-date').value = ds;
-  switchTab('revenue');
-  loadDayRevenue();
+  const dd2 = String(d).padStart(2,'0');
+  const ds = `${adY}-${mm}-${dd2}`;
+  _calSelectedDate = ds;
+  // Build label
+  const dt = new Date(adY, m, d);
+  const label = `${DAY_TH_L[dt.getDay()]}ที่ ${d} ${MONTH_TH_L[m]} ${y}`;
+  document.getElementById('dam-date').textContent = label;
+  document.getElementById('day-action-modal').classList.add('open');
+};
+
+window.goFromCal = function(dest) {
+  closeModal('day-action-modal');
+  if (!_calSelectedDate) return;
+  const parts = _calSelectedDate.split('-');
+  const adY = parseInt(parts[0]);
+  const m = parseInt(parts[1])-1;
+  const thY = adY + 543;
+  const d = parseInt(parts[2]);
+  if (dest === 'booking') {
+    curBookingDate = new Date(adY, m, d);
+    renderBookingHeader();
+    loadBookings();
+    switchTab('booking');
+  } else {
+    document.getElementById('rev-date').value = _calSelectedDate;
+    switchTab('revenue');
+    loadDayRevenue();
+  }
 };
 
 window.changeCalMonth = function(delta) {
   calMonth += delta;
   if (calMonth > 11) { calMonth = 0; calYear++; }
   if (calMonth < 0) { calMonth = 11; calYear--; }
-  // Load data for this month if not loaded
   const mk = getMonthKey(calMonth, calYear);
-  if (!monthData[mk]) {
-    get(ref(db, `kk_branch/revenue/${mk}`)).then(snap => {
-      let raw = snap.val() || {};
-      if (Array.isArray(raw)) { const obj={}; raw.forEach((v,i)=>{if(v)obj[i]=v;}); raw=obj; }
-      monthData[mk] = raw;
-      buildCal();
-    }).catch(()=>{ monthData[mk]={}; buildCal(); });
-  } else buildCal();
+  const loadRev = monthData[mk]
+    ? Promise.resolve()
+    : get(ref(db, `kk_branch/revenue/${mk}`)).then(snap => {
+        let raw = snap.val() || {};
+        if (Array.isArray(raw)) { const obj={}; raw.forEach((v,i)=>{if(v)obj[i]=v;}); raw=obj; }
+        monthData[mk] = raw;
+      }).catch(()=>{ monthData[mk]={}; });
+  loadRev.then(() => preloadCalendarData(calMonth, calYear)).then(() => buildCal());
 };
 
 // ── Tab switcher ──
 window.switchTab = function(tab) {
+  const tabs = ['calendar','booking','revenue','monthly'];
   document.querySelectorAll('.tab').forEach((t,i) => {
-    const tabs = ['booking','revenue','monthly','calendar'];
     t.classList.toggle('active', tabs[i]===tab);
   });
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -1290,6 +1336,34 @@ window.switchTab = function(tab) {
 // ── Modal helpers ──
 window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); };
 document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); }));
+
+async function preloadCalendarData(m, y) {
+  // Load holidays for month
+  const adY = y - 543;
+  try {
+    const hSnap = await get(ref(db, `kk_branch/holidays`));
+    calHolidays = hSnap.val() || {};
+  } catch(e) { calHolidays = {}; }
+
+  // Count bookings per day
+  calBookingCounts = {};
+  const daysInMonth = new Date(adY, m+1, 0).getDate();
+  // Batch: load all booking paths for the month (fire all then await)
+  const promises = [];
+  for (let d=1; d<=daysInMonth; d++) {
+    const mm = String(m+1).padStart(2,'0');
+    const dd = String(d).padStart(2,'0');
+    const ds = `${adY}-${mm}-${dd}`;
+    promises.push(
+      get(ref(db, bookPath(ds))).then(snap => {
+        const bks = snap.val() || {};
+        const count = Object.values(bks).filter(b=>!b._blocked).length;
+        if (count > 0) calBookingCounts[ds] = count;
+      }).catch(()=>{})
+    );
+  }
+  await Promise.all(promises);
+}
 
 // ── Init ──
 async function init() {
@@ -1306,11 +1380,7 @@ async function init() {
   buildServiceInputs();
   addExpRow(); addOtherRow();
 
-  // Load booking
-  renderBookingHeader();
-  await loadBookings();
-
-  // Preload month data
+  // Preload month data for revenue calendar
   const mk = getMonthKey(curMonth, curYear);
   try {
     const snap = await get(ref(db, `kk_branch/revenue/${mk}`));
@@ -1320,15 +1390,28 @@ async function init() {
     fbOk();
   } catch(e) { fbErr(); monthData[mk]={}; }
 
+  // Preload booking counts and holidays for calendar
+  await preloadCalendarData(calMonth, calYear);
+
+  // Render calendar (first tab)
   buildCal();
   calcRevSum();
 
-  // Realtime listener for bookings
+  // Load bookings for today in background
+  renderBookingHeader();
+  loadBookings();
+
+  // Realtime listener for today's bookings
   onValue(ref(db, bookPath(bookingDateStr(curBookingDate))), (snap) => {
     bookings = snap.val() || {};
     renderGrid();
     renderDaySummary();
     refreshCopyText();
+    // Update booking count badge on calendar
+    const ds = bookingDateStr(curBookingDate);
+    const count = Object.values(bookings).filter(b=>!b._blocked).length;
+    calBookingCounts[ds] = count;
+    if (document.getElementById('p-calendar').classList.contains('active')) buildCal();
   });
 }
 
@@ -1336,3 +1419,4 @@ init();
 </script>
 </body>
 </html>
+
