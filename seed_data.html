@@ -3,343 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌱 Seed Historical Data — The Beauty Arts</title>
-<style>
-body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;padding:20px;max-width:800px;margin:0 auto;}
-h1{color:#0c4a6e;font-size:18px;}
-.log{background:#1e293b;color:#e2e8f0;padding:16px;border-radius:10px;font-size:12px;font-family:monospace;height:400px;overflow-y:auto;margin:16px 0;}
-.log .ok{color:#4ade80;}.log .err{color:#f87171;}.log .info{color:#60a5fa;}.log .warn{color:#fbbf24;}
-.btn{padding:10px 24px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;margin-right:8px;}
-.btn-go{background:#0c4a6e;color:#fff;}.btn-go:hover{background:#0e7490;}
-.btn-go:disabled{background:#94a3b8;cursor:not-allowed;}
-.progress{background:#e0f2fe;border-radius:8px;height:12px;margin-bottom:16px;overflow:hidden;}
-.progress-fill{background:#0ea5e9;height:100%;transition:width .3s;width:0%;}
-.summary{background:#fff;border-radius:10px;padding:16px;margin-top:16px;border:1px solid #e0f2fe;}
-.summary h3{color:#0c4a6e;margin-bottom:8px;}
-.tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;margin:2px;}
-.tag-apr{background:#fde68a;color:#92400e;}
-.tag-may{background:#bbf7d0;color:#065f46;}
-.tag-jun{background:#bae6fd;color:#0c4a6e;}
-</style>
-</head>
-<body>
+<title>Seed Data</title>
+
+<style>body{font-family:sans-serif;background:#f0f4f8;padding:20px;max-width:700px;margin:0 auto;}
+h1{color:#0c4a6e;font-size:18px;}.log{background:#1e293b;color:#e2e8f0;padding:16px;border-radius:10px;font-size:12px;font-family:monospace;height:380px;overflow-y:auto;margin:16px 0;}
+.ok{color:#4ade80;}.err{color:#f87171;}.info{color:#60a5fa;}.bar{background:#e0f2fe;border-radius:8px;height:10px;margin-bottom:12px;overflow:hidden;}.fill{background:#0ea5e9;height:100%;transition:width .3s;width:0%;}
+.btn{padding:10px 22px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;background:#0c4a6e;color:#fff;}.btn:disabled{background:#94a3b8;cursor:not-allowed;}</style>
+</head><body>
 <h1>🌱 โหลดข้อมูลย้อนหลัง — The Beauty Arts (สาขาหลัก)</h1>
-<p style="font-size:13px;color:#475569;">โหลดข้อมูลรายได้จาก Google Sheets เข้า Firebase<br>
-<strong>เมษายน 2569</strong> (7 วันทำงาน) &nbsp;|&nbsp;
-<strong>พฤษภาคม 2569</strong> (5 วันทำงาน) &nbsp;|&nbsp;
-<strong>มิถุนายน 2569</strong> (8 วันทำงาน)
-</p>
-
-<div class="progress"><div class="progress-fill" id="pbar"></div></div>
-
-<div>
-  <button class="btn btn-go" id="btn-start" onclick="startSeed()">🚀 เริ่มโหลดข้อมูล</button>
-  <button class="btn" style="background:#f0fdf4;color:#16a34a;border:1px solid #86efac;" onclick="clearLog()">🗑️ ล้าง log</button>
-</div>
-
+<p style="font-size:13px;color:#475569;">เมษายน 2569 (7 วัน) | พฤษภาคม 2569 (5 วัน) | มิถุนายน 2569 (7 วัน)</p>
+<div class="bar"><div class="fill" id="pbar"></div></div>
+<button class="btn" id="btn" onclick="startSeed()">🚀 เริ่มโหลดข้อมูล</button>
 <div class="log" id="log"></div>
-
-<div class="summary" id="summary" style="display:none;">
-  <h3>✅ สรุปข้อมูลที่โหลด</h3>
-  <div id="summary-content"></div>
-</div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCXR3UJ3bFq1Ia_T4D4BXy08nHHBCLhgbs",
-  authDomain: "the-beauty-arts.firebaseapp.com",
-  databaseURL: "https://the-beauty-arts-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "the-beauty-arts",
-  storageBucket: "the-beauty-arts.firebasestorage.app",
-  messagingSenderId: "656894086617",
-  appId: "1:656894086617:web:f25b283061a97f4a401dc8"
-};
-
-const app = initializeApp(firebaseConfig, 'seeder');
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+const app = initializeApp({apiKey:"AIzaSyCXR3UJ3bFq1Ia_T4D4BXy08nHHBCLhgbs",authDomain:"the-beauty-arts.firebaseapp.com",databaseURL:"https://the-beauty-arts-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"the-beauty-arts",storageBucket:"the-beauty-arts.firebasestorage.app",messagingSenderId:"656894086617",appId:"1:656894086617:web:f25b283061a97f4a401dc8"},"seeder3");
 const db = getDatabase(app);
+const L=document.getElementById("log"),P=document.getElementById("pbar");
+function log(m,c=""){L.innerHTML+=`<div class="${c}">${m}</div>`;L.scrollTop=9999;}
+const DATA={"apr2569": {"3": {"svc": [{"brow": 3000, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 0, "tap": 0, "credit": 3000, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณกิ๊ฟ ดึงสีคิ้ว ฿3,000 | เจ้ต้อยรีวิว ลอกแผ่นสลายฝ้า (ฟรี)"}, "6": {"svc": [{"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 3400, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 3400, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณลูกหมู จี้ไฝ ฿3,400 + Melanin reset รอบ2 (ฟรี)"}, "11": {"svc": [{"brow": 4990, "eye": 0, "lip": 0, "lash": 0, "hair": 10000, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 4990, "transfer": 10000, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณแดง สักคิ้ว ฿4,990 (เงินสด) | คุณหมอกรวิน ฝ้ากระ+SMP ฿10,000 (QR)"}, "16": {"svc": [{"brow": 2900, "eye": 0, "lip": 4990, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 7890, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "walk-in ร้านHana: สักปาก ฿4,990 + สักคิ้ว ฿2,900"}, "17": {"svc": [{"brow": 0, "eye": 4990, "lip": 2900, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 4990, "transfer": 2900, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "ผอ.ปนัดดา สักปาก ฿2,900 (QR) | คุณดา สักขอบตา ฿4,990 (เงินสด)"}, "18": {"svc": [{"brow": 4990, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 4990, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณหนิง สักคิ้ว ฿4,990 (QR)"}, "29": {"svc": [{"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 49900, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [{"n": "คุณสุรีย์พร เรียน scalp painting&SMP", "a": 49900, "w": "อ.หญิง"}], "absent": [false, false, false, false, false], "note": "คุณสุรีย์พร0867101268 เรียน scalp painting&SMP (28-30 เม.ย.) ชำระผ่านอาจารย์หญิง"}}, "may2569": {"13": {"svc": [{"brow": 0, "eye": 4990, "lip": 4990, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 9980, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณน้อง สักขอบตา ฿4,990 | คุณแจม สักปาก ฿4,990"}, "15": {"svc": [{"brow": 0, "eye": 0, "lip": 4990, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 4990, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณวนารินทร์0957577079 สักปาก pro"}, "18": {"svc": [{"brow": 0, "eye": 0, "lip": 9900, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 9900, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณวรางคณา0935562436 แก้ปากคล้ำ"}, "24": {"svc": [{"brow": 0, "eye": 0, "lip": 4990, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 4990, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "ครูไหม สักปาก"}, "31": {"svc": [{"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 15900, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 15900, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณมนูญ0951930195 สักผม SMP 3v"}}, "jun2569": {"1": {"svc": [{"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 6900, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 6900, "transfer": 0, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [{"n": "ซื้อน้ำ", "a": 52}], "other": [], "absent": [false, false, false, false, false], "note": "คุณชินชญาดา0980973400 Scalp painting 1v"}, "5": {"svc": [{"brow": 4990, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 4990, "transfer": 0, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [{"n": "ซื้อทิชชู่", "a": 94}], "other": [], "absent": [false, false, false, false, false], "note": "คุณนาง(ตปท) สักคิ้ว"}, "6": {"svc": [{"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 6900, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 6900, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณฐิติพงศ์0909528386 สัก SMP 1v"}, "10": {"svc": [{"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 15900, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 15900, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "ทวีศักดิ์ วุฒิเวียงธรรม098-8322438 SMP 3v ใหญ่"}, "11": {"svc": [{"brow": 4990, "eye": 4990, "lip": 0, "lash": 0, "hair": 19800, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 19800, "transfer": 9980, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณสอน ฮุงเฮือง(สปป) Short cut กรอบหน้า 2v ฿19,800 | คุณดารณี สักคิ้ว ฿4,990 + เติมขอบตา ฿4,990"}, "12": {"svc": [{"brow": 0, "eye": 0, "lip": 9900, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 9900, "transfer": 0, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "กรวรรณ เจริญอาจ สักปาก over lips"}, "14": {"svc": [{"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 6900, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}, {"brow": 0, "eye": 0, "lip": 0, "lash": 0, "hair": 0, "nail": 0, "item": 0, "laser": 0, "facial": 0, "chalacol": 0}], "commR2": [0, 0, 0, 0, 0, 0], "channels": {"cash": 0, "transfer": 6900, "tap": 0, "credit": 0, "deposit": 0}, "haein": {"sadryi": 0, "henna": 0, "product": 0, "channel": "transfer"}, "expenses": [], "other": [], "absent": [false, false, false, false, false], "note": "คุณมนูญ เติมผม SMP รอบ2 + สักเพิ่ม 1v รอบข้างและด้านหลัง"}}};
 
-const logEl = document.getElementById('log');
-const pbar = document.getElementById('pbar');
-
-function log(msg, cls='') { logEl.innerHTML += `<div class="${cls}">${msg}</div>`; logEl.scrollTop=logEl.scrollHeight; }
-window.clearLog = () => { logEl.innerHTML = ''; };
-
-function makeSvc({brow=0,eye=0,lip=0,hair=0,laser=0,other_svc=0}={}) {
-  return {brow,eye,lip,hair,laser,other_svc,lash:0,nail:0,item:0,chalacol:0};
-}
-
-// ══ DATA ════════════════════════════════════════════════════════════
-
-const MONTHS_DATA = {
-
-  // ─── เมษายน 2569 ────────────────────────────────────────────────
-  apr2569: {
-    label: 'เมษายน 2569',
-    days: {
-      3:  {
-        svc: makeSvc({brow:3000}),
-        channels: {cash:3000,transfer:0,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณกิ๊ฟ ดึงสีคิ้ว (Credit card)'
-      },
-      6:  {
-        svc: makeSvc({laser:3400}),
-        channels: {cash:0,transfer:3400,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณลูกหมู จี้ไฝ + Melanin reset'
-      },
-      11: {
-        svc: makeSvc({brow:4990, hair:10000}),
-        channels: {cash:4990,transfer:10000,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณแดง สักคิ้ว ฿4,990 | คุณหมอกรวิน ฝ้ากระ+SMP ฿10,000'
-      },
-      16: {
-        svc: makeSvc({brow:2900, lip:4990}),
-        channels: {cash:0,transfer:7890,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'walk-in ร้านHana: สักปาก ฿4,990 + สักคิ้ว ฿2,900'
-      },
-      17: {
-        svc: makeSvc({eye:4990, lip:2900}),
-        channels: {cash:4990,transfer:2900,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'ผอ.ปนัดดา สักปาก ฿2,900 | คุณดา สักขอบตา ฿4,990'
-      },
-      18: {
-        svc: makeSvc({brow:4990}),
-        channels: {cash:0,transfer:4990,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณหนิง สักคิ้ว'
-      },
-      29: {
-        svc: makeSvc({other_svc:49900}),
-        channels: {cash:0,transfer:49900,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณสุรีย์พร เรียน scalp painting&SMP (28-30 เม.ย.) ชำระผ่านอาจารย์หญิง'
-      },
-    }
-  },
-
-  // ─── พฤษภาคม 2569 ───────────────────────────────────────────────
-  may2569: {
-    label: 'พฤษภาคม 2569',
-    days: {
-      13: {
-        svc: makeSvc({eye:4990, lip:4990}),
-        channels: {cash:0,transfer:9980,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณน้อง สักขอบตา ฿4,990 | คุณแจม สักปาก ฿4,990'
-      },
-      15: {
-        svc: makeSvc({lip:4990}),
-        channels: {cash:0,transfer:4990,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณวนารินทร์ สักปาก pro'
-      },
-      18: {
-        svc: makeSvc({lip:9900}),
-        channels: {cash:0,transfer:9900,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณวรางคณา แก้ปากคล้ำ'
-      },
-      24: {
-        svc: makeSvc({lip:4990}),
-        channels: {cash:0,transfer:4990,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'ครูไหม สักปาก'
-      },
-      31: {
-        svc: makeSvc({hair:15900}),
-        channels: {cash:0,transfer:15900,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณมนูญ สักผม SMP 3v'
-      },
-    }
-  },
-
-  // ─── มิถุนายน 2569 ──────────────────────────────────────────────
-  jun2569: {
-    label: 'มิถุนายน 2569',
-    days: {
-      1:  {
-        svc: makeSvc({hair:6900}),
-        channels: {cash:6900,transfer:0,tap:0,deposit:0},
-        expenses: [{n:'ซื้อน้ำ',a:52}],
-        other: [],
-        note: 'คุณชินชญาดา Scalp painting 1v'
-      },
-      5:  {
-        svc: makeSvc({brow:4990}),
-        channels: {cash:4990,transfer:0,tap:0,deposit:0},
-        expenses: [{n:'ซื้อทิชชู่',a:94}],
-        other: [],
-        note: 'คุณนาง(ตปท) สักคิ้ว'
-      },
-      6:  {
-        svc: makeSvc({hair:6900}),
-        channels: {cash:0,transfer:6900,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณฐิติพงศ์ สัก SMP 1v'
-      },
-      10: {
-        svc: makeSvc({hair:15900}),
-        channels: {cash:0,transfer:15900,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'ทวีศักดิ์ SMP 3v ใหญ่'
-      },
-      11: {
-        svc: makeSvc({brow:4990, eye:4990, hair:19800}),
-        channels: {cash:19800,transfer:9980,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณสอน ฮุงเฮือง Short cut กรอบหน้า 2v ฿19,800 | คุณดารณี สักคิ้ว ฿4,990 + เติมขอบตา ฿4,990'
-      },
-      12: {
-        svc: makeSvc({lip:9900}),
-        channels: {cash:9900,transfer:0,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'กรวรรณ สักปาก over lips'
-      },
-      14: {
-        svc: makeSvc({hair:6900}),
-        channels: {cash:0,transfer:6900,tap:0,deposit:0},
-        expenses: [],
-        other: [],
-        note: 'คุณมนูญ เติมผม SMP รอบ2 + สักเพิ่ม 1v รอบข้างและด้านหลัง'
-      },
+const LABELS={apr2569:"เมษายน 2569",may2569:"พฤษภาคม 2569",jun2569:"มิถุนายน 2569"};
+window.startSeed=async function(){
+  const btn=document.getElementById("btn");
+  btn.disabled=true; btn.textContent="โหลด...";
+  const months=Object.entries(DATA);
+  const tot=months.reduce((s,[,m])=>s+Object.keys(m).length,0);
+  let done=0,ok=0,fail=0;
+  for(const [mk,days] of months){
+    log("<span class=info>📅 "+LABELS[mk]+"</span>");
+    for(const [d,dd] of Object.entries(days)){
+      dd.updatedAt=new Date().toISOString();
+      const path=mk+"/d"+d;
+      try{
+        await set(ref(db,path),dd);
+        const sv=dd.svc.reduce((s,a)=>s+Object.values(a).reduce((x,y)=>x+y,0),0);
+        const ot=(dd.other||[]).reduce((s,e)=>s+(+e.a||0),0);
+        log("  ✓ d"+d+" — ฿"+(sv+ot).toLocaleString("th-TH")+(dd.note?" | "+dd.note:""),"ok");
+        ok++;
+      }catch(e){log("  ✗ "+path+": "+e.message,"err");fail++;}
+      done++; P.style.width=(done/tot*100)+"%";
+      await new Promise(r=>setTimeout(r,120));
     }
   }
+  P.style.width="100%";
+  log("<br><span class=info>═══ สำเร็จ "+ok+" | ล้มเหลว "+fail+" ═══</span>");
+  if(fail===0){btn.textContent="✅ โหลดสำเร็จ!";btn.style.background="#16a34a";}
+  else{btn.textContent="❌ มีข้อผิดพลาด";btn.disabled=false;}
 };
 
-// วันหยุด
-const HOLIDAYS = {
-  // เม.ย.
-  'apr2569_2025-04-02': {reason:'วันหยุด', date:'2025-04-02'},
-  'apr2569_2025-04-12': {reason:'หยุดสงกรานต์', date:'2025-04-12'},
-  'apr2569_2025-04-13': {reason:'หยุดสงกรานต์', date:'2025-04-13'},
-  'apr2569_2025-04-14': {reason:'หยุดสงกรานต์', date:'2025-04-14'},
-  'apr2569_2025-04-22': {reason:'วันหยุด', date:'2025-04-22'},
-  // พ.ค.
-  'may2569_2025-05-09': {reason:'วันหยุด', date:'2025-05-09'},
-  'may2569_2025-05-10': {reason:'วันหยุด', date:'2025-05-10'},
-  'may2569_2025-05-11': {reason:'วันหยุด', date:'2025-05-11'},
-  'may2569_2025-05-25': {reason:'วันหยุด', date:'2025-05-25'},
-  // มิ.ย.
-  'jun2569_2025-06-04': {reason:'วันหยุด', date:'2025-06-04'},
-};
-
-window.startSeed = async function() {
-  const btn = document.getElementById('btn-start');
-  btn.disabled = true;
-  btn.textContent = '⏳ กำลังโหลด...';
-
-  log('<span class="info">═══════════════════════════════════════</span>');
-  log('<span class="info">🌱 เริ่มโหลดข้อมูลย้อนหลัง</span>');
-  log('<span class="info">═══════════════════════════════════════</span>');
-
-  const allMonths = Object.entries(MONTHS_DATA);
-  let totalDays = allMonths.reduce((s,[,m])=>s+Object.keys(m.days).length,0);
-  totalDays += Object.keys(HOLIDAYS).length;
-  let done = 0;
-  let successCount = 0, failCount = 0;
-  const summaryLines = [];
-
-  // Load days
-  for (const [mk, monthObj] of allMonths) {
-    log(`<br><span class="info">📅 ${monthObj.label} (${Object.keys(monthObj.days).length} วัน)</span>`);
-    for (const [dayNum, data] of Object.entries(monthObj.days)) {
-      data.updatedAt = new Date().toISOString();
-      try {
-        await set(ref(db, `months/${mk}/${dayNum}`), data);
-        const svcTotal = Object.values(data.svc).reduce((a,b)=>a+b,0);
-        log(`  <span class="ok">✓</span> วันที่ ${String(dayNum).padStart(2,' ')} — ฿${svcTotal.toLocaleString('th-TH')} ${data.note?'('+data.note+')':''}`);
-        summaryLines.push({mk, day:dayNum, total:svcTotal, note:data.note});
-        successCount++;
-      } catch(e) {
-        log(`  <span class="err">✗</span> วันที่ ${dayNum} ERROR: ${e.message}`, 'err');
-        failCount++;
-      }
-      done++;
-      pbar.style.width = (done/totalDays*100)+'%';
-      await new Promise(r=>setTimeout(r,80)); // small delay
-    }
-  }
-
-  // Load holidays
-  log(`<br><span class="info">🏖️ วันหยุด (${Object.keys(HOLIDAYS).length} วัน)</span>`);
-  for (const [key, hol] of Object.entries(HOLIDAYS)) {
-    try {
-      const dateKey = hol.date.replace(/-/g,'_');
-      await set(ref(db, `holidays/${dateKey}`), hol);
-      log(`  <span class="ok">✓</span> ${hol.date} — ${hol.reason}`);
-      successCount++;
-    } catch(e) {
-      log(`  <span class="err">✗</span> ${key}: ${e.message}`);
-      failCount++;
-    }
-    done++;
-    pbar.style.width = (done/totalDays*100)+'%';
-    await new Promise(r=>setTimeout(r,50));
-  }
-
-  pbar.style.width = '100%';
-
-  // Summary
-  log('<br><span class="info">═══════════════════════════════════════</span>');
-  log(`<span class="${failCount===0?'ok':'warn'}">สรุป: สำเร็จ ${successCount} รายการ | ล้มเหลว ${failCount} รายการ</span>`);
-  log('<span class="info">═══════════════════════════════════════</span>');
-
-  // Show summary card
-  const totals = {apr2569:0, may2569:0, jun2569:0};
-  summaryLines.forEach(({mk,total}) => { if(totals[mk]!==undefined) totals[mk]+=total; });
-  const summaryEl = document.getElementById('summary');
-  summaryEl.style.display = 'block';
-  document.getElementById('summary-content').innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;">
-      <div style="background:#fffbeb;border-radius:8px;padding:12px;text-align:center;border:1px solid #fde68a;">
-        <div style="font-size:11px;font-weight:700;color:#92400e;">เมษายน 2569</div>
-        <div style="font-size:18px;font-weight:700;color:#92400e;">฿${totals.apr2569.toLocaleString('th-TH')}</div>
-        <div style="font-size:11px;color:#888;">7 วันทำงาน</div>
-      </div>
-      <div style="background:#f0fdf4;border-radius:8px;padding:12px;text-align:center;border:1px solid #bbf7d0;">
-        <div style="font-size:11px;font-weight:700;color:#065f46;">พฤษภาคม 2569</div>
-        <div style="font-size:18px;font-weight:700;color:#065f46;">฿${totals.may2569.toLocaleString('th-TH')}</div>
-        <div style="font-size:11px;color:#888;">5 วันทำงาน</div>
-      </div>
-      <div style="background:#e0f2fe;border-radius:8px;padding:12px;text-align:center;border:1px solid #bae6fd;">
-        <div style="font-size:11px;font-weight:700;color:#0c4a6e;">มิถุนายน 2569</div>
-        <div style="font-size:18px;font-weight:700;color:#0c4a6e;">฿${totals.jun2569.toLocaleString('th-TH')}</div>
-        <div style="font-size:11px;color:#888;">8 วันทำงาน</div>
-      </div>
-    </div>
-    <div style="font-size:13px;color:#475569;">
-      <strong>หมายเหตุ:</strong> ข้อมูลถูกบันทึกใน Firebase path <code>months/{เดือน}/{วัน}</code><br>
-      เปิด <a href="https://thebeautyarts.github.io/The-Beauty-Arts/" target="_blank" style="color:#0ea5e9;">ระบบหลัก</a> แล้วเลือกเดือนที่ต้องการดูได้เลย
-    </div>
-  `;
-
-  btn.textContent = '✅ โหลดเสร็จแล้ว';
-  btn.style.background = '#16a34a';
-};
-</script>
-</body>
-</html>
+</script></body></html>
