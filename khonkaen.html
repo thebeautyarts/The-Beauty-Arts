@@ -21,7 +21,7 @@ header{background:linear-gradient(135deg,#7c1d3c 0%,#b5456b 100%);color:#fff;pad
 .tab.active{color:#fff;border-bottom-color:var(--gold);}
 .tab:hover{color:#fff;}
 .panel{display:none;}.panel.active{display:block;}
-.container{max-width:1100px;margin:16px auto;padding:0 14px;}
+.container{max-width:1100px;margin:14px auto;padding:0 14px;}
 .btn{padding:7px 14px;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;transition:.15s;}
 .btn-rose{background:var(--rose);color:#fff;}.btn-rose:hover{background:#8c2f4e;}
 .btn-outline{background:#fff;border:1.5px solid var(--border);color:#2d1b0e;}.btn-outline:hover{border-color:var(--rose-mid);}
@@ -36,7 +36,7 @@ header{background:linear-gradient(135deg,#7c1d3c 0%,#b5456b 100%);color:#fff;pad
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* Cards */
-.sum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.sum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
 .card{background:#fff;border-radius:10px;padding:12px;box-shadow:0 2px 8px rgba(0,0,0,.07);text-align:center;border-top:3px solid var(--rose);}
 .card.green{border-top-color:#22c55e;}.card.red{border-top-color:#ef4444;}.card.gold{border-top-color:var(--gold);}
 .card .c-lbl{font-size:10px;color:#475569;text-transform:uppercase;margin-bottom:4px;font-weight:600;}
@@ -44,111 +44,55 @@ header{background:linear-gradient(135deg,#7c1d3c 0%,#b5456b 100%);color:#fff;pad
 .card.green .c-val{color:#16a34a;}.card.red .c-val{color:#dc2626;}.card.gold .c-val{color:var(--gold);}
 
 /* Box */
-.box{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:18px;margin-bottom:16px;}
+.box{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:16px;margin-bottom:14px;}
 .box h3{font-size:13px;font-weight:700;color:#7c1d3c;margin-bottom:12px;}
 .sec-label{font-size:11px;font-weight:700;color:#7c1d3c;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--rose-pale);}
 
-/* Calendar */
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+/* ── Calendar ── */
+.cal-box-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
 .cal-nav-btn{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:15px;color:var(--rose);display:flex;align-items:center;justify-content:center;}
 .cal-nav-btn:hover{background:var(--rose-pale);}
+.cal-month-lbl{font-size:15px;font-weight:700;color:#7c1d3c;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
 .cal-hdr{text-align:center;font-size:12px;font-weight:800;padding:5px 2px;color:#1e293b;}
 .cal-hdr.h-sun{color:#b91c1c;}.cal-hdr.h-sat{color:#6d28d9;}
-.cal-day{border:1.5px solid var(--border);border-radius:7px;padding:5px 4px;min-height:72px;cursor:pointer;transition:.12s;background:#fff;position:relative;}
-.cal-day:hover{filter:brightness(.95);}
-.cal-day.selected{border:2.5px solid var(--rose)!important;box-shadow:0 0 0 2px var(--rose-light);}
-.cal-day.has-data{border:2px solid var(--rose);background:var(--rose-pale);}
-.cal-day.is-holiday{background:repeating-linear-gradient(-45deg,#fee2e2,#fee2e2 3px,#fff 3px,#fff 8px)!important;}
+.cal-day{border:1.5px solid var(--border);border-radius:7px;padding:6px 5px;min-height:62px;cursor:pointer;transition:.12s;background:#fff;position:relative;display:flex;flex-direction:column;align-items:flex-start;}
+.cal-day:hover{filter:brightness(.94);transform:scale(1.02);}
+.cal-day.has-rev{border:2px solid var(--rose);background:var(--rose-pale);}
+.cal-day.is-holiday{background:repeating-linear-gradient(-45deg,#fee2e2,#fee2e2 3px,#fff 3px,#fff 8px)!important;border-color:#fca5a5;}
 .cal-day.today-d{border:2.5px solid var(--gold)!important;box-shadow:0 0 0 2px var(--gold-light);}
-.cal-day.empty-day{background:#f8f8f8;cursor:default;opacity:.2;pointer-events:none;}
+.cal-day.empty-day{background:#f8f8f8;cursor:default;opacity:.15;pointer-events:none;}
 .cal-day.is-sun{background:#fff1f1!important;border-color:#fca5a5;}
 .cal-day.is-sun .d-num{color:#b91c1c!important;}
 .cal-day.is-sat{background:#faf5ff!important;border-color:#d8b4fe;}
 .cal-day.is-sat .d-num{color:#6d28d9!important;}
-.d-num{font-weight:900;font-size:13px;color:#1e293b;margin-bottom:2px;}
-.d-rev{font-size:10px;color:#166534;font-weight:700;background:#dcfce7;border-radius:3px;padding:1px 3px;margin-top:2px;}
-.d-exp{font-size:10px;color:#991b1b;font-weight:700;background:#fee2e2;border-radius:3px;padding:1px 3px;margin-top:2px;}
-.d-profit{font-size:10px;color:#7c1d3c;font-weight:700;background:var(--rose-pale);border-radius:3px;padding:1px 3px;margin-top:2px;}
+.d-num{font-weight:900;font-size:14px;color:#1e293b;line-height:1;}
+.d-rev{font-size:10px;font-weight:700;color:#166534;background:#dcfce7;border-radius:3px;padding:1px 4px;margin-top:4px;width:100%;text-align:center;}
+.d-hol{font-size:9px;color:#dc2626;font-weight:700;margin-top:3px;}
+.d-bk{font-size:9px;color:#0369a1;font-weight:700;background:#e0f2fe;border-radius:3px;padding:1px 3px;margin-top:2px;}
 
-/* Entry form */
-.entry-wrap{border-top:3px solid var(--rose);}
-.entry-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
-.entry-date-lbl{font-size:15px;font-weight:700;color:#7c1d3c;}
-.comm-banner{background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:7px;padding:8px 12px;font-size:12px;color:var(--brown);margin-bottom:12px;}
-.comm-banner strong{color:var(--gold);}
-
-/* Holiday checkbox box */
-.holiday-box{background:#fffbeb;border:1.5px solid #fde68a;border-radius:8px;padding:12px 14px;margin-bottom:4px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
-.holiday-box .hol-chk-lbl{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:700;color:#92400e;white-space:nowrap;}
-.holiday-box input[type=checkbox]{width:18px;height:18px;accent-color:#f97316;cursor:pointer;flex-shrink:0;}
-.holiday-box .hol-reason-wrap{flex:1;min-width:180px;}
-.holiday-box .hol-reason-wrap input{width:100%;padding:6px 10px;border:1.5px solid #fde68a;border-radius:6px;font-size:12px;font-family:inherit;}
-.holiday-box .hol-reason-wrap input:focus{outline:none;border-color:#f59e0b;}
-
-/* Services */
-.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
-.svc-box{border:1px solid var(--border);border-radius:8px;padding:10px;background:var(--rose-pale);}
-.svc-box label{font-size:11px;font-weight:700;color:#7c1d3c;display:block;margin-bottom:4px;}
-.svc-box input{width:100%;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;text-align:right;}
-.svc-box input:focus{outline:none;border-color:var(--rose);}
-.svc-box .comm-prev{font-size:11px;color:#16a34a;font-weight:600;text-align:right;margin-top:4px;}
-
-/* Preview bar */
-.preview-bar{font-size:12px;color:#475569;padding:8px 12px;background:#f8fafc;border-radius:6px;margin-bottom:4px;}
-.preview-bar strong{color:#7c1d3c;}
-
-/* Channels */
-.channel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
-.ch-card{border:1px solid #ddd;border-radius:8px;padding:10px;text-align:center;}
-.ch-card .ch-icon{font-size:18px;margin-bottom:3px;}
-.ch-card .ch-label{font-size:11px;font-weight:700;margin-bottom:5px;}
-.ch-card input{width:100%;padding:5px 7px;border:1px solid #ddd;border-radius:5px;font-size:12px;text-align:right;}
-.ch-card input:focus{outline:none;border-color:var(--rose);}
-.ch-cash{border-color:#86efac;background:#f0fdf4;}
-.ch-qr{border-color:#93c5fd;background:#eff6ff;}
-.ch-credit{border-color:#c4b5fd;background:#faf5ff;}
-
-/* Exp/Other */
-.exp-other-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:4px;}
-.exp-box{border:1px solid #fee2e2;border-radius:8px;padding:12px;background:#fff5f5;}
-.exp-box h4{font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;}
-.other-box{border:1px solid #bbf7d0;border-radius:8px;padding:12px;background:#f0fdf4;}
-.other-box h4{font-size:12px;font-weight:700;color:#16a34a;margin-bottom:8px;}
-.exp-row,.other-row{display:flex;gap:6px;margin-bottom:5px;}
-.exp-row input,.other-row input{flex:1;padding:5px 7px;border:1px solid #ddd;border-radius:5px;font-size:12px;}
-.exp-row input:last-child,.other-row input:last-child{flex:0 0 85px;text-align:right;}
-.rm-btn{background:#fee2e2;border:none;border-radius:4px;padding:0 8px;cursor:pointer;font-size:12px;color:#dc2626;}
-.rm-btn:hover{background:#dc2626;color:#fff;}
-.add-btn{background:none;border:1px dashed #ddd;border-radius:5px;padding:3px 10px;font-size:11px;color:#aaa;cursor:pointer;margin-top:2px;}
-.add-btn:hover{border-color:var(--rose);color:var(--rose);}
-.add-btn.green:hover{border-color:#16a34a;color:#16a34a;}
-.note-area{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:12px;resize:vertical;min-height:60px;font-family:inherit;}
-.btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px;}
-.save-msg{font-size:12px;color:#16a34a;font-weight:600;}
-
-/* Monthly */
-.ms-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;}
+/* ── Monthly summary table ── */
+.ms-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
 .ms-card{background:#fff;border-radius:9px;padding:12px;box-shadow:0 1px 5px rgba(0,0,0,.07);text-align:center;}
 .ms-card .ms-lbl{font-size:10px;color:#888;font-weight:600;text-transform:uppercase;margin-bottom:3px;}
 .ms-card .ms-val{font-size:15px;font-weight:700;color:#7c1d3c;}
 .ms-card.green .ms-val{color:#16a34a;}.ms-card.red .ms-val{color:#dc2626;}.ms-card.gold .ms-val{color:var(--gold);}
-.salary-box{background:var(--gold-pale);border:1.5px solid var(--gold-light);border-radius:10px;padding:14px;margin-bottom:16px;}
+.salary-box{background:var(--gold-pale);border:1.5px solid var(--gold-light);border-radius:10px;padding:14px;margin-bottom:14px;}
 .salary-box h4{font-size:13px;font-weight:700;color:var(--brown);margin-bottom:10px;}
 .salary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
 .s-field label{font-size:11px;font-weight:600;color:#6b4226;display:block;margin-bottom:3px;}
 .s-field .s-val{font-size:15px;font-weight:700;color:var(--brown);}
-.table-wrap{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);overflow:hidden;margin-bottom:16px;overflow-x:auto;}
+.table-wrap{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);overflow:hidden;margin-bottom:14px;overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:12px;}
 thead th{background:#7c1d3c;color:#fff;padding:9px 8px;text-align:center;white-space:nowrap;}
 thead th:first-child{text-align:left;padding-left:14px;}
 tbody tr:nth-child(even){background:#fdf6f0;}
-tbody tr:hover{background:var(--rose-pale);cursor:pointer;}
+tbody tr:hover{background:var(--rose-pale);}
 td{padding:8px;text-align:right;border-bottom:1px solid var(--border);color:#1e293b;white-space:nowrap;}
 td:first-child{text-align:left;padding-left:14px;font-weight:600;}
 tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3c;color:#7c1d3c;}
 
-/* Booking */
+/* ── Booking / Daily tab ── */
 .bk-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
 .date-nav{display:flex;align-items:center;gap:10px;}
 .dn-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:16px;color:var(--rose);display:flex;align-items:center;justify-content:center;}
@@ -174,9 +118,72 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 .bc-status{display:inline-block;padding:1px 6px;border-radius:10px;font-size:9px;font-weight:700;margin-top:2px;}
 .st-confirm{background:#fff3cd;color:#856404;}.st-doing{background:#cff4fc;color:#0a5068;}.st-done{background:#d1e7dd;color:#0a3622;}
 .bc-amt{font-size:10px;font-weight:700;color:var(--gold);}
+
+/* Daily entry */
+.entry-wrap{border-top:3px solid var(--rose);margin-top:14px;}
+.entry-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.entry-date-lbl{font-size:14px;font-weight:700;color:#7c1d3c;}
+.comm-banner{background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:7px;padding:8px 12px;font-size:12px;color:var(--brown);margin-bottom:12px;}
+.comm-banner strong{color:var(--gold);}
+.holiday-box{background:#fffbeb;border:1.5px solid #fde68a;border-radius:8px;padding:12px 14px;margin-bottom:4px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.hol-chk-lbl{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:700;color:#92400e;white-space:nowrap;}
+.hol-chk-lbl input[type=checkbox]{width:18px;height:18px;accent-color:#f97316;cursor:pointer;}
+.hol-reason-wrap{flex:1;min-width:180px;}
+.hol-reason-wrap input{width:100%;padding:6px 10px;border:1.5px solid #fde68a;border-radius:6px;font-size:12px;font-family:inherit;}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
+.svc-box{border:1px solid var(--border);border-radius:8px;padding:10px;background:var(--rose-pale);}
+.svc-box label{font-size:11px;font-weight:700;color:#7c1d3c;display:block;margin-bottom:4px;}
+.svc-box input{width:100%;padding:6px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;text-align:right;}
+.svc-box input:focus{outline:none;border-color:var(--rose);}
+.svc-box .comm-prev{font-size:11px;color:#16a34a;font-weight:600;text-align:right;margin-top:4px;}
+.preview-bar{font-size:12px;color:#475569;padding:8px 12px;background:#f8fafc;border-radius:6px;margin:8px 0;}
+.preview-bar strong{color:#7c1d3c;}
+.channel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:4px;}
+.ch-card{border:1px solid #ddd;border-radius:8px;padding:10px;text-align:center;}
+.ch-card .ch-icon{font-size:18px;margin-bottom:3px;}
+.ch-card .ch-label{font-size:11px;font-weight:700;margin-bottom:5px;}
+.ch-card input{width:100%;padding:5px 7px;border:1px solid #ddd;border-radius:5px;font-size:12px;text-align:right;}
+.ch-card input:focus{outline:none;border-color:var(--rose);}
+.ch-cash{border-color:#86efac;background:#f0fdf4;}
+.ch-qr{border-color:#93c5fd;background:#eff6ff;}
+.ch-credit{border-color:#c4b5fd;background:#faf5ff;}
+.exp-other-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;}
+.exp-box{border:1px solid #fee2e2;border-radius:8px;padding:12px;background:#fff5f5;}
+.exp-box h4{font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;}
+.other-box{border:1px solid #bbf7d0;border-radius:8px;padding:12px;background:#f0fdf4;}
+.other-box h4{font-size:12px;font-weight:700;color:#16a34a;margin-bottom:8px;}
+.exp-row,.other-row{display:flex;gap:6px;margin-bottom:5px;}
+.exp-row input,.other-row input{flex:1;padding:5px 7px;border:1px solid #ddd;border-radius:5px;font-size:12px;}
+.exp-row input:last-child,.other-row input:last-child{flex:0 0 85px;text-align:right;}
+.rm-btn{background:#fee2e2;border:none;border-radius:4px;padding:0 8px;cursor:pointer;font-size:12px;color:#dc2626;}
+.rm-btn:hover{background:#dc2626;color:#fff;}
+.add-btn{background:none;border:1px dashed #ddd;border-radius:5px;padding:3px 10px;font-size:11px;color:#aaa;cursor:pointer;margin-top:2px;}
+.add-btn:hover{border-color:var(--rose);color:var(--rose);}
+.add-btn.green:hover{border-color:#16a34a;color:#16a34a;}
+.note-area{width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:12px;resize:vertical;min-height:60px;font-family:inherit;}
+.btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;}
+.save-msg{font-size:12px;color:#16a34a;font-weight:600;}
+
+/* Copy panel */
 .copy-panel{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:14px;margin-top:12px;}
 .copy-panel h3{font-size:13px;font-weight:700;color:#7c1d3c;margin-bottom:8px;}
-.copy-text{width:100%;min-height:140px;padding:10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf6f0;}
+.copy-text{width:100%;min-height:130px;padding:10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf6f0;}
+
+/* Yearly */
+.yr-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.yr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.yr-card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.07);cursor:pointer;transition:.12s;border-top:3px solid var(--border);}
+.yr-card:hover{border-top-color:var(--rose);filter:brightness(.97);}
+.yr-card.has-rev{border-top-color:var(--rose);}
+.yr-card .yr-month{font-size:12px;font-weight:700;color:var(--text-mid);margin-bottom:6px;}
+.yr-card .yr-rev{font-size:16px;font-weight:700;color:#7c1d3c;}
+.yr-card .yr-exp{font-size:11px;color:#dc2626;margin-top:2px;}
+.yr-card .yr-profit{font-size:11px;color:#16a34a;font-weight:600;margin-top:2px;}
+.yr-card .yr-comm{font-size:11px;color:var(--gold);font-weight:600;margin-top:2px;}
+.yr-sum-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.yr-salary-box{background:var(--gold-pale);border:1.5px solid var(--gold-light);border-radius:10px;padding:14px;margin-bottom:14px;}
+.yr-salary-box h4{font-size:13px;font-weight:700;color:var(--brown);margin-bottom:10px;}
+.yr-salary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
 
 /* Modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:16px;}
@@ -196,12 +203,12 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 .gcal-link:hover{text-decoration:underline;}
 
 @media(max-width:768px){
-  .svc-grid{grid-template-columns:repeat(2,1fr);}
+  .svc-grid,.yr-grid{grid-template-columns:repeat(2,1fr);}
   .channel-grid{grid-template-columns:1fr 1fr;}
   .exp-other-grid{grid-template-columns:1fr;}
   .sum-row,.ms-grid{grid-template-columns:repeat(2,1fr);}
-  .salary-grid{grid-template-columns:repeat(2,1fr);}
-  .bk-day-sum{grid-template-columns:repeat(2,1fr);}
+  .salary-grid,.yr-salary-grid{grid-template-columns:repeat(2,1fr);}
+  .bk-day-sum,.yr-sum-row{grid-template-columns:repeat(2,1fr);}
   header h1{font-size:14px;}
 }
 </style>
@@ -222,37 +229,119 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('entry')">📝 บันทึกรายได้</div>
-  <div class="tab" onclick="switchTab('booking')">📅 จองคิว</div>
-  <div class="tab" onclick="switchTab('monthly')">📊 สรุปรายเดือน</div>
+  <div class="tab active" onclick="switchTab('cal')">🗓️ ปฏิทิน</div>
+  <div class="tab" onclick="switchTab('booking')">📅 จองคิว & บันทึกรายได้</div>
+  <div class="tab" onclick="switchTab('yearly')">📈 สรุปรายปี</div>
 </div>
 
-<!-- ══ TAB 1: บันทึกรายได้ (ปฏิทิน + ฟอร์ม) ══ -->
-<div class="panel active" id="p-entry">
+<!-- ═══════════════════════════════════════════════════════
+     TAB 1: ปฏิทิน + สรุปรายเดือน
+═══════════════════════════════════════════════════════ -->
+<div class="panel active" id="p-cal">
 <div class="container">
 
-  <div class="sum-row">
-    <div class="card"><div class="c-lbl">รายรับเดือนนี้</div><div class="c-val" id="ec-rev">฿0</div></div>
-    <div class="card red"><div class="c-lbl">รายจ่ายเดือนนี้</div><div class="c-val" id="ec-exp">฿0</div></div>
-    <div class="card green"><div class="c-lbl">กำไรเดือนนี้</div><div class="c-val" id="ec-profit">฿0</div></div>
-    <div class="card gold"><div class="c-lbl">คอมมิชชั่นเดือนนี้</div><div class="c-val" id="ec-comm">฿0</div></div>
-  </div>
-
+  <!-- Calendar nav -->
   <div class="box">
-    <div class="cal-nav">
-      <h3 id="cal-title" style="margin:0;">📅 ปฏิทิน — คลิกวันที่เพื่อบันทึก</h3>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <button class="cal-nav-btn" onclick="changeEntryMonth(-1)">‹</button>
-        <span id="cal-month-lbl" style="font-size:14px;font-weight:700;color:#7c1d3c;"></span>
-        <button class="cal-nav-btn" onclick="changeEntryMonth(1)">›</button>
+    <div class="cal-box-nav">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="cal-nav-btn" onclick="changeCalMonth(-1)">‹</button>
+        <span class="cal-month-lbl" id="cal-month-lbl"></span>
+        <button class="cal-nav-btn" onclick="changeCalMonth(1)">›</button>
       </div>
+      <div style="font-size:11px;color:var(--text-mid);">💡 คลิกวันที่ → ไปหน้าจองคิว</div>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
   </div>
 
-  <div class="box entry-wrap" id="entry-form" style="display:none;">
+  <!-- Monthly summary cards -->
+  <div class="ms-grid">
+    <div class="ms-card"><div class="ms-lbl">รายรับรวม</div><div class="ms-val" id="ms-rev">฿0</div></div>
+    <div class="ms-card red"><div class="ms-lbl">รายจ่ายรวม</div><div class="ms-val" id="ms-exp">฿0</div></div>
+    <div class="ms-card green"><div class="ms-lbl">กำไรสุทธิ</div><div class="ms-val" id="ms-profit">฿0</div></div>
+    <div class="ms-card gold"><div class="ms-lbl">คอมมิชชั่น</div><div class="ms-val" id="ms-comm">฿0</div></div>
+    <div class="ms-card"><div class="ms-lbl">วันทำงาน</div><div class="ms-val" id="ms-days">0 วัน</div></div>
+  </div>
+
+  <!-- Salary -->
+  <div class="salary-box">
+    <h4>💰 สรุปเงินเดือน ช่างไอซ์ — <span id="ms-month-lbl"></span></h4>
+    <div class="salary-grid">
+      <div class="s-field"><label>ฐานเงินเดือน</label><div class="s-val">฿15,000</div></div>
+      <div class="s-field"><label>ค่าคอมมิชชั่น (20%)</label><div class="s-val" id="sal-comm">฿0</div></div>
+      <div class="s-field"><label>รวมรับทั้งหมด</label><div class="s-val" id="sal-total">฿15,000</div></div>
+    </div>
+  </div>
+
+  <!-- Monthly table -->
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>วัน</th><th>รายรับ</th><th>รายจ่าย</th><th>อื่นๆ</th><th>กำไร</th><th>คอม</th><th>ช่องทาง</th><th>หมายเหตุ</th>
+      </tr></thead>
+      <tbody id="ms-tbody"></tbody>
+      <tfoot><tr>
+        <td>รวม</td>
+        <td id="mft-rev">฿0</td><td id="mft-exp">฿0</td><td id="mft-oth">฿0</td>
+        <td id="mft-profit">฿0</td><td id="mft-comm">฿0</td><td></td><td></td>
+      </tr></tfoot>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 2: จองคิว + บันทึกรายได้
+═══════════════════════════════════════════════════════ -->
+<div class="panel" id="p-booking">
+<div class="container">
+
+  <!-- Date nav -->
+  <div class="bk-hdr">
+    <div class="date-nav">
+      <button class="dn-btn" onclick="changeDate(-1)">‹</button>
+      <div>
+        <div class="bk-date-lbl" id="bk-date-lbl">–</div>
+        <div class="bk-date-sub">สาขาขอนแก่น · ช่างไอซ์</div>
+      </div>
+      <button class="dn-btn" onclick="changeDate(1)">›</button>
+      <button class="today-btn" onclick="goToday()">วันนี้</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-outline btn-sm" onclick="openHolModal()">🏖️ วันหยุด</button>
+      <button class="btn btn-rose btn-sm" onclick="openBkModal()">+ จองคิว</button>
+    </div>
+  </div>
+
+  <!-- Day summary -->
+  <div class="bk-day-sum" id="bk-day-sum" style="display:none;">
+    <div class="card"><div class="c-lbl">นัดทั้งหมด</div><div class="c-val" id="bk-count">0</div></div>
+    <div class="card green"><div class="c-lbl">เสร็จแล้ว</div><div class="c-val" id="bk-done">0</div></div>
+    <div class="card gold"><div class="c-lbl">รายได้วันนี้</div><div class="c-val" id="bk-rev">฿0</div></div>
+  </div>
+
+  <!-- Booking grid -->
+  <div class="grid-wrap">
+    <div class="sch-grid" id="main-grid">
+      <div class="g-time-hdr">เวลา</div>
+      <div class="g-staff-hdr">👩‍🎨 ช่างไอซ์</div>
+    </div>
+  </div>
+
+  <!-- Copy panel -->
+  <div class="copy-panel">
+    <h3>📋 สรุปวันนี้</h3>
+    <textarea class="copy-text" id="copy-text" readonly></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn btn-outline btn-sm" onclick="copyClipboard()">📋 คัดลอก</button>
+      <button class="btn btn-outline btn-sm" onclick="refreshCopy()">🔄 รีเฟรช</button>
+    </div>
+  </div>
+
+  <!-- ── Daily Revenue Entry ── -->
+  <div class="box entry-wrap" id="entry-form">
     <div class="entry-hdr">
-      <div class="entry-date-lbl">✏️ บันทึกวันที่ <span id="sel-date-lbl">—</span></div>
+      <div class="entry-date-lbl">✏️ บันทึกรายได้ — <span id="entry-date-lbl">–</span></div>
       <div style="display:flex;gap:8px;align-items:center;">
         <button class="btn btn-rose btn-sm" onclick="saveDay()">💾 บันทึก</button>
         <button class="btn btn-outline btn-sm" onclick="clearForm()">🗑️ ล้าง</button>
@@ -260,13 +349,13 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       </div>
     </div>
 
-    <div class="comm-banner">💡 ทุกบริการ: คอมมิชชั่น <strong>20%</strong> ของยอดรับจริง &nbsp;|&nbsp; ฐานเงินเดือนช่างไอซ์ <strong>฿15,000</strong></div>
+    <div class="comm-banner">💡 ทุกบริการ: คอมมิชชั่น <strong>20%</strong> &nbsp;|&nbsp; ฐานเงินเดือนช่างไอซ์ <strong>฿15,000</strong></div>
 
-    <!-- วันหยุดช่าง -->
+    <!-- Holiday -->
     <div class="sec-label">🏖️ วันหยุดของช่างไอซ์</div>
     <div class="holiday-box">
       <label class="hol-chk-lbl">
-        <input type="checkbox" id="is-holiday" onchange="toggleHolidayForm()">
+        <input type="checkbox" id="is-holiday" onchange="toggleHolForm()">
         ช่างไอซ์หยุดวันนี้
       </label>
       <div class="hol-reason-wrap" id="hol-reason-wrap" style="display:none;">
@@ -277,11 +366,10 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
     <!-- Services -->
     <div class="sec-label">💅 รายได้ตามบริการ</div>
     <div class="svc-grid" id="svc-inputs"></div>
-
     <div class="preview-bar">
       รายรับบริการ: <strong id="prev-svc">฿0</strong> &nbsp;|&nbsp;
-      คอมมิชชั่น (20%): <strong id="prev-comm">฿0</strong> &nbsp;|&nbsp;
-      รายรับรวมทั้งหมด: <strong id="prev-total">฿0</strong>
+      คอมมิชชั่น: <strong id="prev-comm">฿0</strong> &nbsp;|&nbsp;
+      รวมทั้งหมด: <strong id="prev-total">฿0</strong>
     </div>
 
     <!-- Channels -->
@@ -292,11 +380,11 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       <div class="ch-card ch-credit"><div class="ch-icon">💳</div><div class="ch-label">เครดิตการ์ด</div><input type="number" id="ch-credit" placeholder="0" oninput="updatePreview()"></div>
     </div>
 
-    <!-- Expenses + Other -->
+    <!-- Expenses / Other -->
     <div class="sec-label">💸 รายจ่าย & รายรับอื่นๆ</div>
     <div class="exp-other-grid">
       <div class="exp-box">
-        <h4>💸 รายจ่ายประจำวัน</h4>
+        <h4>💸 รายจ่าย</h4>
         <div id="exp-list"></div>
         <button class="add-btn" onclick="addExpRow()">+ เพิ่มรายการ</button>
       </div>
@@ -309,7 +397,6 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 
     <div class="sec-label">📝 หมายเหตุ</div>
     <textarea class="note-area" id="day-note" placeholder="บันทึกเพิ่มเติม..."></textarea>
-
     <div class="btn-row">
       <button class="btn btn-rose" onclick="saveDay()">💾 บันทึกข้อมูล</button>
       <button class="btn btn-outline" onclick="clearForm()">🗑️ ล้างข้อมูล</button>
@@ -320,91 +407,54 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 </div>
 </div>
 
-<!-- ══ TAB 2: จองคิว ══ -->
-<div class="panel" id="p-booking">
+<!-- ═══════════════════════════════════════════════════════
+     TAB 3: สรุปรายปี
+═══════════════════════════════════════════════════════ -->
+<div class="panel" id="p-yearly">
 <div class="container">
 
-  <div class="bk-hdr">
-    <div class="date-nav">
-      <button class="dn-btn" onclick="changeDate(-1)">‹</button>
-      <div>
-        <div class="bk-date-lbl" id="bk-date-lbl">–</div>
-        <div class="bk-date-sub">สาขาขอนแก่น · ช่างไอซ์</div>
-      </div>
-      <button class="dn-btn" onclick="changeDate(1)">›</button>
-      <button class="today-btn" onclick="goToday()">วันนี้</button>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn btn-outline btn-sm" onclick="openHolModal()">🏖️ ตั้งวันหยุด</button>
-      <button class="btn btn-rose btn-sm" onclick="openBkModal()">+ จองคิว</button>
+  <div class="yr-nav">
+    <div style="font-size:15px;font-weight:700;color:#7c1d3c;">📈 สรุปรายปี</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="cal-nav-btn" onclick="changeYear(-1)">‹</button>
+      <span id="yr-lbl" style="font-size:15px;font-weight:700;color:#7c1d3c;"></span>
+      <button class="cal-nav-btn" onclick="changeYear(1)">›</button>
     </div>
   </div>
 
-  <div class="bk-day-sum" id="bk-day-sum" style="display:none;">
-    <div class="card"><div class="c-lbl">นัดทั้งหมด</div><div class="c-val" id="bk-count">0</div></div>
-    <div class="card green"><div class="c-lbl">เสร็จแล้ว</div><div class="c-val" id="bk-done">0</div></div>
-    <div class="card gold"><div class="c-lbl">รายได้วันนี้</div><div class="c-val" id="bk-rev">฿0</div></div>
+  <!-- Yearly summary cards -->
+  <div class="yr-sum-row">
+    <div class="card"><div class="c-lbl">รายรับทั้งปี</div><div class="c-val" id="yr-rev">฿0</div></div>
+    <div class="card red"><div class="c-lbl">รายจ่ายทั้งปี</div><div class="c-val" id="yr-exp">฿0</div></div>
+    <div class="card green"><div class="c-lbl">กำไรทั้งปี</div><div class="c-val" id="yr-profit">฿0</div></div>
+    <div class="card gold"><div class="c-lbl">คอมมิชชั่นทั้งปี</div><div class="c-val" id="yr-comm">฿0</div></div>
   </div>
 
-  <div class="grid-wrap">
-    <div class="sch-grid" id="main-grid">
-      <div class="g-time-hdr">เวลา</div>
-      <div class="g-staff-hdr">👩‍🎨 ช่างไอซ์</div>
+  <!-- Yearly salary -->
+  <div class="yr-salary-box">
+    <h4>💰 สรุปเงินเดือนรายปี — ช่างไอซ์</h4>
+    <div class="yr-salary-grid">
+      <div class="s-field"><label>ฐานเงินเดือน/ปี</label><div class="s-val" id="yr-sal-base">฿0</div></div>
+      <div class="s-field"><label>คอมมิชชั่นรวม/ปี</label><div class="s-val" id="yr-sal-comm">฿0</div></div>
+      <div class="s-field"><label>วันทำงาน</label><div class="s-val" id="yr-work-days">0 วัน</div></div>
+      <div class="s-field"><label>รวมรับทั้งปี</label><div class="s-val" id="yr-sal-total">฿0</div></div>
     </div>
   </div>
 
-  <div class="copy-panel">
-    <h3>📋 สรุปวันนี้ (คัดลอก)</h3>
-    <textarea class="copy-text" id="copy-text" readonly></textarea>
-    <div style="display:flex;gap:8px;margin-top:8px;">
-      <button class="btn btn-outline btn-sm" onclick="copyToClipboard()">📋 คัดลอก</button>
-      <button class="btn btn-outline btn-sm" onclick="refreshCopy()">🔄 รีเฟรช</button>
-    </div>
-  </div>
+  <!-- Monthly grid cards -->
+  <div class="yr-grid" id="yr-grid"></div>
 
-</div>
-</div>
-
-<!-- ══ TAB 3: สรุปรายเดือน ══ -->
-<div class="panel" id="p-monthly">
-<div class="container">
-
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-    <div style="font-size:15px;font-weight:700;color:#7c1d3c;" id="ms-title">สรุปรายเดือน</div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="btn btn-outline btn-sm" onclick="changeMonthly(-1)">‹</button>
-      <span id="ms-label" style="font-weight:700;color:#7c1d3c;font-size:13px;"></span>
-      <button class="btn btn-outline btn-sm" onclick="changeMonthly(1)">›</button>
-    </div>
-  </div>
-
-  <div class="ms-grid">
-    <div class="ms-card"><div class="ms-lbl">รายรับรวม</div><div class="ms-val" id="ms-rev">฿0</div></div>
-    <div class="ms-card red"><div class="ms-lbl">รายจ่ายรวม</div><div class="ms-val" id="ms-exp">฿0</div></div>
-    <div class="ms-card green"><div class="ms-lbl">กำไรสุทธิ</div><div class="ms-val" id="ms-profit">฿0</div></div>
-    <div class="ms-card gold"><div class="ms-lbl">คอมมิชชั่นรวม</div><div class="ms-val" id="ms-comm">฿0</div></div>
-    <div class="ms-card"><div class="ms-lbl">วันทำงาน</div><div class="ms-val" id="ms-days">0 วัน</div></div>
-  </div>
-
-  <div class="salary-box">
-    <h4>💰 สรุปเงินเดือน ช่างไอซ์</h4>
-    <div class="salary-grid">
-      <div class="s-field"><label>ฐานเงินเดือน</label><div class="s-val">฿15,000</div></div>
-      <div class="s-field"><label>ค่าคอมมิชชั่น (20%)</label><div class="s-val" id="sal-comm">฿0</div></div>
-      <div class="s-field"><label>รวมรับทั้งหมด</label><div class="s-val" id="sal-total">฿15,000</div></div>
-    </div>
-  </div>
-
+  <!-- Yearly table -->
   <div class="table-wrap">
     <table>
       <thead><tr>
-        <th>วัน</th><th>รายรับ</th><th>รายจ่าย</th><th>อื่นๆ</th><th>กำไร</th><th>คอม</th><th>ช่องทาง</th><th>หมายเหตุ</th>
+        <th>เดือน</th><th>รายรับ</th><th>รายจ่าย</th><th>กำไร</th><th>คอม</th><th>วันทำงาน</th>
       </tr></thead>
-      <tbody id="ms-tbody"></tbody>
+      <tbody id="yr-tbody"></tbody>
       <tfoot><tr>
-        <td>รวม</td>
-        <td id="mft-rev">฿0</td><td id="mft-exp">฿0</td><td id="mft-other">฿0</td>
-        <td id="mft-profit">฿0</td><td id="mft-comm">฿0</td><td></td><td></td>
+        <td>รวมทั้งปี</td>
+        <td id="yft-rev">฿0</td><td id="yft-exp">฿0</td>
+        <td id="yft-profit">฿0</td><td id="yft-comm">฿0</td><td id="yft-days">0</td>
       </tr></tfoot>
     </table>
   </div>
@@ -412,7 +462,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 </div>
 </div>
 
-<!-- ══ MODALS ══ -->
+<!-- ═══════ MODALS ═══════ -->
 <div class="modal-overlay" id="bk-modal">
   <div class="modal">
     <h3 id="bm-title">📅 จองคิว</h3>
@@ -425,12 +475,9 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       <div class="form-field"><label>เวลาเริ่ม</label><select id="bm-time"></select></div>
       <div class="form-field"><label>ระยะเวลา</label>
         <select id="bm-dur">
-          <option value="1">1 ชั่วโมง</option>
-          <option value="1.5">1.5 ชั่วโมง</option>
-          <option value="2" selected>2 ชั่วโมง</option>
-          <option value="2.5">2.5 ชั่วโมง</option>
-          <option value="3">3 ชั่วโมง</option>
-          <option value="4">4 ชั่วโมง</option>
+          <option value="1">1 ชั่วโมง</option><option value="1.5">1.5 ชั่วโมง</option>
+          <option value="2" selected>2 ชั่วโมง</option><option value="2.5">2.5 ชั่วโมง</option>
+          <option value="3">3 ชั่วโมง</option><option value="4">4 ชั่วโมง</option>
         </select>
       </div>
     </div>
@@ -469,9 +516,11 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 
 <div class="modal-overlay" id="hol-modal">
   <div class="modal">
-    <h3>🏖️ ตั้งวันหยุด (ตารางจอง)</h3>
+    <h3>🏖️ ตั้งวันหยุด</h3>
     <p style="font-size:12px;color:#888;margin-bottom:10px;">วันที่: <strong id="hol-date-lbl"></strong></p>
-    <div class="form-field"><label>สาเหตุ</label><input type="text" id="hol-reason-bk" placeholder="เช่น ลาป่วย, วันหยุดนักขัตฤกษ์..."></div>
+    <div class="form-field"><label>สาเหตุ</label>
+      <input type="text" id="hol-reason-bk" placeholder="เช่น ลาป่วย, วันหยุดนักขัตฤกษ์...">
+    </div>
     <div class="modal-btns">
       <button class="btn btn-rose" onclick="saveHol()">💾 ตั้งวันหยุด</button>
       <button class="btn btn-outline btn-sm" onclick="removeHol()" style="color:#dc2626;">🗑️ ยกเลิกวันหยุด</button>
@@ -480,6 +529,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
   </div>
 </div>
 
+<!-- ═══════ SCRIPT ═══════ -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import { getDatabase, ref, set, get, onValue, remove } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
@@ -492,9 +542,10 @@ const app = initializeApp({
   storageBucket:"the-beauty-arts.firebasestorage.app",
   messagingSenderId:"656894086617",
   appId:"1:656894086617:web:f25b283061a97f4a401dc8"
-}, 'kk');
+},'kk');
 const db = getDatabase(app);
 
+// ── Constants ──
 const BASE_SALARY = 15000, COMM = 0.20;
 const SERVICES = [
   {key:'brow',label:'🎨 สักคิ้ว'},{key:'lip',label:'💋 สักปาก'},
@@ -502,255 +553,117 @@ const SERVICES = [
   {key:'hair',label:'💇 ผม'},{key:'item',label:'🛍️ ขายสินค้า'},
   {key:'other_svc',label:'✨ บริการอื่นๆ'},
 ];
-const CHANNELS = ['cash','qr','credit'];
-const CH_ICON = {cash:'💵',qr:'📲',credit:'💳'};
-const MK = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-const ML = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-const MS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-const DS = ['อา','จ','อ','พ','พฤ','ศ','ส'];
-const DL = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+const CHANNELS=['cash','qr','credit'];
+const CH_ICON={cash:'💵',qr:'📲',credit:'💳'};
+const MKL=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+const ML=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const MS=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const DS=['อา','จ','อ','พ','พฤ','ศ','ส'];
+const DL=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
 const TIMES=[];for(let h=11;h<=20;h++){TIMES.push(`${String(h).padStart(2,'0')}:00`);if(h<20)TIMES.push(`${String(h).padStart(2,'0')}:30`);}
 
-const today = new Date();
-let eMonth=today.getMonth(), eYear=today.getFullYear()+543;
-let mMonth=today.getMonth(), mYear=today.getFullYear()+543;
-let selDay=null, selDs=null;
-let monthData={}, bookings={}, bkHols={};
+// ── State ──
+const today=new Date();
+let calMonth=today.getMonth(), calYear=today.getFullYear()+543;
+let yrYear=today.getFullYear()+543;
+let monthCache={};          // mk → {day→data}
+let bookings={}, bkHols={};
 let editBkId=null, depPaid=false;
 let curBkDate=new Date(today);
 
 const fN=n=>'฿'+Math.round(n).toLocaleString('th-TH');
 const fNN=n=>Math.round(n).toLocaleString('th-TH');
-const mkKey=(m,y)=>MK[m]+y;
+const mkKey=(m,y)=>MKL[m]+y;
+
+// ── Firebase helpers ──
 function fbOk(m){document.getElementById('fb-dot').className='fb-dot ok';document.getElementById('fb-msg').textContent=m||'✅ เชื่อมต่อสำเร็จ';document.getElementById('sync-badge').textContent='✅ ซิงค์แล้ว';}
 function fbErr(m){document.getElementById('fb-dot').className='fb-dot err';document.getElementById('fb-msg').textContent=m||'❌ ขัดข้อง';document.getElementById('sync-badge').textContent='❌ ออฟไลน์';}
 
 async function loadMonth(m,y){
   const k=mkKey(m,y);
-  if(monthData[k]) return monthData[k];
+  if(monthCache[k]) return monthCache[k];
   try{
     const s=await get(ref(db,`kk_branch/revenue/${k}`));
     let r=s.val()||{};
     if(Array.isArray(r)){const o={};r.forEach((v,i)=>{if(v)o[i]=v;});r=o;}
-    monthData[k]=r; fbOk(); return r;
-  }catch(e){fbErr();monthData[k]={};return {};}
+    monthCache[k]=r; fbOk(); return r;
+  }catch(e){fbErr();monthCache[k]={};return {};}
 }
 
-// ── CALENDAR ──
-function buildCal(){
-  const k=mkKey(eMonth,eYear), data=monthData[k]||{};
-  const lbl=`${ML[eMonth]} ${eYear}`;
+function getSvcTot(dd){return Object.values(dd.svc||{}).reduce((a,b)=>a+b,0);}
+function getExp(dd){return(dd.expenses||[]).reduce((s,e)=>s+(+e.a||0),0);}
+function getOth(dd){return(dd.other||[]).reduce((s,e)=>s+(+e.a||0),0);}
+
+// ════════════════════════════════════════════════════════
+// TAB 1: CALENDAR
+// ════════════════════════════════════════════════════════
+async function buildCal(){
+  const data=await loadMonth(calMonth,calYear);
+  const lbl=`${ML[calMonth]} ${calYear}`;
   document.getElementById('cal-month-lbl').textContent=lbl;
-  document.getElementById('cal-title').textContent=`📅 ปฏิทิน — ${lbl} · คลิกวันที่เพื่อบันทึก`;
-  const dim=new Date(eYear-543,eMonth+1,0).getDate();
-  const fd=new Date(eYear-543,eMonth,1).getDay();
+  document.getElementById('ms-month-lbl').textContent=lbl;
+  const dim=new Date(calYear-543,calMonth+1,0).getDate();
+  const fd=new Date(calYear-543,calMonth,1).getDay();
   const g=document.getElementById('cal-grid');
   g.innerHTML=DS.map((d,i)=>`<div class="cal-hdr ${i===0?'h-sun':i===6?'h-sat':''}">${d}</div>`).join('');
   for(let i=0;i<fd;i++) g.innerHTML+=`<div class="cal-day empty-day"></div>`;
   for(let d=1;d<=dim;d++){
-    const dt=new Date(eYear-543,eMonth,d);
-    const sun=dt.getDay()===0,sat=dt.getDay()===6;
+    const dt=new Date(calYear-543,calMonth,d);
+    const isSun=dt.getDay()===0,isSat=dt.getDay()===6;
     const isToday=dt.toDateString()===today.toDateString();
     const dd=data[d]||{};
-    const sv=Object.values(dd.svc||{}).reduce((a,b)=>a+b,0);
-    const exp=(dd.expenses||[]).reduce((s,e)=>s+(+e.a||0),0);
-    const oth=(dd.other||[]).reduce((s,e)=>s+(+e.a||0),0);
-    const grand=sv+oth; const profit=grand-exp;
-    const hasData=grand>0||exp>0;
-    const isHol=!!dd.is_holiday;
-    const isSel=selDay===d&&selDs&&selDs.startsWith(`${eYear-543}-${String(eMonth+1).padStart(2,'0')}`);
-    const cls=['cal-day',hasData?'has-data':'',isToday?'today-d':'',sun?'is-sun':sat?'is-sat':'',isHol?'is-holiday':'',isSel?'selected':''].filter(Boolean).join(' ');
-    g.innerHTML+=`<div class="${cls}" onclick="selectDay(${d})">
-      <div class="d-num">${d}${isHol?'<span style="font-size:9px;margin-left:2px">🏖️</span>':''}</div>
-      ${grand>0?`<div class="d-rev">฿${fNN(grand)}</div>`:''}
-      ${exp>0?`<div class="d-exp">-฿${fNN(exp)}</div>`:''}
-      ${hasData?`<div class="d-profit">${fNN(profit)}</div>`:''}
+    const sv=getSvcTot(dd),oth=getOth(dd),grand=sv+oth;
+    const isHol=!!dd.is_holiday,hasRev=grand>0;
+    const cls=['cal-day',hasRev?'has-rev':'',isToday?'today-d':'',
+      isSun?'is-sun':isSat?'is-sat':'',isHol?'is-holiday':''].filter(Boolean).join(' ');
+    g.innerHTML+=`<div class="${cls}" onclick="calDayClick(${d})">
+      <div class="d-num">${d}</div>
+      ${hasRev?`<div class="d-rev">฿${fNN(grand)}</div>`:''}
+      ${isHol&&!hasRev?`<div class="d-hol">🏖️ หยุด</div>`:''}
     </div>`;
   }
+  renderMonthlySummary(data);
 }
 
-window.selectDay=function(d){
-  selDay=d;
-  const adY=eYear-543;
-  selDs=`${adY}-${String(eMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-  const dt=new Date(adY,eMonth,d);
-  document.getElementById('sel-date-lbl').textContent=`${DL[dt.getDay()]}ที่ ${d} ${ML[eMonth]} ${eYear}`;
-  const form=document.getElementById('entry-form');
-  form.style.display='block';
-  form.scrollIntoView({behavior:'smooth',block:'start'});
-  loadDayForm();
-  buildCal();
+window.calDayClick=function(d){
+  // Set curBkDate to clicked day
+  curBkDate=new Date(calYear-543,calMonth,d);
+  switchTab('booking');
 };
 
-function loadDayForm(){
-  const k=mkKey(eMonth,eYear);
-  const dd=(monthData[k]||{})[selDay]||{};
-  SERVICES.forEach(sv=>{const el=document.getElementById('svc-'+sv.key);if(el)el.value=dd.svc?.[sv.key]||'';});
-  const isHol=!!dd.is_holiday;
-  document.getElementById('is-holiday').checked=isHol;
-  document.getElementById('hol-reason').value=dd.holiday_reason||'';
-  document.getElementById('hol-reason-wrap').style.display=isHol?'flex':'none';
-  CHANNELS.forEach(ch=>{const el=document.getElementById('ch-'+ch);if(el)el.value=dd.channels?.[ch]||'';});
-  document.getElementById('exp-list').innerHTML='';
-  (dd.expenses||[{n:'',a:''}]).forEach(e=>addExpRow(e.n,e.a||''));
-  document.getElementById('other-list').innerHTML='';
-  (dd.other||[{n:'',a:''}]).forEach(e=>addOtherRow(e.n,e.a||''));
-  document.getElementById('day-note').value=dd.note||'';
-  updatePreview();
-}
-
-window.toggleHolidayForm=function(){
-  const c=document.getElementById('is-holiday').checked;
-  document.getElementById('hol-reason-wrap').style.display=c?'flex':'none';
+window.changeCalMonth=async function(delta){
+  calMonth+=delta;
+  if(calMonth>11){calMonth=0;calYear++;}
+  if(calMonth<0){calMonth=11;calYear--;}
+  await buildCal();
 };
 
-function buildSvcInputs(){
-  document.getElementById('svc-inputs').innerHTML=SERVICES.map(sv=>`
-    <div class="svc-box">
-      <label>${sv.label}</label>
-      <input type="number" id="svc-${sv.key}" placeholder="0" oninput="updatePreview()">
-      <div class="comm-prev" id="comm-${sv.key}">คอม: ฿0</div>
-    </div>`).join('');
-}
-
-window.updatePreview=function(){
-  let sv=0,comm=0;
-  SERVICES.forEach(s=>{
-    const v=+(document.getElementById('svc-'+s.key)?.value||0);
-    const c=v*COMM; sv+=v; comm+=c;
-    const el=document.getElementById('comm-'+s.key);
-    if(el)el.textContent=`คอม: ${fN(c)}`;
-  });
-  let oth=0;
-  document.querySelectorAll('#other-list .oa').forEach(el=>oth+=(+el.value||0));
-  document.getElementById('prev-svc').textContent=fN(sv);
-  document.getElementById('prev-comm').textContent=fN(comm);
-  document.getElementById('prev-total').textContent=fN(sv+oth);
-};
-
-window.addExpRow=function(name='',amount=''){
-  const r=document.createElement('div'); r.className='exp-row';
-  r.innerHTML=`<input class="en" type="text" placeholder="รายการ..." value="${name}">
-    <input class="ea" type="number" placeholder="0" value="${amount}">
-    <button class="rm-btn" onclick="this.parentElement.remove()">✕</button>`;
-  document.getElementById('exp-list').appendChild(r);
-};
-window.addOtherRow=function(name='',amount=''){
-  const r=document.createElement('div'); r.className='other-row';
-  r.innerHTML=`<input class="on" type="text" placeholder="รายการ..." value="${name}">
-    <input class="oa" type="number" placeholder="0" value="${amount}" oninput="updatePreview()">
-    <button class="rm-btn" onclick="this.parentElement.remove();updatePreview()" style="background:#dcfce7;color:#16a34a;">✕</button>`;
-  document.getElementById('other-list').appendChild(r);
-};
-
-window.saveDay=async function(){
-  if(!selDay){alert('กรุณาเลือกวันที่จากปฏิทินก่อน');return;}
-  const svc={};
-  SERVICES.forEach(sv=>{svc[sv.key]=+(document.getElementById('svc-'+sv.key)?.value||0);});
-  const channels={};
-  CHANNELS.forEach(ch=>{channels[ch]=+(document.getElementById('ch-'+ch)?.value||0);});
-  const expenses=[...document.querySelectorAll('#exp-list .exp-row')].map(r=>({
-    n:r.querySelector('.en')?.value.trim()||'',a:+(r.querySelector('.ea')?.value||0)
-  })).filter(e=>e.n||e.a);
-  const other=[...document.querySelectorAll('#other-list .other-row')].map(r=>({
-    n:r.querySelector('.on')?.value.trim()||'',a:+(r.querySelector('.oa')?.value||0)
-  })).filter(e=>e.n||e.a);
-  const isHol=document.getElementById('is-holiday').checked;
-  const holReason=document.getElementById('hol-reason').value.trim();
-  const dayData={svc,channels,expenses,other,is_holiday:isHol,holiday_reason:holReason,
-    note:document.getElementById('day-note').value.trim(),updatedAt:new Date().toISOString()};
-  const k=mkKey(eMonth,eYear);
-  if(!monthData[k])monthData[k]={};
-  monthData[k][selDay]=dayData;
-  try{
-    await set(ref(db,`kk_branch/revenue/${k}/${selDay}`),dayData);
-    ['entry-msg','entry-msg2'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el){el.textContent='✅ บันทึกแล้ว!';setTimeout(()=>el.textContent='',3000);}
-    });
-    fbOk('✅ บันทึกแล้ว');
-    buildCal(); updateEntryCards();
-  }catch(e){fbErr('❌ บันทึกไม่สำเร็จ');}
-};
-
-window.clearForm=function(){
-  if(!confirm('ล้างข้อมูลวันนี้?'))return;
-  SERVICES.forEach(sv=>{const el=document.getElementById('svc-'+sv.key);if(el)el.value='';});
-  CHANNELS.forEach(ch=>{const el=document.getElementById('ch-'+ch);if(el)el.value='';});
-  document.getElementById('exp-list').innerHTML=''; addExpRow();
-  document.getElementById('other-list').innerHTML=''; addOtherRow();
-  document.getElementById('day-note').value='';
-  document.getElementById('is-holiday').checked=false;
-  document.getElementById('hol-reason-wrap').style.display='none';
-  document.getElementById('hol-reason').value='';
-  updatePreview();
-};
-
-function updateEntryCards(){
-  const data=monthData[mkKey(eMonth,eYear)]||{};
-  let rev=0,exp=0,comm=0;
-  Object.values(data).forEach(dd=>{
-    if(!dd||typeof dd!=='object')return;
-    const sv=Object.values(dd.svc||{}).reduce((a,b)=>a+b,0);
-    const oth=(dd.other||[]).reduce((s,e)=>s+(+e.a||0),0);
-    rev+=sv+oth; exp+=(dd.expenses||[]).reduce((s,e)=>s+(+e.a||0),0); comm+=sv*COMM;
-  });
-  document.getElementById('ec-rev').textContent=fN(rev);
-  document.getElementById('ec-exp').textContent=fN(exp);
-  document.getElementById('ec-profit').textContent=fN(rev-exp);
-  document.getElementById('ec-comm').textContent=fN(comm);
-}
-
-window.changeEntryMonth=async function(delta){
-  eMonth+=delta;
-  if(eMonth>11){eMonth=0;eYear++;}
-  if(eMonth<0){eMonth=11;eYear--;}
-  selDay=null;selDs=null;
-  document.getElementById('entry-form').style.display='none';
-  await loadMonth(eMonth,eYear);
-  buildCal(); updateEntryCards();
-};
-
-// ── MONTHLY SUMMARY ──
-window.changeMonthly=async function(delta){
-  mMonth+=delta;
-  if(mMonth>11){mMonth=0;mYear++;}
-  if(mMonth<0){mMonth=11;mYear--;}
-  await loadMonth(mMonth,mYear);
-  renderMonthly();
-};
-
-function renderMonthly(){
-  const data=monthData[mkKey(mMonth,mYear)]||{};
-  const lbl=`${ML[mMonth]} ${mYear}`;
-  document.getElementById('ms-label').textContent=lbl;
-  document.getElementById('ms-title').textContent=`สรุปรายเดือน — ${lbl}`;
-  const dim=new Date(mYear-543,mMonth+1,0).getDate();
+function renderMonthlySummary(data){
+  const dim=new Date(calYear-543,calMonth+1,0).getDate();
   let totRev=0,totExp=0,totOth=0,totComm=0,wdays=0;
   const tbody=document.getElementById('ms-tbody'); tbody.innerHTML='';
   for(let d=1;d<=dim;d++){
     const dd=data[d]||{};
-    if(!dd||typeof dd!=='object')continue;
-    const sv=Object.values(dd.svc||{}).reduce((a,b)=>a+b,0);
-    const exp=(dd.expenses||[]).reduce((s,e)=>s+(+e.a||0),0);
-    const oth=(dd.other||[]).reduce((s,e)=>s+(+e.a||0),0);
+    if(!dd||typeof dd!=='object') continue;
+    const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
     const grand=sv+oth,profit=grand-exp,comm=sv*COMM;
     const isHol=!!dd.is_holiday;
     if(grand>0||exp>0||isHol){
       if(grand>0)wdays++;
       totRev+=grand;totExp+=exp;totOth+=oth;totComm+=comm;
-      const dt=new Date(mYear-543,mMonth,d);
+      const dt=new Date(calYear-543,calMonth,d);
       const chStr=CHANNELS.map(ch=>{const v=+(dd.channels||{})[ch]||0;return v?`${CH_ICON[ch]}${fNN(v)}`:''}).filter(Boolean).join(' ');
       const row=document.createElement('tr');
-      row.onclick=()=>{switchTab('entry');eMonth=mMonth;eYear=mYear;loadMonth(eMonth,eYear).then(()=>{buildCal();updateEntryCards();setTimeout(()=>selectDay(d),250);});};
-      row.innerHTML=`<td>${DS[dt.getDay()]} ${d} ${MS[mMonth]}${isHol?' 🏖️':''}</td>
+      row.style.cursor='pointer';
+      row.onclick=()=>calDayClick(d);
+      row.innerHTML=`<td>${DS[dt.getDay()]} ${d} ${MS[calMonth]}${isHol?' 🏖️':''}</td>
         <td>${grand?fN(grand):'–'}</td>
         <td style="color:#dc2626">${exp?fN(exp):'–'}</td>
         <td style="color:#16a34a">${oth?fN(oth):'–'}</td>
         <td style="color:${profit>=0?'#0c4a6e':'#dc2626'}">${fN(profit)}</td>
         <td style="color:var(--gold)">${comm?fN(comm):'–'}</td>
         <td style="font-size:11px">${chStr||'–'}</td>
-        <td style="font-size:11px;color:#888">${dd.note||''}</td>`;
+        <td style="font-size:11px;color:#888;max-width:120px;overflow:hidden;text-overflow:ellipsis">${dd.note||''}</td>`;
       tbody.appendChild(row);
     }
   }
@@ -762,14 +675,16 @@ function renderMonthly(){
   document.getElementById('ms-days').textContent=wdays+' วัน';
   document.getElementById('mft-rev').textContent=fN(totRev);
   document.getElementById('mft-exp').textContent=fN(totExp);
-  document.getElementById('mft-other').textContent=fN(totOth);
+  document.getElementById('mft-oth').textContent=fN(totOth);
   document.getElementById('mft-profit').textContent=fN(totProfit);
   document.getElementById('mft-comm').textContent=fN(totComm);
   document.getElementById('sal-comm').textContent=fN(totComm);
   document.getElementById('sal-total').textContent=fN(BASE_SALARY+totComm);
 }
 
-// ── BOOKING ──
+// ════════════════════════════════════════════════════════
+// TAB 2: BOOKING + DAILY REVENUE
+// ════════════════════════════════════════════════════════
 function bkDs(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function bkPath(ds){return `kk_branch/bookings/${ds.replace(/-/g,'_')}`;}
 function holPath(ds){return `kk_branch/bk_holidays/${ds.replace(/-/g,'_')}`;}
@@ -777,6 +692,7 @@ function holPath(ds){return `kk_branch/bk_holidays/${ds.replace(/-/g,'_')}`;}
 function renderBkHdr(){
   const d=curBkDate,thY=d.getFullYear()+543;
   document.getElementById('bk-date-lbl').textContent=`${DL[d.getDay()]}ที่ ${d.getDate()} ${ML[d.getMonth()]} ${thY}`;
+  document.getElementById('entry-date-lbl').textContent=`${DL[d.getDay()]}ที่ ${d.getDate()} ${ML[d.getMonth()]} ${thY}`;
 }
 
 async function loadBk(){
@@ -787,6 +703,11 @@ async function loadBk(){
     fbOk();
   }catch(e){fbErr();bookings={};}
   renderGrid();renderBkSum();refreshCopy();
+  // Load revenue form for this day
+  const m=curBkDate.getMonth(),y=curBkDate.getFullYear()+543;
+  const data=await loadMonth(m,y);
+  const d=curBkDate.getDate();
+  loadDayForm(data[d]||{});
 }
 
 function renderGrid(){
@@ -824,17 +745,129 @@ function renderBkSum(){
   document.getElementById('bk-day-sum').style.display=list.length>0?'grid':'none';
 }
 
+// ── Daily Revenue Form ──
+function buildSvcInputs(){
+  document.getElementById('svc-inputs').innerHTML=SERVICES.map(sv=>`
+    <div class="svc-box">
+      <label>${sv.label}</label>
+      <input type="number" id="svc-${sv.key}" placeholder="0" oninput="updatePreview()">
+      <div class="comm-prev" id="comm-${sv.key}">คอม: ฿0</div>
+    </div>`).join('');
+}
+
+function loadDayForm(dd){
+  SERVICES.forEach(sv=>{const el=document.getElementById('svc-'+sv.key);if(el)el.value=dd.svc?.[sv.key]||'';});
+  const isHol=!!dd.is_holiday;
+  document.getElementById('is-holiday').checked=isHol;
+  document.getElementById('hol-reason').value=dd.holiday_reason||'';
+  document.getElementById('hol-reason-wrap').style.display=isHol?'flex':'none';
+  CHANNELS.forEach(ch=>{const el=document.getElementById('ch-'+ch);if(el)el.value=dd.channels?.[ch]||'';});
+  document.getElementById('exp-list').innerHTML='';
+  (dd.expenses||[{n:'',a:''}]).forEach(e=>addExpRow(e.n,e.a||''));
+  document.getElementById('other-list').innerHTML='';
+  (dd.other||[{n:'',a:''}]).forEach(e=>addOtherRow(e.n,e.a||''));
+  document.getElementById('day-note').value=dd.note||'';
+  updatePreview();
+}
+
+window.toggleHolForm=function(){
+  document.getElementById('hol-reason-wrap').style.display=document.getElementById('is-holiday').checked?'flex':'none';
+};
+
+window.updatePreview=function(){
+  let sv=0,comm=0;
+  SERVICES.forEach(s=>{
+    const v=+(document.getElementById('svc-'+s.key)?.value||0);
+    const c=v*COMM;sv+=v;comm+=c;
+    const el=document.getElementById('comm-'+s.key);if(el)el.textContent=`คอม: ${fN(c)}`;
+  });
+  let oth=0;document.querySelectorAll('#other-list .oa').forEach(el=>oth+=(+el.value||0));
+  document.getElementById('prev-svc').textContent=fN(sv);
+  document.getElementById('prev-comm').textContent=fN(comm);
+  document.getElementById('prev-total').textContent=fN(sv+oth);
+};
+
+window.addExpRow=function(name='',amount=''){
+  const r=document.createElement('div');r.className='exp-row';
+  r.innerHTML=`<input class="en" type="text" placeholder="รายการ..." value="${name}">
+    <input class="ea" type="number" placeholder="0" value="${amount}">
+    <button class="rm-btn" onclick="this.parentElement.remove()">✕</button>`;
+  document.getElementById('exp-list').appendChild(r);
+};
+window.addOtherRow=function(name='',amount=''){
+  const r=document.createElement('div');r.className='other-row';
+  r.innerHTML=`<input class="on" type="text" placeholder="รายการ..." value="${name}">
+    <input class="oa" type="number" placeholder="0" value="${amount}" oninput="updatePreview()">
+    <button class="rm-btn" onclick="this.parentElement.remove();updatePreview()" style="background:#dcfce7;color:#16a34a;">✕</button>`;
+  document.getElementById('other-list').appendChild(r);
+};
+
+window.saveDay=async function(){
+  const m=curBkDate.getMonth(),y=curBkDate.getFullYear()+543,d=curBkDate.getDate();
+  const svc={};SERVICES.forEach(sv=>{svc[sv.key]=+(document.getElementById('svc-'+sv.key)?.value||0);});
+  const channels={};CHANNELS.forEach(ch=>{channels[ch]=+(document.getElementById('ch-'+ch)?.value||0);});
+  const expenses=[...document.querySelectorAll('#exp-list .exp-row')].map(r=>({n:r.querySelector('.en')?.value.trim()||'',a:+(r.querySelector('.ea')?.value||0)})).filter(e=>e.n||e.a);
+  const other=[...document.querySelectorAll('#other-list .other-row')].map(r=>({n:r.querySelector('.on')?.value.trim()||'',a:+(r.querySelector('.oa')?.value||0)})).filter(e=>e.n||e.a);
+  const isHol=document.getElementById('is-holiday').checked;
+  const dayData={svc,channels,expenses,other,is_holiday:isHol,
+    holiday_reason:document.getElementById('hol-reason').value.trim(),
+    note:document.getElementById('day-note').value.trim(),updatedAt:new Date().toISOString()};
+  const k=mkKey(m,y);
+  if(!monthCache[k])monthCache[k]={};
+  monthCache[k][d]=dayData;
+  try{
+    await set(ref(db,`kk_branch/revenue/${k}/${d}`),dayData);
+    ['entry-msg','entry-msg2'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='✅ บันทึกแล้ว!';setTimeout(()=>el.textContent='',3000);}});
+    fbOk('✅ บันทึกแล้ว');
+    // Refresh calendar if same month
+    if(m===calMonth&&y===calYear) buildCal();
+  }catch(e){fbErr('❌ บันทึกไม่สำเร็จ');}
+};
+
+window.clearForm=function(){
+  if(!confirm('ล้างข้อมูลวันนี้?'))return;
+  SERVICES.forEach(sv=>{const el=document.getElementById('svc-'+sv.key);if(el)el.value='';});
+  CHANNELS.forEach(ch=>{const el=document.getElementById('ch-'+ch);if(el)el.value='';});
+  document.getElementById('exp-list').innerHTML='';addExpRow();
+  document.getElementById('other-list').innerHTML='';addOtherRow();
+  document.getElementById('day-note').value='';
+  document.getElementById('is-holiday').checked=false;
+  document.getElementById('hol-reason-wrap').style.display='none';
+  document.getElementById('hol-reason').value='';
+  updatePreview();
+};
+
+// Copy
+window.refreshCopy=function(){
+  const d=curBkDate,thY=d.getFullYear()+543;
+  const lbl=`${DL[d.getDay()]}ที่ ${d.getDate()} ${ML[d.getMonth()]} ${thY}`;
+  const list=Object.values(bookings).filter(b=>!b._blocked).sort((a,b)=>a.time.localeCompare(b.time));
+  const done=list.filter(b=>b.status==='เสร็จแล้ว');
+  const rev=done.reduce((s,b)=>s+(+b.price||0),0);
+  let txt=`💗 The Beauty Arts สาขาขอนแก่น\n📅 ${lbl}\n${'─'.repeat(28)}\n`;
+  if(!list.length)txt+='— ยังไม่มีการจองวันนี้ —';
+  else{
+    list.forEach(b=>{
+      const ic=b.status==='เสร็จแล้ว'?'✅':b.status==='กำลังทำ'?'⚙️':'📌';
+      txt+=`${ic} ${b.time} | ${b.name}${b.service?' | '+b.service:''}${b.price?' | '+fN(b.price):''}\n`;
+    });
+    txt+=`${'─'.repeat(28)}\n📊 ${list.length} นัด | เสร็จแล้ว ${done.length} | รายได้ ${fN(rev)}`;
+  }
+  document.getElementById('copy-text').value=txt;
+};
+window.copyClipboard=function(){const el=document.getElementById('copy-text');el.select();document.execCommand('copy');alert('คัดลอกแล้ว!');};
+
+// Booking modal
 window.openBkModal=function(id=null,defTime=null){
   editBkId=id;depPaid=false;
   const b=id?bookings[id]:null;
   document.getElementById('bm-title').textContent=id?'✏️ แก้ไขการจอง':'📅 จองคิว';
-  ['bm-name','bm-phone','bm-service','bm-note'].forEach(x=>document.getElementById(x).value=b?.[x.replace('bm-','')]||'');
   document.getElementById('bm-name').value=b?.name||'';
   document.getElementById('bm-phone').value=b?.phone||'';
   document.getElementById('bm-service').value=b?.service||'';
-  document.getElementById('bm-note').value=b?.note||'';
   document.getElementById('bm-price').value=b?.price||'';
   document.getElementById('bm-pay').value=b?.payment||'';
+  document.getElementById('bm-note').value=b?.note||'';
   document.getElementById('bm-status').value=b?.status||'ยืนยัน';
   depPaid=b?.depositPaid||false;updateDep();
   document.getElementById('bm-del').style.display=id?'':'none';
@@ -844,7 +877,6 @@ window.openBkModal=function(id=null,defTime=null){
   updateGcal();
   document.getElementById('bk-modal').classList.add('open');
 };
-
 window.toggleDep=function(){depPaid=!depPaid;updateDep();};
 function updateDep(){
   document.getElementById('dep-toggle').className='dep-toggle '+(depPaid?'paid':'unpaid');
@@ -856,7 +888,7 @@ function updateGcal(){
   const dur=+(document.getElementById('bm-dur')?.value||2);
   const name=document.getElementById('bm-name')?.value||'ลูกค้า';
   const svc=document.getElementById('bm-service')?.value||'';
-  const [h,m]=time.split(':').map(Number);
+  const[h,m]=time.split(':').map(Number);
   const s=ds.replace(/-/g,'')+'T'+String(h).padStart(2,'0')+String(m).padStart(2,'0')+'00';
   const eh=h+Math.floor(dur),em=m+Math.round((dur%1)*60);
   const e2=ds.replace(/-/g,'')+'T'+String(eh).padStart(2,'0')+String(em).padStart(2,'0')+'00';
@@ -864,7 +896,6 @@ function updateGcal(){
   link.href=`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('[KK] '+name+' — '+svc)}&dates=${s}/${e2}`;
   link.style.display='';
 }
-
 window.saveBk=async function(){
   const name=document.getElementById('bm-name').value.trim();
   if(!name){alert('กรุณาใส่ชื่อลูกค้า');return;}
@@ -883,15 +914,12 @@ window.saveBk=async function(){
   bookings[id]=b;closeModal('bk-modal');
   renderGrid();renderBkSum();refreshCopy();fbOk('✅ บันทึกการจองแล้ว');
 };
-
 window.deleteBk=async function(){
   if(!editBkId||!confirm('ลบการจองนี้?'))return;
   const ds=bkDs(curBkDate);
   await remove(ref(db,bkPath(ds)+'/'+editBkId));
-  delete bookings[editBkId];closeModal('bk-modal');
-  renderGrid();renderBkSum();refreshCopy();
+  delete bookings[editBkId];closeModal('bk-modal');renderGrid();renderBkSum();refreshCopy();
 };
-
 window.openHolModal=function(){
   const ds=bkDs(curBkDate);
   document.getElementById('hol-date-lbl').textContent=ds;
@@ -901,59 +929,98 @@ window.openHolModal=function(){
 window.saveHol=async function(){
   const ds=bkDs(curBkDate);
   const h={date:ds,reason:document.getElementById('hol-reason-bk').value.trim()};
-  await set(ref(db,holPath(ds)),h);
-  bkHols[ds]=h;closeModal('hol-modal');renderGrid();
+  await set(ref(db,holPath(ds)),h);bkHols[ds]=h;closeModal('hol-modal');renderGrid();
 };
 window.removeHol=async function(){
   const ds=bkDs(curBkDate);
-  await remove(ref(db,holPath(ds)));
-  bkHols[ds]=null;closeModal('hol-modal');renderGrid();
+  await remove(ref(db,holPath(ds)));bkHols[ds]=null;closeModal('hol-modal');renderGrid();
 };
-
-window.refreshCopy=function(){
-  const d=curBkDate,thY=d.getFullYear()+543;
-  const lbl=`${DL[d.getDay()]}ที่ ${d.getDate()} ${ML[d.getMonth()]} ${thY}`;
-  const list=Object.values(bookings).filter(b=>!b._blocked).sort((a,b)=>a.time.localeCompare(b.time));
-  const done=list.filter(b=>b.status==='เสร็จแล้ว');
-  const rev=done.reduce((s,b)=>s+(+b.price||0),0);
-  let txt=`💗 The Beauty Arts สาขาขอนแก่น\n📅 ${lbl}\n${'─'.repeat(28)}\n`;
-  if(!list.length)txt+='— ยังไม่มีการจองวันนี้ —';
-  else{
-    list.forEach(b=>{
-      const ic=b.status==='เสร็จแล้ว'?'✅':b.status==='กำลังทำ'?'⚙️':'📌';
-      txt+=`${ic} ${b.time} | ${b.name}${b.service?' | '+b.service:''}${b.price?' | '+fN(b.price):''}\n`;
-    });
-    txt+=`${'─'.repeat(28)}\n📊 ${list.length} นัด | เสร็จแล้ว ${done.length} | รายได้ ${fN(rev)}`;
-  }
-  document.getElementById('copy-text').value=txt;
-};
-window.copyToClipboard=function(){const el=document.getElementById('copy-text');el.select();document.execCommand('copy');alert('คัดลอกแล้ว!');};
-window.changeDate=function(d){curBkDate.setDate(curBkDate.getDate()+d);renderBkHdr();loadBk();};
+window.changeDate=function(delta){curBkDate.setDate(curBkDate.getDate()+delta);renderBkHdr();loadBk();};
 window.goToday=function(){curBkDate=new Date();renderBkHdr();loadBk();};
 
-// ── TAB SWITCH ──
-window.switchTab=function(tab){
-  ['entry','booking','monthly'].forEach((t,i)=>{
+// ════════════════════════════════════════════════════════
+// TAB 3: YEARLY
+// ════════════════════════════════════════════════════════
+async function buildYearly(){
+  document.getElementById('yr-lbl').textContent=`พ.ศ. ${yrYear}`;
+  let totRev=0,totExp=0,totComm=0,totWdays=0;
+  const tbody=document.getElementById('yr-tbody'); tbody.innerHTML='';
+  const grid=document.getElementById('yr-grid'); grid.innerHTML='';
+  // Load all 12 months
+  const allData=await Promise.all(MKL.map((_,m)=>loadMonth(m,yrYear)));
+  allData.forEach((data,m)=>{
+    let mRev=0,mExp=0,mOth=0,mComm=0,mWdays=0;
+    const dim=new Date(yrYear-543,m+1,0).getDate();
+    for(let d=1;d<=dim;d++){
+      const dd=data[d]||{};if(!dd||typeof dd!=='object')continue;
+      const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
+      const grand=sv+oth;
+      if(grand>0){mWdays++;}
+      mRev+=grand;mExp+=exp;mOth+=oth;mComm+=sv*COMM;
+    }
+    const mProfit=mRev-mExp;
+    totRev+=mRev;totExp+=mExp;totComm+=mComm;totWdays+=mWdays;
+    // Month card
+    const card=document.createElement('div');
+    card.className='yr-card'+(mRev>0?' has-rev':'');
+    card.innerHTML=`<div class="yr-month">${ML[m]}</div>
+      <div class="yr-rev">${mRev?fN(mRev):'—'}</div>
+      ${mExp>0?`<div class="yr-exp">-${fN(mExp)}</div>`:''}
+      ${mRev>0?`<div class="yr-profit">กำไร ${fN(mProfit)}</div>`:'' }
+      ${mComm>0?`<div class="yr-comm">คอม ${fN(mComm)}</div>`:''}`;
+    card.onclick=()=>{calMonth=m;calYear=yrYear;switchTab('cal');};
+    grid.appendChild(card);
+    // Table row
+    if(mRev>0||mExp>0){
+      const row=document.createElement('tr');
+      row.style.cursor='pointer';
+      row.onclick=()=>{calMonth=m;calYear=yrYear;switchTab('cal');};
+      row.innerHTML=`<td>${ML[m]}</td><td>${fN(mRev)}</td><td style="color:#dc2626">${mExp?fN(mExp):'–'}</td>
+        <td style="color:${mProfit>=0?'#0c4a6e':'#dc2626'}">${fN(mProfit)}</td>
+        <td style="color:var(--gold)">${mComm?fN(mComm):'–'}</td><td>${mWdays} วัน</td>`;
+      tbody.appendChild(row);
+    }
+  });
+  const totProfit=totRev-totExp;
+  const yrBase=BASE_SALARY*12;
+  document.getElementById('yr-rev').textContent=fN(totRev);
+  document.getElementById('yr-exp').textContent=fN(totExp);
+  document.getElementById('yr-profit').textContent=fN(totProfit);
+  document.getElementById('yr-comm').textContent=fN(totComm);
+  document.getElementById('yr-work-days').textContent=totWdays+' วัน';
+  document.getElementById('yr-sal-base').textContent=fN(yrBase);
+  document.getElementById('yr-sal-comm').textContent=fN(totComm);
+  document.getElementById('yr-sal-total').textContent=fN(yrBase+totComm);
+  document.getElementById('yft-rev').textContent=fN(totRev);
+  document.getElementById('yft-exp').textContent=fN(totExp);
+  document.getElementById('yft-profit').textContent=fN(totProfit);
+  document.getElementById('yft-comm').textContent=fN(totComm);
+  document.getElementById('yft-days').textContent=totWdays+' วัน';
+}
+
+window.changeYear=function(delta){yrYear+=delta;buildYearly();};
+
+// ── Tab switch ──
+window.switchTab=async function(tab){
+  ['cal','booking','yearly'].forEach((t,i)=>{
     document.querySelectorAll('.tab')[i].classList.toggle('active',t===tab);
     document.getElementById('p-'+t).classList.toggle('active',t===tab);
   });
-  if(tab==='monthly'){mMonth=eMonth;mYear=eYear;renderMonthly();}
-  if(tab==='booking'){renderBkHdr();loadBk();}
+  if(tab==='booking'){renderBkHdr();await loadBk();}
+  if(tab==='yearly'){await buildYearly();}
 };
 
 window.closeModal=id=>document.getElementById(id).classList.remove('open');
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
-// ── INIT ──
+// ── Init ──
 async function init(){
   const thY=today.getFullYear()+543;
   document.getElementById('main-sub').textContent=`ระบบบันทึกรายได้ & จองคิว · ช่างไอซ์ · ${ML[today.getMonth()]} ${thY}`;
   buildSvcInputs(); addExpRow(); addOtherRow();
-  await loadMonth(eMonth,eYear);
-  buildCal(); updateEntryCards();
-  // Auto-select today
-  if(today.getMonth()===eMonth&&today.getFullYear()+543===eYear) selectDay(today.getDate());
   renderBkHdr();
+  await buildCal();
+  // Realtime booking listener
   onValue(ref(db,bkPath(bkDs(curBkDate))),snap=>{
     bookings=snap.val()||{};
     if(document.getElementById('p-booking').classList.contains('active')){
