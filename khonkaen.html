@@ -111,6 +111,8 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 .g-slot:hover{background:var(--rose-pale);}
 .g-slot.g-holiday{background:repeating-linear-gradient(-45deg,#fee2e2,#fee2e2 4px,#fff 4px,#fff 10px);cursor:not-allowed;pointer-events:none;}
 .g-slot.g-holiday::after{content:'🏖️ วันหยุด';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:#dc2626;font-weight:700;white-space:nowrap;}
+.g-slot.g-blocked{background:linear-gradient(135deg,#fde8f0 0%,#f9d0e0 100%);cursor:not-allowed;pointer-events:none;display:flex;align-items:center;justify-content:center;}
+.g-slot.g-blocked-start{cursor:default;pointer-events:none;}
 .bk-card{background:linear-gradient(135deg,#fff0f5,#fff);border:1.5px solid var(--rose-light);border-radius:7px;padding:5px 7px;margin-bottom:3px;cursor:pointer;}
 .bk-card:hover{border-color:var(--rose);}
 .bc-name{font-size:12px;font-weight:700;color:#7c1d3c;}
@@ -470,7 +472,19 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       <div class="form-field"><label>ชื่อลูกค้า</label><input type="text" id="bm-name" placeholder="ชื่อลูกค้า"></div>
       <div class="form-field"><label>เบอร์โทร</label><input type="tel" id="bm-phone" placeholder="08x-xxx-xxxx"></div>
     </div>
-    <div class="form-field"><label>บริการ</label><input type="text" id="bm-service" placeholder="เช่น สักคิ้ว, เลเซอร์..."></div>
+    <div class="form-field"><label>บริการ</label>
+      <select id="bm-service-sel" onchange="onSvcSelChange()" style="width:100%;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;margin-bottom:6px;">
+        <option value="">— เลือกบริการ —</option>
+        <option value="สักคิ้ว">🎨 สักคิ้ว</option>
+        <option value="สักขอบตา">👁️ สักขอบตา</option>
+        <option value="สักปาก">💋 สักปาก</option>
+        <option value="สักผม">💇 สักผม (SMP)</option>
+        <option value="สลายฝ้ากระ">✨ สลายฝ้ากระ</option>
+        <option value="เลเซอร์">⚡ เลเซอร์</option>
+        <option value="อื่นๆ">📝 อื่นๆ (ระบุเอง)</option>
+      </select>
+      <input type="text" id="bm-service-other" placeholder="ระบุบริการ..." style="display:none;width:100%;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;">
+    </div>
     <div class="form-row">
       <div class="form-field"><label>เวลาเริ่ม</label><select id="bm-time"></select></div>
       <div class="form-field"><label>ระยะเวลา</label>
@@ -714,25 +728,100 @@ function renderGrid(){
   const g=document.getElementById('main-grid');
   g.innerHTML=`<div class="g-time-hdr">เวลา</div><div class="g-staff-hdr">👩‍🎨 ช่างไอซ์</div>`;
   const ds=bkDs(curBkDate),isHol=!!(bkHols[ds]);
+  const now=new Date();
+
+  // Build a map: timeSlot → booking that occupies it (either starts or spans)
+  // For each booking, mark which TIMES slots it occupies
+  const slotOwner={};   // TIMES[i] → booking obj (the one that starts there)
+  const slotBlocked={}; // TIMES[i] → true (continuation slots)
+  Object.values(bookings).forEach(b=>{
+    const si=TIMES.indexOf(b.time);
+    if(si<0) return;
+    const slots=Math.ceil((+b.duration||1)*2); // each slot = 30min
+    slotOwner[TIMES[si]]=b;
+    for(let k=1;k<slots&&si+k<TIMES.length;k++){
+      slotBlocked[TIMES[si+k]]=b; // continuation: belongs to b
+    }
+  });
+
   TIMES.forEach(time=>{
     const tc=document.createElement('div');tc.className='g-time-cell';tc.textContent=time;
     const slot=document.createElement('div');
-    const inSlot=Object.entries(bookings).filter(([,b])=>b.time===time&&!b._blocked);
-    if(isHol){slot.className='g-slot g-holiday';}
-    else{
-      slot.className='g-slot';slot.onclick=()=>openBkModal(null,time);
-      inSlot.forEach(([id,b])=>{
-        const c=document.createElement('div');c.className='bk-card';
-        const sc=b.status==='เสร็จแล้ว'?'st-done':b.status==='กำลังทำ'?'st-doing':'st-confirm';
-        c.innerHTML=`<div class="bc-name">${b.name||'–'}</div><div class="bc-svc">${b.service||'–'}</div>
-          ${b.price?`<div class="bc-amt">${fN(b.price)}</div>`:''}
-          <span class="bc-status ${sc}">${b.status||'ยืนยัน'}</span>`;
-        c.onclick=e=>{e.stopPropagation();openBkModal(id);};
-        slot.appendChild(c);
-      });
+
+    if(isHol){
+      slot.className='g-slot g-holiday';
+    } else if(slotBlocked[time]){
+      // Continuation of a booking — show as filled/blocked
+      slot.className='g-slot g-blocked';
+      slot.innerHTML=`<div style="font-size:10px;color:#b5456b;opacity:.5;">▓</div>`;
+    } else if(slotOwner[time]){
+      // Booking card starts here
+      const b=slotOwner[time];
+      slot.className='g-slot g-blocked-start';
+      const sc=b.status==='เสร็จแล้ว'?'st-done':b.status==='กำลังทำ'?'st-doing':'st-confirm';
+      // Duration label
+      const durLabel=b.duration===1?'1 ชม.':(b.duration===1.5?'1.5 ชม.':`${b.duration} ชม.`);
+      // Auto-complete countdown (only for today, only confirmed/doing)
+      let timerHtml='';
+      const bkDateStr2=b.dateStr||ds;
+      if(bkDateStr2===bkDs(now)&&b.status!=='เสร็จแล้ว'){
+        const[h,m]=b.time.split(':').map(Number);
+        const endMs=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,0).getTime()+(+b.duration||1)*3600000;
+        const diffMin=Math.round((endMs-now.getTime())/60000);
+        if(diffMin<=0){
+          timerHtml=`<span style="font-size:9px;color:#16a34a;font-weight:700;">⏰ ครบเวลาแล้ว</span>`;
+        } else if(diffMin<=30){
+          timerHtml=`<span style="font-size:9px;color:#f97316;font-weight:700;">⏱ อีก ${diffMin} นาที</span>`;
+        }
+      }
+      const card=document.createElement('div');card.className='bk-card';
+      card.style.borderLeft=`4px solid ${b.status==='เสร็จแล้ว'?'#22c55e':b.status==='กำลังทำ'?'#0ea5e9':'#f59e0b'}`;
+      card.innerHTML=`
+        <div class="bc-name">${b.name||'–'}</div>
+        <div class="bc-svc">${b.service||'–'} <span style="font-size:9px;color:#aaa;">(${durLabel})</span></div>
+        ${b.price?`<div class="bc-amt">${fN(b.price)}</div>`:''}
+        <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+          <span class="bc-status ${sc}">${b.status||'ยืนยัน'}</span>
+          ${timerHtml}
+        </div>`;
+      card.onclick=e=>{e.stopPropagation();openBkModal(b.id);};
+      slot.appendChild(card);
+    } else {
+      // Empty slot
+      slot.className='g-slot';
+      slot.onclick=()=>openBkModal(null,time);
     }
     g.appendChild(tc);g.appendChild(slot);
   });
+}
+
+// ── Auto-complete: run every minute ──
+function startAutoComplete(){
+  setInterval(async()=>{
+    if(!document.getElementById('p-booking').classList.contains('active')) return;
+    const ds=bkDs(curBkDate);
+    // Only process today
+    if(ds!==bkDs(new Date())) return;
+    const now=new Date();
+    let changed=false;
+    for(const[id,b] of Object.entries(bookings)){
+      if(b.status==='เสร็จแล้ว'||b.status==='ยกเลิก') continue;
+      const[h,m]=b.time.split(':').map(Number);
+      const endMs=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,0).getTime()+(+b.duration||1)*3600000;
+      if(now.getTime()>=endMs){
+        // Auto-complete
+        b.status='เสร็จแล้ว';
+        b.updatedAt=new Date().toISOString();
+        try{
+          await set(ref(db,bkPath(ds)+'/'+id),b);
+          bookings[id]=b;
+          changed=true;
+        }catch(e){console.log('auto-complete err',e);}
+      }
+    }
+    if(changed){renderGrid();renderBkSum();refreshCopy();}
+    else{renderGrid();} // refresh timers display
+  },60000); // every 60s
 }
 
 function renderBkSum(){
@@ -858,13 +947,31 @@ window.refreshCopy=function(){
 window.copyClipboard=function(){const el=document.getElementById('copy-text');el.select();document.execCommand('copy');alert('คัดลอกแล้ว!');};
 
 // Booking modal
+window.onSvcSelChange=function(){
+  const sel=document.getElementById('bm-service-sel').value;
+  const otherEl=document.getElementById('bm-service-other');
+  otherEl.style.display=sel==='อื่นๆ'?'block':'none';
+  if(sel!=='อื่นๆ') otherEl.value='';
+};
+
 window.openBkModal=function(id=null,defTime=null){
   editBkId=id;depPaid=false;
   const b=id?bookings[id]:null;
   document.getElementById('bm-title').textContent=id?'✏️ แก้ไขการจอง':'📅 จองคิว';
   document.getElementById('bm-name').value=b?.name||'';
   document.getElementById('bm-phone').value=b?.phone||'';
-  document.getElementById('bm-service').value=b?.service||'';
+  // Populate service select
+  const svcVal=b?.service||'';
+  const knownSvcs=['สักคิ้ว','สักขอบตา','สักปาก','สักผม','สลายฝ้ากระ','เลเซอร์'];
+  const sel=document.getElementById('bm-service-sel');
+  const otherEl=document.getElementById('bm-service-other');
+  if(knownSvcs.includes(svcVal)){
+    sel.value=svcVal; otherEl.style.display='none'; otherEl.value='';
+  } else if(svcVal){
+    sel.value='อื่นๆ'; otherEl.style.display='block'; otherEl.value=svcVal;
+  } else {
+    sel.value=''; otherEl.style.display='none'; otherEl.value='';
+  }
   document.getElementById('bm-price').value=b?.price||'';
   document.getElementById('bm-pay').value=b?.payment||'';
   document.getElementById('bm-note').value=b?.note||'';
@@ -887,7 +994,8 @@ function updateGcal(){
   const ds=bkDs(curBkDate),time=document.getElementById('bm-time')?.value||'11:00';
   const dur=+(document.getElementById('bm-dur')?.value||2);
   const name=document.getElementById('bm-name')?.value||'ลูกค้า';
-  const svc=document.getElementById('bm-service')?.value||'';
+  const selVal=document.getElementById('bm-service-sel')?.value||'';
+  const svc=selVal==='อื่นๆ'?(document.getElementById('bm-service-other')?.value||'อื่นๆ'):selVal;
   const[h,m]=time.split(':').map(Number);
   const s=ds.replace(/-/g,'')+'T'+String(h).padStart(2,'0')+String(m).padStart(2,'0')+'00';
   const eh=h+Math.floor(dur),em=m+Math.round((dur%1)*60);
@@ -899,10 +1007,15 @@ function updateGcal(){
 window.saveBk=async function(){
   const name=document.getElementById('bm-name').value.trim();
   if(!name){alert('กรุณาใส่ชื่อลูกค้า');return;}
+  const selVal=document.getElementById('bm-service-sel').value;
+  const svcFinal=selVal==='อื่นๆ'
+    ?(document.getElementById('bm-service-other').value.trim()||'อื่นๆ')
+    :selVal;
+  if(!svcFinal){alert('กรุณาเลือกบริการ');return;}
   const id=editBkId||('bk_'+Date.now()),ds=bkDs(curBkDate);
   const b={id,name,
     phone:document.getElementById('bm-phone').value.trim(),
-    service:document.getElementById('bm-service').value.trim(),
+    service:svcFinal,
     time:document.getElementById('bm-time').value,
     duration:+document.getElementById('bm-dur').value,
     price:+document.getElementById('bm-price').value||0,
@@ -1020,6 +1133,7 @@ async function init(){
   buildSvcInputs(); addExpRow(); addOtherRow();
   renderBkHdr();
   await buildCal();
+  startAutoComplete();
   // Realtime booking listener
   onValue(ref(db,bkPath(bkDs(curBkDate))),snap=>{
     bookings=snap.val()||{};
