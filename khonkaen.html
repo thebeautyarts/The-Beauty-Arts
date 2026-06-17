@@ -53,12 +53,12 @@ header{background:linear-gradient(135deg,#7c1d3c 0%,#b5456b 100%);color:#fff;pad
 .cal-nav-btn{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:15px;color:var(--rose);display:flex;align-items:center;justify-content:center;}
 .cal-nav-btn:hover{background:var(--rose-pale);}
 .cal-month-lbl{font-size:15px;font-weight:700;color:#7c1d3c;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
-.cal-hdr{text-align:center;font-size:12px;font-weight:800;padding:5px 2px;color:#1e293b;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-hdr{text-align:center;font-size:11px;font-weight:800;padding:4px 1px;color:#1e293b;}
 .cal-hdr.h-sun{color:#b91c1c;}.cal-hdr.h-sat{color:#6d28d9;}
-.cal-day{border:1.5px solid var(--border);border-radius:7px;padding:6px 5px;min-height:62px;cursor:pointer;transition:.12s;background:#fff;position:relative;display:flex;flex-direction:column;align-items:flex-start;}
-.cal-day:hover{filter:brightness(.94);transform:scale(1.02);}
-.cal-day.has-rev{border:2px solid var(--rose);background:var(--rose-pale);}
+.cal-day{border:1.5px solid var(--border);border-radius:6px;padding:4px 3px;min-height:80px;cursor:pointer;transition:.12s;background:#fff;position:relative;display:flex;flex-direction:column;align-items:flex-start;overflow:hidden;}
+.cal-day:hover{filter:brightness(.94);}
+.cal-day.has-bk{border:2px solid var(--rose);background:var(--rose-pale);}
 .cal-day.is-holiday{background:repeating-linear-gradient(-45deg,#fee2e2,#fee2e2 3px,#fff 3px,#fff 8px)!important;border-color:#fca5a5;}
 .cal-day.today-d{border:2.5px solid var(--gold)!important;box-shadow:0 0 0 2px var(--gold-light);}
 .cal-day.empty-day{background:#f8f8f8;cursor:default;opacity:.15;pointer-events:none;}
@@ -66,10 +66,15 @@ header{background:linear-gradient(135deg,#7c1d3c 0%,#b5456b 100%);color:#fff;pad
 .cal-day.is-sun .d-num{color:#b91c1c!important;}
 .cal-day.is-sat{background:#faf5ff!important;border-color:#d8b4fe;}
 .cal-day.is-sat .d-num{color:#6d28d9!important;}
-.d-num{font-weight:900;font-size:14px;color:#1e293b;line-height:1;}
-.d-rev{font-size:10px;font-weight:700;color:#166534;background:#dcfce7;border-radius:3px;padding:1px 4px;margin-top:4px;width:100%;text-align:center;}
-.d-hol{font-size:9px;color:#dc2626;font-weight:700;margin-top:3px;}
-.d-bk{font-size:9px;color:#0369a1;font-weight:700;background:#e0f2fe;border-radius:3px;padding:1px 3px;margin-top:2px;}
+.d-num{font-weight:900;font-size:12px;color:#1e293b;line-height:1;margin-bottom:2px;}
+.d-bk-item{width:100%;margin-top:2px;background:#7c1d3c;border-radius:3px;padding:2px 3px;overflow:hidden;}
+.d-bk-time{font-size:8px;font-weight:700;color:rgba(255,255,255,.75);line-height:1.2;}
+.d-bk-name{font-size:8px;font-weight:700;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.d-bk-svc{font-size:7px;color:rgba(255,255,255,.8);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.d-bk-price{font-size:7px;font-weight:700;color:#fde68a;line-height:1.2;}
+.d-bk-more{font-size:7px;color:var(--rose);font-weight:700;margin-top:1px;}
+.d-hol{font-size:8px;color:#dc2626;font-weight:700;margin-top:2px;text-align:center;width:100%;}
+.d-rev{font-size:9px;font-weight:700;color:#166534;background:#dcfce7;border-radius:3px;padding:1px 3px;margin-top:2px;width:100%;text-align:center;}
 
 /* ── Monthly summary table ── */
 .ms-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
@@ -212,6 +217,10 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
   .salary-grid,.yr-salary-grid{grid-template-columns:repeat(2,1fr);}
   .bk-day-sum,.yr-sum-row{grid-template-columns:repeat(2,1fr);}
   header h1{font-size:14px;}
+  .container{padding:0 8px;}
+  .box{padding:12px;}
+  .cal-day{min-height:70px;padding:3px 2px;}
+  .cal-hdr{font-size:10px;padding:3px 1px;}
 }
 </style>
 </head>
@@ -618,22 +627,70 @@ async function buildCal(){
   document.getElementById('ms-month-lbl').textContent=lbl;
   const dim=new Date(calYear-543,calMonth+1,0).getDate();
   const fd=new Date(calYear-543,calMonth,1).getDay();
+  const adYear=calYear-543;
+
+  // Load all bookings for the month in parallel
+  const bkMap={}; // day → sorted booking list
+  const promises=[];
+  for(let d=1;d<=dim;d++){
+    const mm=String(calMonth+1).padStart(2,'0');
+    const dd2=String(d).padStart(2,'0');
+    const ds=`${adYear}-${mm}-${dd2}`;
+    const dayNum=d;
+    promises.push(
+      get(ref(db,`kk_branch/bookings/${ds.replace(/-/g,'_')}`))
+        .then(snap=>{
+          const bks=snap.val()||{};
+          bkMap[dayNum]=Object.values(bks)
+            .filter(b=>!b._blocked)
+            .sort((a,b2)=>a.time.localeCompare(b2.time));
+        }).catch(()=>{bkMap[dayNum]=[];})
+    );
+  }
+  await Promise.all(promises);
+
   const g=document.getElementById('cal-grid');
   g.innerHTML=DS.map((d,i)=>`<div class="cal-hdr ${i===0?'h-sun':i===6?'h-sat':''}">${d}</div>`).join('');
   for(let i=0;i<fd;i++) g.innerHTML+=`<div class="cal-day empty-day"></div>`;
+
   for(let d=1;d<=dim;d++){
-    const dt=new Date(calYear-543,calMonth,d);
+    const dt=new Date(adYear,calMonth,d);
     const isSun=dt.getDay()===0,isSat=dt.getDay()===6;
     const isToday=dt.toDateString()===today.toDateString();
     const dd=data[d]||{};
-    const sv=getSvcTot(dd),oth=getOth(dd),grand=sv+oth;
-    const isHol=!!dd.is_holiday,hasRev=grand>0;
-    const cls=['cal-day',hasRev?'has-rev':'',isToday?'today-d':'',
-      isSun?'is-sun':isSat?'is-sat':'',isHol?'is-holiday':''].filter(Boolean).join(' ');
+    const isHol=!!dd.is_holiday;
+    const bkList=bkMap[d]||[];
+    const hasBk=bkList.length>0;
+
+    // Build booking items HTML (show max 2, then "+N อื่นๆ")
+    let bkHtml='';
+    const maxShow=2;
+    bkList.slice(0,maxShow).forEach(b=>{
+      const priceStr=b.price?`฿${Math.round(b.price).toLocaleString('th-TH')}`:'';
+      bkHtml+=`<div class="d-bk-item">
+        <div class="d-bk-time">${b.time}</div>
+        <div class="d-bk-name">${b.name||'–'}</div>
+        <div class="d-bk-svc">${b.service||''}</div>
+        ${priceStr?`<div class="d-bk-price">${priceStr}</div>`:''}
+      </div>`;
+    });
+    if(bkList.length>maxShow){
+      bkHtml+=`<div class="d-bk-more">+${bkList.length-maxShow} อื่นๆ</div>`;
+    }
+    if(isHol&&!hasBk){
+      bkHtml=`<div class="d-hol">🏖️ หยุด</div>`;
+    }
+
+    const cls=['cal-day',
+      hasBk?'has-bk':'',
+      isToday?'today-d':'',
+      isSun?'is-sun':isSat?'is-sat':'',
+      isHol?'is-holiday':''
+    ].filter(Boolean).join(' ');
+
     g.innerHTML+=`<div class="${cls}" onclick="calDayClick(${d})">
       <div class="d-num">${d}</div>
-      ${hasRev?`<div class="d-rev">฿${fNN(grand)}</div>`:''}
-      ${isHol&&!hasRev?`<div class="d-hol">🏖️ หยุด</div>`:''}
+      ${bkHtml}
     </div>`;
   }
   renderMonthlySummary(data);
