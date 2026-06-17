@@ -1,0 +1,791 @@
+<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Seed KK Bookings</title>
+<style>
+body{font-family:sans-serif;background:#fdf6f0;padding:20px;max-width:700px;margin:0 auto;}
+h1{color:#7c1d3c;font-size:18px;margin-bottom:4px;}
+p{font-size:13px;color:#7c4a5a;margin-bottom:14px;}
+.log{background:#1e293b;color:#e2e8f0;padding:16px;border-radius:10px;font-size:12px;font-family:monospace;height:420px;overflow-y:auto;margin:16px 0;}
+.ok{color:#4ade80;}.err{color:#f87171;}.info{color:#60a5fa;}
+.bar{background:#fde8f0;border-radius:8px;height:12px;margin-bottom:14px;overflow:hidden;}
+.fill{background:#b5456b;height:100%;transition:width .3s;width:0%;}
+.btn{padding:10px 22px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;background:#7c1d3c;color:#fff;}.btn:disabled{background:#94a3b8;cursor:not-allowed;}
+.sum{background:#fff;border-radius:10px;padding:14px;margin-top:14px;border:1px solid #f0c8d8;display:none;}
+</style>
+</head><body>
+<h1>💗 โหลดข้อมูลการจองคิว — สาขาขอนแก่น</h1>
+<p>เมษายน 2568 + มิถุนายน 2568 รวม 44 รายการ จาก 33 วัน</p>
+<div class="bar"><div class="fill" id="pbar"></div></div>
+<button class="btn" id="btn" onclick="startSeed()">🚀 เริ่มโหลดข้อมูลการจอง</button>
+<div class="log" id="log"></div>
+<div class="sum" id="sum"><h3 style="color:#7c1d3c;">✅ โหลดสำเร็จแล้ว</h3>
+<p style="font-size:12px;">เปิดระบบสาขาขอนแก่นได้เลย → <a href="https://thebeautyarts.github.io/The-Beauty-Arts/khonkaen.html" target="_blank" style="color:#b5456b;">khonkaen.html</a></p></div>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import{getDatabase,ref,set}from"https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+const app=initializeApp({apiKey:"AIzaSyCXR3UJ3bFq1Ia_T4D4BXy08nHHBCLhgbs",authDomain:"the-beauty-arts.firebaseapp.com",databaseURL:"https://the-beauty-arts-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"the-beauty-arts",storageBucket:"the-beauty-arts.firebasestorage.app",messagingSenderId:"656894086617",appId:"1:656894086617:web:f25b283061a97f4a401dc8"},"kk_bk_seeder");
+const db=getDatabase(app);
+const L=document.getElementById("log"),P=document.getElementById("pbar");
+function log(m,c=""){L.innerHTML+=`<div class="${c}">${m}</div>`;L.scrollTop=9999;}
+const DATA={
+  "2025_04_03": {
+    "bk_20250403_1100": {
+      "id": "bk_20250403_1100",
+      "name": "คุณกิ๊ฟ (ลูกค้าเก่า)",
+      "phone": "",
+      "service": "ดึงสีคิ้ว",
+      "time": "11:00",
+      "duration": 2,
+      "price": 3000,
+      "payment": "เครดิตการ์ด",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-03",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250403_1400": {
+      "id": "bk_20250403_1400",
+      "name": "เจ้ต้อยรีวิว",
+      "phone": "",
+      "service": "ลอกแผ่นสลายฝ้า",
+      "time": "14:00",
+      "duration": 1,
+      "price": 0,
+      "payment": "",
+      "note": "รีวิว ฟรี",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-03",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_04": {
+    "bk_20250404_1030": {
+      "id": "bk_20250404_1030",
+      "name": "คุณอรุณวรรณ",
+      "phone": "",
+      "service": "ลอกแผ่นสลายฝ้า",
+      "time": "10:30",
+      "duration": 1,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-04",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250404_1100": {
+      "id": "bk_20250404_1100",
+      "name": "คุณบอม รีวิว",
+      "phone": "",
+      "service": "สักปาก over lips",
+      "time": "11:00",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "รีวิว ฟรี",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-04",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250404_1400": {
+      "id": "bk_20250404_1400",
+      "name": "คุณครูแตง",
+      "phone": "",
+      "service": "เติมคิ้วรอบ2",
+      "time": "14:00",
+      "duration": 1,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-04",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250404_1530": {
+      "id": "bk_20250404_1530",
+      "name": "คุณแยมรีวิว",
+      "phone": "",
+      "service": "สักปาก over lips",
+      "time": "15:30",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "รีวิว ฟรี",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-04",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_05": {
+    "bk_20250405_1100": {
+      "id": "bk_20250405_1100",
+      "name": "คุณกบ",
+      "phone": "",
+      "service": "เติม SMP รอบ2",
+      "time": "11:00",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี รอบ2",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-05",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_06": {
+    "bk_20250406_1400": {
+      "id": "bk_20250406_1400",
+      "name": "คุณลูกหมู",
+      "phone": "",
+      "service": "จี้ไฝ + Melanin reset รอบ2",
+      "time": "14:00",
+      "duration": 2,
+      "price": 3400,
+      "payment": "QR Code",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-06",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_07": {
+    "bk_20250407_1100": {
+      "id": "bk_20250407_1100",
+      "name": "คุณฝน (หุ่น)",
+      "phone": "",
+      "service": "สักปาก over lips",
+      "time": "11:00",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "รีวิว ฟรี",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-07",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_08": {
+    "bk_20250408_1300": {
+      "id": "bk_20250408_1300",
+      "name": "คุณซาร่า (ลค.อ.หญิง)",
+      "phone": "",
+      "service": "ลบคิ้ว",
+      "time": "13:00",
+      "duration": 1,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี ลค.อ.หญิง",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-08",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_09": {
+    "bk_20250409_1100": {
+      "id": "bk_20250409_1100",
+      "name": "รีวิว",
+      "phone": "",
+      "service": "สักปาก",
+      "time": "11:00",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "รีวิว ฟรี",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-09",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250409_1300": {
+      "id": "bk_20250409_1300",
+      "name": "คุณอ๋อง",
+      "phone": "",
+      "service": "เติมคิ้ว",
+      "time": "13:00",
+      "duration": 1,
+      "price": 0,
+      "payment": "",
+      "note": "ลูกค้า อ.หญิง",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-09",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_10": {
+    "bk_20250410_1100": {
+      "id": "bk_20250410_1100",
+      "name": "คุณทวีรัตน์",
+      "phone": "",
+      "service": "ฝังสีโคนผม",
+      "time": "11:00",
+      "duration": 3,
+      "price": 0,
+      "payment": "",
+      "note": "ลูกค้ายกเลิกนัด ติดธุระ",
+      "status": "ยกเลิก",
+      "depositPaid": false,
+      "dateStr": "2025-04-10",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_11": {
+    "bk_20250411_1100": {
+      "id": "bk_20250411_1100",
+      "name": "รีวิว",
+      "phone": "",
+      "service": "สักปาก",
+      "time": "11:00",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "รีวิว ฟรี",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-11",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250411_1430": {
+      "id": "bk_20250411_1430",
+      "name": "คุณแดง",
+      "phone": "",
+      "service": "สักคิ้ว",
+      "time": "14:30",
+      "duration": 2,
+      "price": 4990,
+      "payment": "เงินสด",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-11",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250411_1600": {
+      "id": "bk_20250411_1600",
+      "name": "คุณหมอกรวิน",
+      "phone": "",
+      "service": "ฝ้ากระ+SMP",
+      "time": "16:00",
+      "duration": 2,
+      "price": 10000,
+      "payment": "QR Code",
+      "note": "ลูกค้า อ.หญิง",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-11",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_16": {
+    "bk_20250416_1000": {
+      "id": "bk_20250416_1000",
+      "name": "walk in ร้านHana",
+      "phone": "",
+      "service": "สักปาก",
+      "time": "10:00",
+      "duration": 2,
+      "price": 4990,
+      "payment": "QR Code",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-16",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250416_1200": {
+      "id": "bk_20250416_1200",
+      "name": "walk in ร้านHana",
+      "phone": "",
+      "service": "สักคิ้ว",
+      "time": "12:00",
+      "duration": 2,
+      "price": 2900,
+      "payment": "QR Code",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-16",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250416_1430": {
+      "id": "bk_20250416_1430",
+      "name": "นางแบบ",
+      "phone": "",
+      "service": "สักคิ้ว",
+      "time": "14:30",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี นางแบบ",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-16",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_17": {
+    "bk_20250417_1100": {
+      "id": "bk_20250417_1100",
+      "name": "ผอ.ปนัดดา",
+      "phone": "",
+      "service": "สักปาก",
+      "time": "11:00",
+      "duration": 2,
+      "price": 2900,
+      "payment": "QR Code",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-17",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250417_1500": {
+      "id": "bk_20250417_1500",
+      "name": "คุณดา",
+      "phone": "",
+      "service": "สักขอบตา",
+      "time": "15:00",
+      "duration": 2,
+      "price": 4990,
+      "payment": "เงินสด",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-17",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_18": {
+    "bk_20250418_1100": {
+      "id": "bk_20250418_1100",
+      "name": "คุณหนิง",
+      "phone": "",
+      "service": "สักคิ้ว",
+      "time": "11:00",
+      "duration": 2,
+      "price": 4990,
+      "payment": "QR Code",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-18",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_23": {
+    "bk_20250423_1630": {
+      "id": "bk_20250423_1630",
+      "name": "คุณซาร่า (ลค.อ.หญิง)",
+      "phone": "",
+      "service": "ลบคิ้ว",
+      "time": "16:30",
+      "duration": 1,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-23",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_25": {
+    "bk_20250425_1100": {
+      "id": "bk_20250425_1100",
+      "name": "คุณหญิง",
+      "phone": "",
+      "service": "Melanin reset รอบ2",
+      "time": "11:00",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-25",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_28": {
+    "bk_20250428_1100": {
+      "id": "bk_20250428_1100",
+      "name": "คุณสุรีย์พร",
+      "phone": "",
+      "service": "เรียน Scalp Painting & SMP",
+      "time": "11:00",
+      "duration": 4,
+      "price": 0,
+      "payment": "",
+      "note": "วันที่ 1/3 ชำระรวม 49,900",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-28",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_29": {
+    "bk_20250429_1100": {
+      "id": "bk_20250429_1100",
+      "name": "คุณสุรีย์พร",
+      "phone": "",
+      "service": "เรียน Scalp Painting & SMP",
+      "time": "11:00",
+      "duration": 4,
+      "price": 49900,
+      "payment": "QR Code",
+      "note": "วันที่ 2/3 ชำระผ่านอาจารย์หญิง",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-29",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_04_30": {
+    "bk_20250430_1200": {
+      "id": "bk_20250430_1200",
+      "name": "คุณสุรีย์พร",
+      "phone": "",
+      "service": "เรียน Scalp Painting & SMP",
+      "time": "12:00",
+      "duration": 4,
+      "price": 0,
+      "payment": "",
+      "note": "วันที่ 3/3",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-04-30",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_01": {
+    "bk_20250601_1100": {
+      "id": "bk_20250601_1100",
+      "name": "คุณชินชญาดา",
+      "phone": "",
+      "service": "Scalp Painting 1v",
+      "time": "11:00",
+      "duration": 3,
+      "price": 6900,
+      "payment": "เงินสด",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-01",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_05": {
+    "bk_20250605_1000": {
+      "id": "bk_20250605_1000",
+      "name": "คุณนาง (ตปท)",
+      "phone": "",
+      "service": "สักคิ้ว",
+      "time": "10:00",
+      "duration": 2,
+      "price": 4990,
+      "payment": "เงินสด",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-05",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_06": {
+    "bk_20250606_1300": {
+      "id": "bk_20250606_1300",
+      "name": "คุณฐิติพงศ์",
+      "phone": "",
+      "service": "สักผม SMP 1v",
+      "time": "13:00",
+      "duration": 2,
+      "price": 6900,
+      "payment": "QR Code",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-06",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_07": {
+    "bk_20250607_1100": {
+      "id": "bk_20250607_1100",
+      "name": "คุณซาร่า (ลค.อ.หญิง)",
+      "phone": "",
+      "service": "ลบคิ้วซ้ำ",
+      "time": "11:00",
+      "duration": 1,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี ลค.อ.หญิง",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-07",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_08": {
+    "bk_20250608_1000": {
+      "id": "bk_20250608_1000",
+      "name": "คุณชินชญาดา",
+      "phone": "",
+      "service": "เติมไรผม SMP 1v ใหญ่",
+      "time": "10:00",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี รอบเติม",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-08",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_10": {
+    "bk_20250610_1000": {
+      "id": "bk_20250610_1000",
+      "name": "ทวีศักดิ์ วุฒิเวียงธรรม",
+      "phone": "",
+      "service": "สักผม SMP 3v ใหญ่",
+      "time": "10:00",
+      "duration": 3,
+      "price": 15900,
+      "payment": "QR Code",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-10",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_11": {
+    "bk_20250611_1200": {
+      "id": "bk_20250611_1200",
+      "name": "คุณสอน ฮุงเฮือง (สปป)",
+      "phone": "",
+      "service": "สักผม Short cut กรอบหน้า 2v",
+      "time": "12:00",
+      "duration": 3,
+      "price": 19800,
+      "payment": "เงินสด",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-11",
+      "updatedAt": "2025-import"
+    },
+    "bk_20250611_1830": {
+      "id": "bk_20250611_1830",
+      "name": "คุณดารณี (ลูกค้าเก่า)",
+      "phone": "",
+      "service": "สักคิ้ว + เติมขอบตา",
+      "time": "18:30",
+      "duration": 2,
+      "price": 9980,
+      "payment": "QR Code",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-11",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_12": {
+    "bk_20250612_1300": {
+      "id": "bk_20250612_1300",
+      "name": "กรวรรณ เจริญอาจ",
+      "phone": "",
+      "service": "สักปาก over lips",
+      "time": "13:00",
+      "duration": 2,
+      "price": 9900,
+      "payment": "เงินสด",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-12",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_14": {
+    "bk_20250614_1000": {
+      "id": "bk_20250614_1000",
+      "name": "คุณมนูญ",
+      "phone": "",
+      "service": "เติมผม SMP รอบ2 + สักเพิ่ม 1v รอบข้าง",
+      "time": "10:00",
+      "duration": 3,
+      "price": 6900,
+      "payment": "QR Code",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-14",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_15": {
+    "bk_20250615_1700": {
+      "id": "bk_20250615_1700",
+      "name": "คุณฐิติพงศ์",
+      "phone": "",
+      "service": "เติม SMP 1v",
+      "time": "17:00",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี รอบเติม",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-15",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_17": {
+    "bk_20250617_1300": {
+      "id": "bk_20250617_1300",
+      "name": "คุณฐิติพงศ์",
+      "phone": "",
+      "service": "เติม SMP 1v รอบ2",
+      "time": "13:00",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี รอบ2",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-17",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_20": {
+    "bk_20250620_1100": {
+      "id": "bk_20250620_1100",
+      "name": "คุณอานน น้อยเมล์",
+      "phone": "",
+      "service": "เรียน Scalp Painting & SMP",
+      "time": "11:00",
+      "duration": 4,
+      "price": 49900,
+      "payment": "เงินสด",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-20",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_24": {
+    "bk_20250624_1300": {
+      "id": "bk_20250624_1300",
+      "name": "คุณอ๊อฟ",
+      "phone": "",
+      "service": "เติมปาก รอบ2",
+      "time": "13:00",
+      "duration": 1,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี รอบ2",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-24",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_25": {
+    "bk_20250625_1000": {
+      "id": "bk_20250625_1000",
+      "name": "ทวีศักดิ์ วุฒิเวียงธรรม",
+      "phone": "",
+      "service": "เติม SMP 3v ใหญ่",
+      "time": "10:00",
+      "duration": 3,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี รอบเติม",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-25",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_27": {
+    "bk_20250627_1100": {
+      "id": "bk_20250627_1100",
+      "name": "เติมผม (follow-up)",
+      "phone": "",
+      "service": "เติม SMP ด้านหลัง รอบข้าง",
+      "time": "11:00",
+      "duration": 2,
+      "price": 0,
+      "payment": "",
+      "note": "ฟรี รอบเติม",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-27",
+      "updatedAt": "2025-import"
+    }
+  },
+  "2025_06_28": {
+    "bk_20250628_1200": {
+      "id": "bk_20250628_1200",
+      "name": "คุณเบียร์",
+      "phone": "",
+      "service": "สักคิ้ว/เติม",
+      "time": "12:00",
+      "duration": 2,
+      "price": 4990,
+      "payment": "",
+      "note": "",
+      "status": "เสร็จแล้ว",
+      "depositPaid": false,
+      "dateStr": "2025-06-28",
+      "updatedAt": "2025-import"
+    }
+  }
+};
+
+window.startSeed=async function(){
+  const btn=document.getElementById("btn");
+  btn.disabled=true;btn.textContent="⏳ กำลังโหลด...";
+  const dates=Object.entries(DATA);
+  const total=dates.reduce((s,[,bks])=>s+Object.keys(bks).length,0);
+  let done=0,ok=0,fail=0;
+  log("<span class=info>📅 โหลดข้อมูลการจอง "+total+" รายการ จาก "+dates.length+" วัน</span>");
+  for(const[dateKey,bks] of dates){
+    const dateLabel=dateKey.replace(/_/g,'-');
+    log(`<br><span class=info>${dateLabel} (${Object.keys(bks).length} รายการ)</span>`);
+    for(const[bkId,bkData] of Object.entries(bks)){
+      bkData.updatedAt=new Date().toISOString();
+      const path=`kk_branch/bookings/${dateKey}/${bkId}`;
+      try{
+        await set(ref(db,path),bkData);
+        const priceStr=bkData.price?` | ฿${bkData.price.toLocaleString("th-TH")}`:'';
+        log(`  <span class=ok>✓</span> ${bkData.time} ${bkData.name} — ${bkData.service}${priceStr}`);
+        ok++;
+      }catch(e){
+        log(`  <span class=err>✗</span> ${path}: ${e.message}`);
+        fail++;
+      }
+      done++;P.style.width=(done/total*100)+"%";
+      await new Promise(r=>setTimeout(r,80));
+    }
+  }
+  P.style.width="100%";
+  log(`<br><span class=info>═══ สำเร็จ ${ok} | ล้มเหลว ${fail} ═══</span>`);
+  if(fail===0){btn.textContent="✅ โหลดสำเร็จ!";btn.style.background="#16a34a";document.getElementById("sum").style.display="block";}
+  else{btn.textContent="❌ มีข้อผิดพลาด — กดลองใหม่";btn.disabled=false;}
+};
+
+</script></body></html>
