@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="th">
+<head><meta charset="UTF-8"><title>Firebase Check</title>
+<style>body{font-family:monospace;padding:20px;background:#f0f4f8;}
+.ok{color:#16a34a}.err{color:#dc2626}.info{color:#0369a1}
+pre{background:#1e293b;color:#e2e8f0;padding:14px;border-radius:8px;overflow:auto;font-size:12px;}
+button{padding:8px 16px;background:#0c4a6e;color:white;border:none;border-radius:6px;cursor:pointer;margin:4px;}
+</style>
+</head>
+<body>
+<h2>🔍 ตรวจสอบข้อมูลใน Firebase</h2>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+  <button onclick="checkPath('jun2569')">ตรวจ jun2569 (สาขาหลัก)</button>
+  <button onclick="checkPath('may2569')">ตรวจ may2569</button>
+  <button onclick="checkPath('apr2569')">ตรวจ apr2569</button>
+  <button onclick="checkPath('months/jun2569')">ตรวจ months/jun2569</button>
+  <button onclick="checkPath('months/apr2569')">ตรวจ months/apr2569</button>
+  <button onclick="checkPath('kk_branch/revenue/jun2569')">ตรวจ kk_branch/jun2569</button>
+  <button onclick="checkAllRoots()">🔍 ตรวจ root ทั้งหมด</button>
+</div>
+<pre id="out">กดปุ่มเพื่อตรวจสอบ...</pre>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyCXR3UJ3bFq1Ia_T4D4BXy08nHHBCLhgbs",
+  authDomain:"the-beauty-arts.firebaseapp.com",
+  databaseURL:"https://the-beauty-arts-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"the-beauty-arts"
+}, 'checker');
+const db = getDatabase(app);
+const out = document.getElementById('out');
+
+window.checkPath = async function(path) {
+  out.textContent = `กำลังตรวจ: ${path} ...\n`;
+  try {
+    const snap = await get(ref(db, path));
+    const val = snap.val();
+    if (!val) {
+      out.textContent += `❌ ไม่มีข้อมูลที่ path: ${path}\n`;
+    } else {
+      const keys = Object.keys(val);
+      out.textContent += `✅ พบข้อมูลที่ path: ${path}\n`;
+      out.textContent += `   จำนวน keys: ${keys.length}\n`;
+      out.textContent += `   Keys: ${keys.slice(0,20).join(', ')}\n\n`;
+      out.textContent += JSON.stringify(val, null, 2).slice(0, 2000);
+    }
+  } catch(e) {
+    out.textContent += `❌ Error: ${e.message}\n`;
+  }
+};
+
+window.checkAllRoots = async function() {
+  out.textContent = 'กำลังตรวจ root ทั้งหมด...\n\n';
+  const snap = await get(ref(db, '/'));
+  const val = snap.val();
+  if (!val) { out.textContent += '❌ ไม่มีข้อมูลเลย\n'; return; }
+  const keys = Object.keys(val);
+  out.textContent += `พบ root keys (${keys.length}): \n`;
+  keys.forEach(k => {
+    const sub = val[k];
+    const subKeys = sub && typeof sub === 'object' ? Object.keys(sub) : [];
+    out.textContent += `  📁 ${k} (${subKeys.length} sub-keys: ${subKeys.slice(0,10).join(', ')})\n`;
+  });
+};
+</script>
+</body>
+</html>
