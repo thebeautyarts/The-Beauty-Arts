@@ -246,6 +246,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
     <span id="fb-msg">กำลังเชื่อมต่อ Firebase...</span>
     <span style="margin-left:auto;display:flex;align-items:center;gap:10px">
       <span style="color:#555;font-size:11px" id="fb-last-sync"></span>
+      <button onclick="window.checkFbData()" style="background:#7c3aed;color:white;border:none;border-radius:5px;padding:4px 12px;font-size:11px;cursor:pointer;font-weight:600">🔍 ตรวจ Firebase</button>
       <button onclick="window.forceSeed()" style="background:#0c4a6e;color:white;border:none;border-radius:5px;padding:4px 12px;font-size:11px;cursor:pointer;font-weight:600">🔄 โหลดข้อมูลตัวอย่าง</button>
     </span>
   </div>
@@ -734,6 +735,31 @@ async function saveToFirebase(day, dayData) {
     setBadge('✅ บันทึกแล้ว'); updateLastSync();
   } catch(e) { setBadge('❌ บันทึกไม่สำเร็จ','rgba(239,68,68,0.4)'); console.error(e); }
 }
+
+
+window.checkFbData = async function() {
+  try {
+    const snap = await get(ref(db, '/'));
+    const val = snap.val();
+    if (!val) { alert('❌ Firebase ว่างเปล่า — ไม่มีข้อมูลเลย'); return; }
+    const keys = Object.keys(val);
+    let msg = '📦 Firebase root keys (' + keys.length + '):\n';
+    for (const k of keys) {
+      const sub = val[k];
+      const subKeys = sub && typeof sub === 'object' ? Object.keys(sub) : [];
+      msg += '  📁 ' + k + ' (' + subKeys.length + ' keys)\n';
+    }
+    msg += '\n--- Path ปัจจุบัน: ' + getRoot() + ' ---\n';
+    const curSnap = await get(ref(db, getRoot()));
+    if (curSnap.exists()) {
+      const curKeys = Object.keys(curSnap.val() || {});
+      msg += '✅ มีข้อมูล ' + curKeys.length + ' วัน: ' + curKeys.join(', ');
+    } else {
+      msg += '❌ ไม่มีข้อมูลที่ ' + getRoot();
+    }
+    alert(msg);
+  } catch(e) { alert('Error: ' + e.message); }
+};
 
 window.forceSeed = async function() {
   if (!confirm('โหลดข้อมูลตัวอย่างวันที่ 1-9 มิถุนายน?\n(จะเขียนทับข้อมูลเดิม)')) return;
