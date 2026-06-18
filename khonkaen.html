@@ -118,8 +118,11 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 .g-slot.g-holiday::after{content:'🏖️ วันหยุด';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:#dc2626;font-weight:700;white-space:nowrap;}
 .g-slot.g-blocked{background:linear-gradient(135deg,#fde8f0 0%,#f9d0e0 100%);cursor:not-allowed;pointer-events:none;display:flex;align-items:center;justify-content:center;}
 .g-slot.g-blocked-start{cursor:default;}
-.bk-card{background:linear-gradient(135deg,#fff0f5,#fff);border:1.5px solid var(--rose-light);border-radius:7px;padding:5px 7px;margin-bottom:3px;cursor:pointer;}
-.bk-card:hover{border-color:var(--rose);}
+.bk-card{border:1.5px solid var(--rose-light);border-radius:7px;padding:5px 7px;margin-bottom:3px;cursor:pointer;transition:.1s;}
+.bk-card:hover{filter:brightness(.96);}
+.bk-card.bk-done{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-color:#86efac;}
+.bk-card.bk-doing{background:linear-gradient(135deg,#eff6ff,#dbeafe);border-color:#93c5fd;}
+.bk-card.bk-confirm{background:linear-gradient(135deg,#fff0f5,#fff);border-color:var(--rose-light);}
 .bc-name{font-size:12px;font-weight:700;color:#7c1d3c;}
 .bc-svc{font-size:10px;color:var(--text-mid);margin-top:1px;}
 .bc-status{display:inline-block;padding:1px 6px;border-radius:10px;font-size:9px;font-weight:700;margin-top:2px;}
@@ -243,6 +246,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
   <div class="tab active" onclick="switchTab('cal')">🗓️ ปฏิทิน</div>
   <div class="tab" onclick="switchTab('booking')">📅 จองคิว & บันทึกรายได้</div>
   <div class="tab" onclick="switchTab('yearly')">📈 สรุปรายปี</div>
+  <div class="tab" onclick="switchTab('line')">💬 ส่งไลน์</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
@@ -270,7 +274,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
     <div class="ms-card red"><div class="ms-lbl">รายจ่ายรวม</div><div class="ms-val" id="ms-exp">฿0</div></div>
     <div class="ms-card green"><div class="ms-lbl">กำไรสุทธิ</div><div class="ms-val" id="ms-profit">฿0</div></div>
     <div class="ms-card gold"><div class="ms-lbl">คอมมิชชั่น</div><div class="ms-val" id="ms-comm">฿0</div></div>
-    <div class="ms-card"><div class="ms-lbl">วันทำงาน</div><div class="ms-val" id="ms-days">0 วัน</div></div>
+    <div class="ms-card"><div class="ms-lbl">บริการทั้งหมด</div><div class="ms-val" id="ms-days">0 ครั้ง</div></div>
   </div>
 
   <!-- Salary -->
@@ -468,6 +472,65 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
         <td id="yft-profit">฿0</td><td id="yft-comm">฿0</td><td id="yft-days">0</td>
       </tr></tfoot>
     </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════ TAB 4: LINE ═══════ -->
+<div class="panel" id="p-line">
+<div class="container">
+
+  <div class="box">
+    <h3>⚙️ ตั้งค่า LINE Messaging API</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:4px;text-transform:uppercase;">Channel Access Token</label>
+        <input type="password" id="line-token" placeholder="กรอก Channel Access Token..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:monospace;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:4px;text-transform:uppercase;">Group / Chat ID</label>
+        <input type="text" id="line-gid" placeholder="C... หรือ G..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:monospace;">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-rose btn-sm" onclick="saveLineConfig()">💾 บันทึก</button>
+      <button class="btn btn-outline btn-sm" onclick="testLine()">🧪 ทดสอบส่ง</button>
+      <span id="line-cfg-msg" style="font-size:12px;color:#16a34a;font-weight:600;"></span>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>📤 ส่งข้อความ LINE</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
+      <button class="btn btn-rose" onclick="sendLine('today')" style="padding:14px;font-size:13px;">📅 สรุปคิววันนี้</button>
+      <button class="btn btn-rose" onclick="sendLine('tomorrow')" style="padding:14px;font-size:13px;">🔮 สรุปคิวพรุ่งนี้</button>
+      <button class="btn btn-gold" onclick="sendLine('revenue')" style="padding:14px;font-size:13px;">💰 สรุปรายรับวันนี้</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;">
+      <button class="btn btn-outline" onclick="sendLine('monthly')" style="padding:10px;font-size:12px;">📊 สรุปรายรับเดือนนี้</button>
+      <button class="btn btn-outline" onclick="toggleCustomLine()" style="padding:10px;font-size:12px;">✏️ ข้อความกำหนดเอง</button>
+    </div>
+    <div id="custom-msg-wrap" style="display:none;margin-bottom:10px;">
+      <textarea id="custom-line-msg" rows="5" placeholder="พิมพ์ข้อความที่ต้องการส่ง..." style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;resize:vertical;"></textarea>
+      <button class="btn btn-rose btn-sm" onclick="sendCustomLine()" style="margin-top:6px;">📤 ส่งเลย</button>
+    </div>
+    <div id="line-send-msg" style="font-size:12px;font-weight:600;padding:6px 0;min-height:24px;"></div>
+  </div>
+
+  <div class="box">
+    <h3>👁️ ตัวอย่างข้อความ</h3>
+    <select id="line-preview-type" onchange="updateLinePreview()" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;margin-bottom:10px;">
+      <option value="today">📅 สรุปคิววันนี้</option>
+      <option value="tomorrow">🔮 สรุปคิวพรุ่งนี้</option>
+      <option value="revenue">💰 สรุปรายรับวันนี้</option>
+      <option value="monthly">📊 สรุปรายรับเดือนนี้</option>
+    </select>
+    <textarea id="line-preview" readonly style="width:100%;min-height:200px;padding:10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf6f0;"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn btn-outline btn-sm" onclick="copyLinePreview()">📋 คัดลอก</button>
+      <button class="btn btn-outline btn-sm" onclick="updateLinePreview()">🔄 รีเฟรช</button>
+    </div>
   </div>
 
 </div>
@@ -723,7 +786,7 @@ async function buildCal(){
       ${bkHtml}
     </div>`;
   }
-  renderMonthlySummary(data);
+  await renderMonthlySummary(data);
 }
 
 window.calDayClick=function(d){
@@ -739,19 +802,40 @@ window.changeCalMonth=async function(delta){
   await buildCal();
 };
 
-function renderMonthlySummary(data){
+async function renderMonthlySummary(data){
   const dim=new Date(calYear-543,calMonth+1,0).getDate();
-  let totRev=0,totExp=0,totOth=0,totComm=0,wdays=0;
+  const adY=calYear-543;
+  let totRev=0,totExp=0,totOth=0,totComm=0,totSvcs=0;
   const tbody=document.getElementById('ms-tbody'); tbody.innerHTML='';
+
+  // Count bookings per day (load all in parallel)
+  const bkCounts={};
+  const bkPromises=[];
+  for(let d=1;d<=dim;d++){
+    const mm=String(calMonth+1).padStart(2,'0');
+    const dd2=String(d).padStart(2,'0');
+    const ds=`${adY}-${mm}-${dd2}`;
+    const dayNum=d;
+    bkPromises.push(
+      get(ref(db,`kk_branch/bookings/${ds.replace(/-/g,'_')}`))
+        .then(snap=>{
+          const bks=snap.val()||{};
+          const cnt=Object.values(bks).filter(b=>!b._blocked&&b.status!=='ยกเลิก').length;
+          bkCounts[dayNum]=cnt;
+        }).catch(()=>{bkCounts[dayNum]=0;})
+    );
+  }
+  await Promise.all(bkPromises);
+
   for(let d=1;d<=dim;d++){
     const dd=data[d]||{};
     if(!dd||typeof dd!=='object') continue;
     const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
     const grand=sv+oth,profit=grand-exp,comm=sv*COMM;
     const isHol=!!dd.is_holiday;
+    const daySvcs=bkCounts[d]||0;
     if(grand>0||exp>0||isHol){
-      if(grand>0)wdays++;
-      totRev+=grand;totExp+=exp;totOth+=oth;totComm+=comm;
+      totRev+=grand;totExp+=exp;totOth+=oth;totComm+=comm;totSvcs+=daySvcs;
       const dt=new Date(calYear-543,calMonth,d);
       const chStr=CHANNELS.map(ch=>{const v=+(dd.channels||{})[ch]||0;return v?`${CH_ICON[ch]}${fNN(v)}`:''}).filter(Boolean).join(' ');
       const row=document.createElement('tr');
@@ -773,7 +857,7 @@ function renderMonthlySummary(data){
   document.getElementById('ms-exp').textContent=fN(totExp);
   document.getElementById('ms-profit').textContent=fN(totProfit);
   document.getElementById('ms-comm').textContent=fN(totComm);
-  document.getElementById('ms-days').textContent=wdays+' วัน';
+  document.getElementById('ms-days').textContent=totSvcs+' ครั้ง';
   document.getElementById('mft-rev').textContent=fN(totRev);
   document.getElementById('mft-exp').textContent=fN(totExp);
   document.getElementById('mft-oth').textContent=fN(totOth);
@@ -861,8 +945,9 @@ function renderGrid(){
           timerHtml=`<span style="font-size:9px;color:#f97316;font-weight:700;">⏱ อีก ${diffMin} นาที</span>`;
         }
       }
-      const card=document.createElement('div');card.className='bk-card';
-      card.style.borderLeft=`4px solid ${b.status==='เสร็จแล้ว'?'#22c55e':b.status==='กำลังทำ'?'#0ea5e9':'#f59e0b'}`;
+      const card=document.createElement('div');
+      const cardCls=b.status==='เสร็จแล้ว'?'bk-done':b.status==='กำลังทำ'?'bk-doing':'bk-confirm';
+      card.className=`bk-card ${cardCls}`;
       card.innerHTML=`
         <div class="bc-name">${b.name||'–'}</div>
         <div class="bc-svc">${b.service||'–'}${b.service2?` + ${b.service2}`:''} <span style="font-size:9px;color:#aaa;">(${durLabel})</span></div>
@@ -1248,14 +1333,188 @@ async function buildYearly(){
 
 window.changeYear=function(delta){yrYear+=delta;buildYearly();};
 
+// ════════════════════════════════════════════════════════
+// LINE MESSAGING
+// ════════════════════════════════════════════════════════
+const LINE_CFG_KEY='kk_line_config';
+function saveLineConfig(){
+  const token=document.getElementById('line-token').value.trim();
+  const gid=document.getElementById('line-gid').value.trim();
+  localStorage.setItem(LINE_CFG_KEY,JSON.stringify({token,gid}));
+  const m=document.getElementById('line-cfg-msg');
+  m.textContent='✅ บันทึกแล้ว';setTimeout(()=>m.textContent='',3000);
+}
+function loadLineConfig(){
+  try{const c=JSON.parse(localStorage.getItem(LINE_CFG_KEY)||'{}');
+    if(c.token)document.getElementById('line-token').value=c.token;
+    if(c.gid)document.getElementById('line-gid').value=c.gid;
+  }catch(e){}
+}
+function getLineConfig(){
+  try{return JSON.parse(localStorage.getItem(LINE_CFG_KEY)||'{}');}
+  catch(e){return {};}
+}
+
+async function pushLine(msg){
+  const{token,gid}=getLineConfig();
+  if(!token||!gid){alert('กรุณาตั้งค่า LINE Token และ Group ID ก่อน');return false;}
+  try{
+    const res=await fetch('https://api.line.me/v2/bot/message/push',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({to:gid,messages:[{type:'text',text:msg}]})
+    });
+    return res.ok;
+  }catch(e){return false;}
+}
+
+function buildLineMsg(type){
+  const NL='\n',LINE='─'.repeat(26);
+  const now=new Date();
+  const thY=now.getFullYear()+543;
+  const todayDs=bkDs(now);
+  const tmrDate=new Date(now);tmrDate.setDate(tmrDate.getDate()+1);
+  const tmrDs=bkDs(tmrDate);
+
+  function fmtThDate(ds){
+    const d=new Date(ds+'T00:00:00');
+    return `${DL[d.getDay()]}ที่ ${d.getDate()} ${ML[d.getMonth()]} ${d.getFullYear()+543}`;
+  }
+  function bkLine(b){
+    const ic=b.status==='เสร็จแล้ว'?'✅':b.status==='กำลังทำ'?'⚙️':'📌';
+    const svc=b.service+(b.service2?' + '+b.service2:'');
+    const total=(+b.price||0)+(+b.price2||0);
+    return `${ic} ${b.time||'?'} — ${b.name}\n   🎨 ${svc}\n   ${total?'💵 ฿'+total.toLocaleString('th-TH'):'ฟรี'}`;
+  }
+
+  if(type==='today'){
+    const bks=Object.values(bookings).filter(b=>!b._blocked).sort((a,b)=>a.time.localeCompare(b.time));
+    const done=bks.filter(b=>b.status==='เสร็จแล้ว');
+    const rev=done.reduce((s,b)=>s+(+b.price||0)+(+b.price2||0),0);
+    let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}📅 ${fmtThDate(todayDs)}${NL}${LINE}${NL}`;
+    if(!bks.length)msg+='ไม่มีคิววันนี้';
+    else{msg+=bks.map(bkLine).join(NL+NL);msg+=`${NL}${LINE}${NL}📋 ${bks.length} คิว | ✅ เสร็จ ${done.length} | 💰 ฿${rev.toLocaleString('th-TH')}`;}
+    return msg;
+  }
+
+  if(type==='tomorrow'){
+    // Load tomorrow bookings async - use preview only
+    return `💗 The Beauty Arts สาขาขอนแก่น${NL}🔮 คิวพรุ่งนี้ ${fmtThDate(tmrDs)}${NL}${LINE}${NL}(โหลดข้อมูลเมื่อกดส่ง)`;
+  }
+
+  if(type==='revenue'){
+    const m=curBkDate.getMonth(),y=curBkDate.getFullYear()+543;
+    const d=curBkDate.getDate();
+    const dd=(monthCache[mkKey(m,y)]||{})[d]||{};
+    const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
+    const grand=sv+oth,profit=grand-exp,comm=sv*COMM;
+    const chStr=CHANNELS.map(ch=>{const v=+(dd.channels||{})[ch]||0;return v?`${CH_ICON[ch]}฿${fNN(v)}`:''}).filter(Boolean).join(' ');
+    let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}💰 สรุปรายรับ ${fmtThDate(todayDs)}${NL}${LINE}${NL}`;
+    msg+=`📥 รายรับ: ฿${fNN(grand)}${NL}`;
+    if(exp)msg+=`📤 รายจ่าย: ฿${fNN(exp)}${NL}`;
+    msg+=`💚 กำไร: ฿${fNN(profit)}${NL}`;
+    msg+=`🎯 คอมมิชชั่น (20%): ฿${fNN(comm)}${NL}`;
+    if(chStr)msg+=`💳 ช่องทาง: ${chStr}${NL}`;
+    if(dd.note)msg+=`📝 ${dd.note}`;
+    return msg.trim();
+  }
+
+  if(type==='monthly'){
+    const mk2=mkKey(calMonth,calYear);
+    const data=monthCache[mk2]||{};
+    let mRev=0,mExp=0,mComm=0,mSvcs=0;
+    const dim=new Date(calYear-543,calMonth+1,0).getDate();
+    for(let d=1;d<=dim;d++){
+      const dd=data[d]||{};if(!dd||typeof dd!=='object')continue;
+      const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
+      mRev+=sv+oth;mExp+=exp;mComm+=sv*COMM;
+    }
+    let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}📊 สรุปรายรับ ${ML[calMonth]} ${calYear}${NL}${LINE}${NL}`;
+    msg+=`📥 รายรับรวม: ฿${fNN(mRev)}${NL}`;
+    msg+=`📤 รายจ่ายรวม: ฿${fNN(mExp)}${NL}`;
+    msg+=`💚 กำไรสุทธิ: ฿${fNN(mRev-mExp)}${NL}`;
+    msg+=`🎯 คอมมิชชั่น: ฿${fNN(mComm)}${NL}`;
+    msg+=`${LINE}${NL}💰 เงินเดือนไอซ์: ฿${fNN(BASE_SALARY)} + ฿${fNN(mComm)} = ฿${fNN(BASE_SALARY+mComm)}`;
+    return msg;
+  }
+  return '';
+}
+
+window.sendLine=async function(type){
+  const msgEl=document.getElementById('line-send-msg');
+  msgEl.style.color='#475569';
+  msgEl.textContent='⏳ กำลังส่ง...';
+
+  let msg='';
+  if(type==='tomorrow'){
+    // Load tomorrow bookings
+    const tmrDate=new Date();tmrDate.setDate(tmrDate.getDate()+1);
+    const tmrDs=bkDs(tmrDate);
+    const snap=await get(ref(db,bkPath(tmrDs))).catch(()=>({val:()=>({})}));
+    const tmrBks=Object.values(snap.val()||{}).filter(b=>!b._blocked).sort((a,b)=>a.time.localeCompare(b.time));
+    const NL='\n',LINE='─'.repeat(26);
+    const thY=tmrDate.getFullYear()+543;
+    const lbl=`${DL[tmrDate.getDay()]}ที่ ${tmrDate.getDate()} ${ML[tmrDate.getMonth()]} ${thY}`;
+    msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}🔮 คิวพรุ่งนี้ ${lbl}${NL}${LINE}${NL}`;
+    if(!tmrBks.length)msg+='ไม่มีคิวพรุ่งนี้';
+    else{
+      tmrBks.forEach(b=>{
+        const svc=b.service+(b.service2?' + '+b.service2:'');
+        msg+=`📌 ${b.time} — ${b.name}${NL}   🎨 ${svc}${NL}`;
+      });
+      msg+=`${LINE}${NL}📋 ${tmrBks.length} คิว`;
+    }
+  } else {
+    msg=buildLineMsg(type);
+  }
+
+  const ok=await pushLine(msg);
+  if(ok){msgEl.style.color='#16a34a';msgEl.textContent='✅ ส่งสำเร็จแล้ว!';}
+  else{msgEl.style.color='#dc2626';msgEl.textContent='❌ ส่งไม่สำเร็จ — ตรวจสอบ Token และ Group ID';}
+  setTimeout(()=>msgEl.textContent='',5000);
+  updateLinePreview();
+};
+
+window.toggleCustomLine=function(){
+  const w=document.getElementById('custom-msg-wrap');
+  w.style.display=w.style.display==='none'?'block':'none';
+};
+window.sendCustomLine=async function(){
+  const msg=document.getElementById('custom-line-msg').value.trim();
+  if(!msg){alert('กรุณาพิมพ์ข้อความก่อน');return;}
+  const msgEl=document.getElementById('line-send-msg');
+  msgEl.style.color='#475569';msgEl.textContent='⏳ กำลังส่ง...';
+  const ok=await pushLine(msg);
+  if(ok){msgEl.style.color='#16a34a';msgEl.textContent='✅ ส่งสำเร็จแล้ว!';}
+  else{msgEl.style.color='#dc2626';msgEl.textContent='❌ ส่งไม่สำเร็จ';}
+  setTimeout(()=>msgEl.textContent='',5000);
+};
+window.testLine=async function(){
+  const msg=`🧪 ทดสอบ LINE — The Beauty Arts สาขาขอนแก่น\n✅ เชื่อมต่อสำเร็จ!`;
+  const msgEl=document.getElementById('line-cfg-msg');
+  msgEl.textContent='⏳ กำลังทดสอบ...';
+  const ok=await pushLine(msg);
+  if(ok){msgEl.style.color='#16a34a';msgEl.textContent='✅ ทดสอบสำเร็จ!';}
+  else{msgEl.style.color='#dc2626';msgEl.textContent='❌ ไม่สำเร็จ — ตรวจสอบ Token/Group ID';}
+  setTimeout(()=>{msgEl.textContent='';msgEl.style.color='#16a34a';},5000);
+};
+window.updateLinePreview=function(){
+  const type=document.getElementById('line-preview-type').value;
+  document.getElementById('line-preview').value=buildLineMsg(type);
+};
+window.copyLinePreview=function(){
+  const el=document.getElementById('line-preview');el.select();document.execCommand('copy');alert('คัดลอกแล้ว!');
+};
+
 // ── Tab switch ──
 window.switchTab=async function(tab){
-  ['cal','booking','yearly'].forEach((t,i)=>{
+  ['cal','booking','yearly','line'].forEach((t,i)=>{
     document.querySelectorAll('.tab')[i].classList.toggle('active',t===tab);
     document.getElementById('p-'+t).classList.toggle('active',t===tab);
   });
   if(tab==='booking'){renderBkHdr();await loadBk();}
   if(tab==='yearly'){await buildYearly();}
+  if(tab==='line'){loadLineConfig();updateLinePreview();}
 };
 
 window.closeModal=id=>document.getElementById(id).classList.remove('open');
