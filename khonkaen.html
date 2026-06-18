@@ -583,7 +583,7 @@ const ML=['มกราคม','กุมภาพันธ์','มีนาค
 const MS=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 const DS=['อา','จ','อ','พ','พฤ','ศ','ส'];
 const DL=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
-const TIMES=[];for(let h=11;h<=20;h++){TIMES.push(`${String(h).padStart(2,'0')}:00`);if(h<20)TIMES.push(`${String(h).padStart(2,'0')}:30`);}
+const TIMES=[];for(let h=10;h<=19;h++){TIMES.push(`${String(h).padStart(2,'0')}:00`);if(h<19)TIMES.push(`${String(h).padStart(2,'0')}:30`);}
 
 // ── State ──
 const today=new Date();
@@ -1036,7 +1036,7 @@ window.openBkModal=function(id=null,defTime=null){
   depPaid=b?.depositPaid||false;updateDep();
   document.getElementById('bm-del').style.display=id?'':'none';
   const tSel=document.getElementById('bm-time');
-  tSel.innerHTML=TIMES.map(t=>`<option value="${t}" ${(b?.time||defTime||'11:00')===t?'selected':''}>${t}</option>`).join('');
+  tSel.innerHTML=TIMES.map(t=>`<option value="${t}" ${(b?.time||defTime||'10:00')===t?'selected':''}>${t}</option>`).join('');
   document.getElementById('bm-dur').value=b?.duration||'2';
   updateGcal();
   document.getElementById('bk-modal').classList.add('open');
