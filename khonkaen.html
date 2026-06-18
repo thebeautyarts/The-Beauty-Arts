@@ -67,10 +67,13 @@ header{background:linear-gradient(135deg,#7c1d3c 0%,#b5456b 100%);color:#fff;pad
 .cal-day.is-sat{background:#faf5ff!important;border-color:#d8b4fe;}
 .cal-day.is-sat .d-num{color:#6d28d9!important;}
 .d-num{font-weight:900;font-size:12px;color:#1e293b;line-height:1;margin-bottom:2px;}
-.d-bk-item{width:100%;margin-top:2px;background:#7c1d3c;border-radius:3px;padding:2px 3px;overflow:hidden;}
-.d-bk-time{font-size:8px;font-weight:700;color:rgba(255,255,255,.75);line-height:1.2;}
+.d-bk-item{width:100%;margin-top:2px;border-radius:3px;padding:2px 3px;overflow:hidden;}
+.d-bk-item.s-done{background:#16a34a;}
+.d-bk-item.s-doing{background:#0369a1;}
+.d-bk-item.s-confirm{background:#7c1d3c;}
+.d-bk-time{font-size:8px;font-weight:700;color:rgba(255,255,255,.8);line-height:1.2;}
 .d-bk-name{font-size:8px;font-weight:700;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.d-bk-svc{font-size:7px;color:rgba(255,255,255,.8);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.d-bk-svc{font-size:7px;color:rgba(255,255,255,.85);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .d-bk-price{font-size:7px;font-weight:700;color:#fde68a;line-height:1.2;}
 .d-bk-more{font-size:7px;color:var(--rose);font-weight:700;margin-top:1px;}
 .d-hol{font-size:8px;color:#dc2626;font-weight:700;margin-top:2px;text-align:center;width:100%;}
@@ -496,37 +499,35 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
       <button class="btn btn-rose btn-sm" onclick="saveLineConfig()">💾 บันทึก</button>
       <button class="btn btn-outline btn-sm" onclick="testLine()">🧪 ทดสอบส่ง</button>
-      <span id="line-cfg-msg" style="font-size:12px;color:#16a34a;font-weight:600;"></span>
+      <span id="line-cfg-msg" style="font-size:12px;font-weight:600;"></span>
     </div>
   </div>
 
   <div class="box">
     <h3>📤 ส่งข้อความ LINE</h3>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
-      <button class="btn btn-rose" onclick="sendLine('today')" style="padding:14px;font-size:13px;">📅 สรุปคิววันนี้</button>
-      <button class="btn btn-rose" onclick="sendLine('tomorrow')" style="padding:14px;font-size:13px;">🔮 สรุปคิวพรุ่งนี้</button>
-      <button class="btn btn-gold" onclick="sendLine('revenue')" style="padding:14px;font-size:13px;">💰 สรุปรายรับวันนี้</button>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;">
-      <button class="btn btn-outline" onclick="sendLine('monthly')" style="padding:10px;font-size:12px;">📊 สรุปรายรับเดือนนี้</button>
-      <button class="btn btn-outline" onclick="toggleCustomLine()" style="padding:10px;font-size:12px;">✏️ ข้อความกำหนดเอง</button>
-    </div>
-    <div id="custom-msg-wrap" style="display:none;margin-bottom:10px;">
-      <textarea id="custom-line-msg" rows="5" placeholder="พิมพ์ข้อความที่ต้องการส่ง..." style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;resize:vertical;"></textarea>
-      <button class="btn btn-rose btn-sm" onclick="sendCustomLine()" style="margin-top:6px;">📤 ส่งเลย</button>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
+      <button class="btn btn-rose" onclick="sendLine('today')" style="padding:16px 10px;font-size:13px;line-height:1.4;">
+        📅 สรุปคิว<br><span style="font-size:11px;opacity:.8;">+ รายรับวันนี้</span>
+      </button>
+      <button class="btn btn-rose" onclick="sendLine('tomorrow')" style="padding:16px 10px;font-size:13px;line-height:1.4;">
+        🔮 สรุปคิว<br><span style="font-size:11px;opacity:.8;">พรุ่งนี้</span>
+      </button>
+      <button class="btn btn-gold" onclick="sendLine('monthly')" style="padding:16px 10px;font-size:13px;line-height:1.4;">
+        📊 สรุปเดือน<br><span id="line-month-btn-lbl" style="font-size:11px;opacity:.9;"></span>
+      </button>
     </div>
     <div id="line-send-msg" style="font-size:12px;font-weight:600;padding:6px 0;min-height:24px;"></div>
   </div>
 
   <div class="box">
     <h3>👁️ ตัวอย่างข้อความ</h3>
-    <select id="line-preview-type" onchange="updateLinePreview()" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;margin-bottom:10px;">
-      <option value="today">📅 สรุปคิววันนี้</option>
-      <option value="tomorrow">🔮 สรุปคิวพรุ่งนี้</option>
-      <option value="revenue">💰 สรุปรายรับวันนี้</option>
-      <option value="monthly">📊 สรุปรายรับเดือนนี้</option>
-    </select>
-    <textarea id="line-preview" readonly style="width:100%;min-height:200px;padding:10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf6f0;"></textarea>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('line-preview-type').value='today';updateLinePreview()">📅 วันนี้</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('line-preview-type').value='tomorrow';updateLinePreview()">🔮 พรุ่งนี้</button>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('line-preview-type').value='monthly';updateLinePreview()">📊 เดือนนี้</button>
+      <input type="hidden" id="line-preview-type" value="today">
+    </div>
+    <textarea id="line-preview" readonly style="width:100%;min-height:220px;padding:10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf6f0;"></textarea>
     <div style="display:flex;gap:8px;margin-top:8px;">
       <button class="btn btn-outline btn-sm" onclick="copyLinePreview()">📋 คัดลอก</button>
       <button class="btn btn-outline btn-sm" onclick="updateLinePreview()">🔄 รีเฟรช</button>
@@ -553,6 +554,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
         <option value="สักผม">💇 สักผม (SMP)</option>
         <option value="สลายฝ้ากระ">✨ สลายฝ้ากระ</option>
         <option value="เลเซอร์">⚡ เลเซอร์</option>
+        <option value="คอร์สเรียน">🎓 คอร์สเรียน</option>
         <option value="อื่นๆ">📝 อื่นๆ (ระบุเอง)</option>
       </select>
       <input type="text" id="bm-service-other" placeholder="ระบุบริการ..." style="display:none;width:100%;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;">
@@ -597,6 +599,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
             <option value="สักผม">💇 สักผม (SMP)</option>
             <option value="สลายฝ้ากระ">✨ สลายฝ้ากระ</option>
             <option value="เลเซอร์">⚡ เลเซอร์</option>
+            <option value="คอร์สเรียน">🎓 คอร์สเรียน</option>
             <option value="อื่นๆ">📝 อื่นๆ (ระบุเอง)</option>
           </select>
           <input type="text" id="bm-svc2-other" placeholder="ระบุบริการ..." style="display:none;width:100%;padding:6px 9px;border:1.5px solid #6ee7b7;border-radius:6px;font-size:13px;font-family:inherit;">
@@ -662,12 +665,16 @@ const app = initializeApp({
 const db = getDatabase(app);
 
 // ── Constants ──
-const BASE_SALARY = 15000, COMM = 0.20;
+const BASE_SALARY = 15000, COMM = 0.20, COMM_COURSE = 0.10;
 const SERVICES = [
-  {key:'brow',label:'🎨 สักคิ้ว'},{key:'lip',label:'💋 สักปาก'},
-  {key:'eye',label:'👁️ สักตา'},{key:'laser',label:'⚡ เลเซอร์'},
-  {key:'hair',label:'💇 ผม'},{key:'item',label:'🛍️ ขายสินค้า'},
-  {key:'other_svc',label:'✨ บริการอื่นๆ'},
+  {key:'brow',  label:'🎨 สักคิ้ว',       comm:COMM},
+  {key:'lip',   label:'💋 สักปาก',         comm:COMM},
+  {key:'eye',   label:'👁️ สักตา',          comm:COMM},
+  {key:'laser', label:'⚡ เลเซอร์',         comm:COMM},
+  {key:'hair',  label:'💇 ผม (SMP)',        comm:COMM},
+  {key:'item',  label:'🛍️ ขายสินค้า',      comm:COMM},
+  {key:'course',label:'🎓 คอร์สเรียน',     comm:COMM_COURSE},
+  {key:'other_svc',label:'✨ บริการอื่นๆ', comm:COMM},
 ];
 const CHANNELS=['cash','qr','credit'];
 const CH_ICON={cash:'💵',qr:'📲',credit:'💳'};
@@ -707,6 +714,13 @@ async function loadMonth(m,y){
 }
 
 function getSvcTot(dd){return Object.values(dd.svc||{}).reduce((a,b)=>a+b,0);}
+function getSvcComm(dd){
+  if(!dd.svc) return 0;
+  return SERVICES.reduce((sum,s)=>{
+    const v=+(dd.svc[s.key]||0);
+    return sum + v*(s.comm||COMM);
+  },0);
+}
 function getExp(dd){return(dd.expenses||[]).reduce((s,e)=>s+(+e.a||0),0);}
 function getOth(dd){return(dd.other||[]).reduce((s,e)=>s+(+e.a||0),0);}
 
@@ -759,8 +773,10 @@ async function buildCal(){
     let bkHtml='';
     const maxShow=2;
     bkList.slice(0,maxShow).forEach(b=>{
-      const priceStr=b.price?`฿${Math.round(b.price).toLocaleString('th-TH')}`:'';
-      bkHtml+=`<div class="d-bk-item">
+      const priceTotal=(+b.price||0)+(+b.price2||0);
+      const priceStr=priceTotal?`฿${Math.round(priceTotal).toLocaleString('th-TH')}`:'';
+      const sCls=b.status==='เสร็จแล้ว'?'s-done':b.status==='กำลังทำ'?'s-doing':'s-confirm';
+      bkHtml+=`<div class="d-bk-item ${sCls}">
         <div class="d-bk-time">${b.time}</div>
         <div class="d-bk-name">${b.name||'–'}</div>
         <div class="d-bk-svc">${b.service||''}${b.service2?' + '+b.service2:''}</div>
@@ -831,7 +847,7 @@ async function renderMonthlySummary(data){
     const dd=data[d]||{};
     if(!dd||typeof dd!=='object') continue;
     const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
-    const grand=sv+oth,profit=grand-exp,comm=sv*COMM;
+    const grand=sv+oth,profit=grand-exp,comm=getSvcComm(dd);
     const isHol=!!dd.is_holiday;
     const daySvcs=bkCounts[d]||0;
     if(grand>0||exp>0||isHol){
@@ -1040,8 +1056,9 @@ window.updatePreview=function(){
   let sv=0,comm=0;
   SERVICES.forEach(s=>{
     const v=+(document.getElementById('svc-'+s.key)?.value||0);
-    const c=v*COMM;sv+=v;comm+=c;
-    const el=document.getElementById('comm-'+s.key);if(el)el.textContent=`คอม: ${fN(c)}`;
+    const c=v*(s.comm||COMM);sv+=v;comm+=c;
+    const el=document.getElementById('comm-'+s.key);
+    if(el)el.textContent=`คอม ${Math.round(s.comm*100)}%: ${fN(c)}`;
   });
   let oth=0;document.querySelectorAll('#other-list .oa').forEach(el=>oth+=(+el.value||0));
   document.getElementById('prev-svc').textContent=fN(sv);
@@ -1289,7 +1306,7 @@ async function buildYearly(){
       const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
       const grand=sv+oth;
       if(grand>0){mWdays++;}
-      mRev+=grand;mExp+=exp;mOth+=oth;mComm+=sv*COMM;
+      mRev+=grand;mExp+=exp;mOth+=oth;mComm+=getSvcComm(dd);
     }
     const mProfit=mRev-mExp;
     totRev+=mRev;totExp+=mExp;totComm+=mComm;totWdays+=mWdays;
@@ -1371,7 +1388,6 @@ async function pushLine(msg){
 function buildLineMsg(type){
   const NL='\n',LINE='─'.repeat(26);
   const now=new Date();
-  const thY=now.getFullYear()+543;
   const todayDs=bkDs(now);
   const tmrDate=new Date(now);tmrDate.setDate(tmrDate.getDate()+1);
   const tmrDs=bkDs(tmrDate);
@@ -1384,57 +1400,60 @@ function buildLineMsg(type){
     const ic=b.status==='เสร็จแล้ว'?'✅':b.status==='กำลังทำ'?'⚙️':'📌';
     const svc=b.service+(b.service2?' + '+b.service2:'');
     const total=(+b.price||0)+(+b.price2||0);
-    return `${ic} ${b.time||'?'} — ${b.name}\n   🎨 ${svc}\n   ${total?'💵 ฿'+total.toLocaleString('th-TH'):'ฟรี'}`;
+    return `${ic} ${b.time||'?'} — ${b.name}\n   🎨 ${svc}${total?'\n   💵 ฿'+total.toLocaleString('th-TH'):''}`;
   }
 
+  // ── วันนี้ (คิว + รายรับ) ──
   if(type==='today'){
     const bks=Object.values(bookings).filter(b=>!b._blocked).sort((a,b)=>a.time.localeCompare(b.time));
     const done=bks.filter(b=>b.status==='เสร็จแล้ว');
-    const rev=done.reduce((s,b)=>s+(+b.price||0)+(+b.price2||0),0);
-    let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}📅 ${fmtThDate(todayDs)}${NL}${LINE}${NL}`;
-    if(!bks.length)msg+='ไม่มีคิววันนี้';
-    else{msg+=bks.map(bkLine).join(NL+NL);msg+=`${NL}${LINE}${NL}📋 ${bks.length} คิว | ✅ เสร็จ ${done.length} | 💰 ฿${rev.toLocaleString('th-TH')}`;}
-    return msg;
-  }
-
-  if(type==='tomorrow'){
-    // Load tomorrow bookings async - use preview only
-    return `💗 The Beauty Arts สาขาขอนแก่น${NL}🔮 คิวพรุ่งนี้ ${fmtThDate(tmrDs)}${NL}${LINE}${NL}(โหลดข้อมูลเมื่อกดส่ง)`;
-  }
-
-  if(type==='revenue'){
-    const m=curBkDate.getMonth(),y=curBkDate.getFullYear()+543;
-    const d=curBkDate.getDate();
+    const bkRev=done.reduce((s,b)=>s+(+b.price||0)+(+b.price2||0),0);
+    // Revenue data
+    const m=now.getMonth(),y=now.getFullYear()+543,d=now.getDate();
     const dd=(monthCache[mkKey(m,y)]||{})[d]||{};
     const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
-    const grand=sv+oth,profit=grand-exp,comm=sv*COMM;
-    const chStr=CHANNELS.map(ch=>{const v=+(dd.channels||{})[ch]||0;return v?`${CH_ICON[ch]}฿${fNN(v)}`:''}).filter(Boolean).join(' ');
-    let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}💰 สรุปรายรับ ${fmtThDate(todayDs)}${NL}${LINE}${NL}`;
+    const grand=sv+oth,profit=grand-exp,comm=getSvcComm(dd);
+    const chStr=CHANNELS.map(ch=>{const v=+(dd.channels||{})[ch]||0;return v?`${CH_ICON[ch]}฿${fNN(v)}`:''}).filter(Boolean).join('  ');
+    let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}📅 ${fmtThDate(todayDs)}${NL}${LINE}${NL}`;
+    if(!bks.length){msg+='ไม่มีคิววันนี้'+NL;}
+    else{msg+=bks.map(bkLine).join(NL+NL)+NL;}
+    msg+=`${LINE}${NL}`;
+    msg+=`📋 ${bks.length} คิว | ✅ เสร็จ ${done.length}${NL}`;
+    msg+=`${LINE}${NL}`;
     msg+=`📥 รายรับ: ฿${fNN(grand)}${NL}`;
     if(exp)msg+=`📤 รายจ่าย: ฿${fNN(exp)}${NL}`;
     msg+=`💚 กำไร: ฿${fNN(profit)}${NL}`;
-    msg+=`🎯 คอมมิชชั่น (20%): ฿${fNN(comm)}${NL}`;
-    if(chStr)msg+=`💳 ช่องทาง: ${chStr}${NL}`;
-    if(dd.note)msg+=`📝 ${dd.note}`;
+    msg+=`🎯 คอมมิชชั่น: ฿${fNN(comm)}${NL}`;
+    if(chStr)msg+=`💳 ${chStr}`;
     return msg.trim();
   }
 
+  // ── พรุ่งนี้ (placeholder — loaded async in sendLine) ──
+  if(type==='tomorrow'){
+    return `💗 The Beauty Arts สาขาขอนแก่น${NL}🔮 คิวพรุ่งนี้ ${fmtThDate(tmrDs)}${NL}${LINE}${NL}(กำลังโหลด...)`;
+  }
+
+  // ── สรุปเดือน ──
   if(type==='monthly'){
     const mk2=mkKey(calMonth,calYear);
     const data=monthCache[mk2]||{};
-    let mRev=0,mExp=0,mComm=0,mSvcs=0;
+    let mRev=0,mExp=0,mComm=0;
     const dim=new Date(calYear-543,calMonth+1,0).getDate();
     for(let d=1;d<=dim;d++){
       const dd=data[d]||{};if(!dd||typeof dd!=='object')continue;
       const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
-      mRev+=sv+oth;mExp+=exp;mComm+=sv*COMM;
+      mRev+=sv+oth;mExp+=exp;mComm+=getSvcComm(dd);
     }
-    let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}📊 สรุปรายรับ ${ML[calMonth]} ${calYear}${NL}${LINE}${NL}`;
-    msg+=`📥 รายรับรวม: ฿${fNN(mRev)}${NL}`;
-    msg+=`📤 รายจ่ายรวม: ฿${fNN(mExp)}${NL}`;
-    msg+=`💚 กำไรสุทธิ: ฿${fNN(mRev-mExp)}${NL}`;
-    msg+=`🎯 คอมมิชชั่น: ฿${fNN(mComm)}${NL}`;
-    msg+=`${LINE}${NL}💰 เงินเดือนไอซ์: ฿${fNN(BASE_SALARY)} + ฿${fNN(mComm)} = ฿${fNN(BASE_SALARY+mComm)}`;
+    const mProfit=mRev-mExp;
+    let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}📊 สรุปเดือน ${ML[calMonth]} ${calYear}${NL}${LINE}${NL}`;
+    msg+=`📥 รายรับรวม:    ฿${fNN(mRev)}${NL}`;
+    msg+=`📤 รายจ่ายรวม:  ฿${fNN(mExp)}${NL}`;
+    msg+=`💚 กำไรสุทธิ:    ฿${fNN(mProfit)}${NL}`;
+    msg+=`🎯 คอมมิชชั่น:  ฿${fNN(mComm)}${NL}`;
+    msg+=`${LINE}${NL}`;
+    msg+=`💰 เงินเดือนไอซ์${NL}`;
+    msg+=`   ฐาน ฿${fNN(BASE_SALARY)} + คอม ฿${fNN(mComm)}${NL}`;
+    msg+=`   รวม ฿${fNN(BASE_SALARY+mComm)}`;
     return msg;
   }
   return '';
@@ -1442,12 +1461,9 @@ function buildLineMsg(type){
 
 window.sendLine=async function(type){
   const msgEl=document.getElementById('line-send-msg');
-  msgEl.style.color='#475569';
-  msgEl.textContent='⏳ กำลังส่ง...';
-
+  msgEl.style.color='#475569';msgEl.textContent='⏳ กำลังส่ง...';
   let msg='';
   if(type==='tomorrow'){
-    // Load tomorrow bookings
     const tmrDate=new Date();tmrDate.setDate(tmrDate.getDate()+1);
     const tmrDs=bkDs(tmrDate);
     const snap=await get(ref(db,bkPath(tmrDs))).catch(()=>({val:()=>({})}));
@@ -1456,23 +1472,23 @@ window.sendLine=async function(type){
     const thY=tmrDate.getFullYear()+543;
     const lbl=`${DL[tmrDate.getDay()]}ที่ ${tmrDate.getDate()} ${ML[tmrDate.getMonth()]} ${thY}`;
     msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}🔮 คิวพรุ่งนี้ ${lbl}${NL}${LINE}${NL}`;
-    if(!tmrBks.length)msg+='ไม่มีคิวพรุ่งนี้';
+    if(!tmrBks.length){msg+='ไม่มีคิวพรุ่งนี้';}
     else{
       tmrBks.forEach(b=>{
+        const ic=b.status==='เสร็จแล้ว'?'✅':b.status==='กำลังทำ'?'⚙️':'📌';
         const svc=b.service+(b.service2?' + '+b.service2:'');
-        msg+=`📌 ${b.time} — ${b.name}${NL}   🎨 ${svc}${NL}`;
+        const total=(+b.price||0)+(+b.price2||0);
+        msg+=`${ic} ${b.time} — ${b.name}${NL}   🎨 ${svc}${total?NL+'   💵 ฿'+total.toLocaleString('th-TH'):''}${NL}`;
       });
       msg+=`${LINE}${NL}📋 ${tmrBks.length} คิว`;
     }
   } else {
     msg=buildLineMsg(type);
   }
-
   const ok=await pushLine(msg);
   if(ok){msgEl.style.color='#16a34a';msgEl.textContent='✅ ส่งสำเร็จแล้ว!';}
   else{msgEl.style.color='#dc2626';msgEl.textContent='❌ ส่งไม่สำเร็จ — ตรวจสอบ Token และ Group ID';}
   setTimeout(()=>msgEl.textContent='',5000);
-  updateLinePreview();
 };
 
 window.toggleCustomLine=function(){
@@ -1514,7 +1530,12 @@ window.switchTab=async function(tab){
   });
   if(tab==='booking'){renderBkHdr();await loadBk();}
   if(tab==='yearly'){await buildYearly();}
-  if(tab==='line'){loadLineConfig();updateLinePreview();}
+  if(tab==='line'){
+    loadLineConfig();
+    updateLinePreview();
+    const lbl=document.getElementById('line-month-btn-lbl');
+    if(lbl) lbl.textContent=ML[calMonth]+' '+calYear;
+  }
 };
 
 window.closeModal=id=>document.getElementById(id).classList.remove('open');
