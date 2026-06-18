@@ -505,7 +505,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       </div>
     </div>
     <div class="form-row">
-      <div class="form-field"><label>ราคา (฿)</label><input type="number" id="bm-price" placeholder="0"></div>
+      <div class="form-field"><label>ราคา (฿)</label><input type="number" id="bm-price" placeholder="0" oninput="kkUpdateTotal()"></div>
       <div class="form-field"><label>ช่องทางชำระเงิน</label>
         <select id="bm-pay">
           <option value="">— เลือก —</option>
@@ -514,6 +514,36 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
           <option value="เครดิตการ์ด">💳 เครดิตการ์ด</option>
         </select>
       </div>
+    </div>
+    <!-- บริการที่ 2 -->
+    <div class="form-field">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;color:#059669;">
+        <input type="checkbox" id="bm-has-svc2" onchange="kkToggleSvc2()" style="width:16px;height:16px;accent-color:#059669;">
+        ➕ ลูกค้าทำ 2 บริการพร้อมกัน
+      </label>
+    </div>
+    <div id="bm-svc2-wrap" style="display:none;background:#f0fdf4;border:1.5px solid #6ee7b7;border-radius:8px;padding:10px;margin-bottom:4px;">
+      <div class="form-row" style="margin-bottom:8px;">
+        <div class="form-field" style="margin-bottom:0;">
+          <label style="color:#059669;">บริการที่ 2</label>
+          <select id="bm-svc2-sel" onchange="kkOnSvc2SelChange()" style="width:100%;padding:7px 9px;border:1.5px solid #6ee7b7;border-radius:7px;font-size:13px;font-family:inherit;margin-bottom:4px;">
+            <option value="">— เลือกบริการ —</option>
+            <option value="สักคิ้ว">🎨 สักคิ้ว</option>
+            <option value="สักขอบตา">👁️ สักขอบตา</option>
+            <option value="สักปาก">💋 สักปาก</option>
+            <option value="สักผม">💇 สักผม (SMP)</option>
+            <option value="สลายฝ้ากระ">✨ สลายฝ้ากระ</option>
+            <option value="เลเซอร์">⚡ เลเซอร์</option>
+            <option value="อื่นๆ">📝 อื่นๆ (ระบุเอง)</option>
+          </select>
+          <input type="text" id="bm-svc2-other" placeholder="ระบุบริการ..." style="display:none;width:100%;padding:6px 9px;border:1.5px solid #6ee7b7;border-radius:6px;font-size:13px;font-family:inherit;">
+        </div>
+        <div class="form-field" style="margin-bottom:0;">
+          <label style="color:#059669;">ราคาบริการที่ 2 (฿)</label>
+          <input type="number" id="bm-price2" placeholder="0" oninput="kkUpdateTotal()" style="width:100%;padding:7px 9px;border:1.5px solid #6ee7b7;border-radius:7px;font-size:13px;">
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:#059669;">💰 ราคารวม 2 บริการ: <span id="bm-total-lbl">฿0</span></div>
     </div>
     <div class="form-field"><label>มัดจำ ฿1,000</label>
       <div class="dep-toggle unpaid" id="dep-toggle" onclick="toggleDep()">
@@ -670,7 +700,7 @@ async function buildCal(){
       bkHtml+=`<div class="d-bk-item">
         <div class="d-bk-time">${b.time}</div>
         <div class="d-bk-name">${b.name||'–'}</div>
-        <div class="d-bk-svc">${b.service||''}</div>
+        <div class="d-bk-svc">${b.service||''}${b.service2?' + '+b.service2:''}</div>
         ${priceStr?`<div class="d-bk-price">${priceStr}</div>`:''}
       </div>`;
     });
@@ -835,7 +865,7 @@ function renderGrid(){
       card.style.borderLeft=`4px solid ${b.status==='เสร็จแล้ว'?'#22c55e':b.status==='กำลังทำ'?'#0ea5e9':'#f59e0b'}`;
       card.innerHTML=`
         <div class="bc-name">${b.name||'–'}</div>
-        <div class="bc-svc">${b.service||'–'} <span style="font-size:9px;color:#aaa;">(${durLabel})</span></div>
+        <div class="bc-svc">${b.service||'–'}${b.service2?` + ${b.service2}`:''} <span style="font-size:9px;color:#aaa;">(${durLabel})</span></div>
         ${b.price?`<div class="bc-amt">${fN(b.price)}</div>`:''}
         <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
           <span class="bc-status ${sc}">${b.status||'ยืนยัน'}</span>
@@ -995,7 +1025,9 @@ window.refreshCopy=function(){
   else{
     list.forEach(b=>{
       const ic=b.status==='เสร็จแล้ว'?'✅':b.status==='กำลังทำ'?'⚙️':'📌';
-      txt+=`${ic} ${b.time} | ${b.name}${b.service?' | '+b.service:''}${b.price?' | '+fN(b.price):''}\n`;
+      const svcStr=b.service+(b.service2?' + '+b.service2:'');
+      const priceTotal=(+b.price||0)+(+b.price2||0);
+      txt+=`${ic} ${b.time} | ${b.name}${svcStr?' | '+svcStr:''}${priceTotal?' | '+fN(priceTotal):''}\n`;
     });
     txt+=`${'─'.repeat(28)}\n📊 ${list.length} นัด | เสร็จแล้ว ${done.length} | รายได้ ${fN(rev)}`;
   }
@@ -1009,6 +1041,24 @@ window.onSvcSelChange=function(){
   const otherEl=document.getElementById('bm-service-other');
   otherEl.style.display=sel==='อื่นๆ'?'block':'none';
   if(sel!=='อื่นๆ') otherEl.value='';
+};
+window.kkToggleSvc2=function(){
+  const has=document.getElementById('bm-has-svc2').checked;
+  document.getElementById('bm-svc2-wrap').style.display=has?'block':'none';
+  if(!has){document.getElementById('bm-price2').value='';kkUpdateTotal();}
+};
+window.kkOnSvc2SelChange=function(){
+  const sel=document.getElementById('bm-svc2-sel').value;
+  const el=document.getElementById('bm-svc2-other');
+  el.style.display=sel==='อื่นๆ'?'block':'none';
+  if(sel!=='อื่นๆ') el.value='';
+};
+window.kkUpdateTotal=function(){
+  const p1=+document.getElementById('bm-price').value||0;
+  const has=document.getElementById('bm-has-svc2').checked;
+  const p2=has?(+document.getElementById('bm-price2').value||0):0;
+  const lbl=document.getElementById('bm-total-lbl');
+  if(lbl) lbl.textContent='฿'+(p1+p2).toLocaleString('th-TH');
 };
 
 window.openBkModal=function(id=null,defTime=null){
@@ -1031,6 +1081,24 @@ window.openBkModal=function(id=null,defTime=null){
   }
   document.getElementById('bm-price').value=b?.price||'';
   document.getElementById('bm-pay').value=b?.payment||'';
+  // service2
+  const hasSvc2=!!(b?.service2);
+  document.getElementById('bm-has-svc2').checked=hasSvc2;
+  document.getElementById('bm-svc2-wrap').style.display=hasSvc2?'block':'none';
+  if(hasSvc2){
+    const knownSvcs2=['สักคิ้ว','สักขอบตา','สักปาก','สักผม','สลายฝ้ากระ','เลเซอร์'];
+    const s2val=b?.service2||'';
+    const s2sel=document.getElementById('bm-svc2-sel');
+    const s2other=document.getElementById('bm-svc2-other');
+    if(knownSvcs2.includes(s2val)){s2sel.value=s2val;s2other.style.display='none';}
+    else if(s2val){s2sel.value='อื่นๆ';s2other.style.display='block';s2other.value=s2val;}
+    else{s2sel.value='';s2other.style.display='none';}
+    document.getElementById('bm-price2').value=b?.price2||'';
+  } else {
+    document.getElementById('bm-svc2-sel').value='';
+    document.getElementById('bm-price2').value='';
+  }
+  kkUpdateTotal();
   document.getElementById('bm-note').value=b?.note||'';
   document.getElementById('bm-status').value=b?.status||'ยืนยัน';
   depPaid=b?.depositPaid||false;updateDep();
@@ -1069,13 +1137,22 @@ window.saveBk=async function(){
     ?(document.getElementById('bm-service-other').value.trim()||'อื่นๆ')
     :selVal;
   if(!svcFinal){alert('กรุณาเลือกบริการ');return;}
+  const hasSvc2=document.getElementById('bm-has-svc2').checked;
+  const svc2sel=document.getElementById('bm-svc2-sel').value;
+  const svc2Final=svc2sel==='อื่นๆ'
+    ?(document.getElementById('bm-svc2-other').value.trim()||'อื่นๆ')
+    :svc2sel;
   const id=editBkId||('bk_'+Date.now()),ds=bkDs(curBkDate);
   const b={id,name,
     phone:document.getElementById('bm-phone').value.trim(),
     service:svcFinal,
+    price:+document.getElementById('bm-price').value||0,
+    ...(hasSvc2&&svc2Final&&{
+      service2:svc2Final,
+      price2:+document.getElementById('bm-price2').value||0
+    }),
     time:document.getElementById('bm-time').value,
     duration:+document.getElementById('bm-dur').value,
-    price:+document.getElementById('bm-price').value||0,
     payment:document.getElementById('bm-pay').value,
     note:document.getElementById('bm-note').value.trim(),
     status:document.getElementById('bm-status').value,
