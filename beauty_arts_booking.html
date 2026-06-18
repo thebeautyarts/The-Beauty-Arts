@@ -486,7 +486,20 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
             <option>ช่างมะลิ</option><option>ช่างเจน</option><option>อั๋น</option>
           </select>
         </div>
-        <div class="f-field"><label>ราคา (฿)</label><input type="number" id="f-price" placeholder="0"></div>
+        <div class="f-field"><label>ราคา (฿)</label><input type="number" id="f-price" placeholder="0" oninput="updateTotalPrice()"></div>
+        <div class="f-field full">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;color:#059669;">
+            <input type="checkbox" id="has-svc2" onchange="toggleSvc2()" style="width:16px;height:16px;accent-color:#059669;">
+            ➕ ลูกค้าทำ 2 บริการพร้อมกัน
+          </label>
+        </div>
+        <div id="svc2-wrap" class="f-field full" style="display:none;background:#f0fdf4;border:1.5px solid #6ee7b7;border-radius:8px;padding:10px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="f-field" style="margin-bottom:0;"><label style="color:#059669;">บริการที่ 2</label><select id="f-service2"></select></div>
+            <div class="f-field" style="margin-bottom:0;"><label style="color:#059669;">ราคาบริการที่ 2 (฿)</label><input type="number" id="f-price2" placeholder="0" oninput="updateTotalPrice()"></div>
+          </div>
+          <div style="font-size:12px;color:#059669;font-weight:700;margin-top:8px;">💰 ราคารวม 2 บริการ: <span id="total-price-lbl">฿0</span></div>
+        </div>
         <div class="f-field full"><label>มัดจำ ฿1,000</label>
           <div class="dep-toggle">
             <div class="dep-opt active-paid" id="dep-paid" onclick="setDeposit('จ่ายแล้ว')">✅ จ่ายมัดจำแล้ว</div>
@@ -797,7 +810,7 @@ function buildSchedGrid() {
         html += `<div class="booking-chip chip-${b.status}" onclick="event.stopPropagation();window._editBk('${b.id}')">
           <span class="bc-dur">${b.duration||1}ชม.</span>
           <div class="bc-name">${b.name}</div>
-          <div class="bc-svc">${b.service||''}</div>
+          <div class="bc-svc">${b.service||''}${b.service2?` + ${b.service2}`:''}</div>
           <div class="bc-price">${b.price ? fmt(b.price) : ''} ${depIcon}</div>
           <div style="margin-top:3px">
             <button onclick="window._gcal('${b.id}',event)" title="เพิ่มใน Google Calendar"
@@ -868,7 +881,22 @@ window.goToday = function() { schedDate = todayStr(); buildSchedGrid(); };
 // ═══ Services ═══
 window.updateServices = function() {
   const s = document.getElementById('f-shop').value;
-  document.getElementById('f-service').innerHTML = (s==='HAE-IN'?SERVICES_HI:SERVICES_BA).map(x=>`<option>${x}</option>`).join('');
+  const opts = (s==='HAE-IN'?SERVICES_HI:SERVICES_BA).map(x=>`<option>${x}</option>`).join('');
+  document.getElementById('f-service').innerHTML = opts;
+  document.getElementById('f-service2').innerHTML = opts;
+};
+
+window.toggleSvc2 = function() {
+  const has = document.getElementById('has-svc2').checked;
+  document.getElementById('svc2-wrap').style.display = has ? 'block' : 'none';
+  if (!has) { document.getElementById('f-price2').value = ''; updateTotalPrice(); }
+};
+
+window.updateTotalPrice = function() {
+  const p1 = +document.getElementById('f-price').value||0;
+  const p2 = document.getElementById('has-svc2').checked ? (+document.getElementById('f-price2').value||0) : 0;
+  const lbl = document.getElementById('total-price-lbl');
+  if (lbl) lbl.textContent = '฿'+(p1+p2).toLocaleString('th-TH');
 };
 
 // ═══ Modal ═══
@@ -892,6 +920,13 @@ window.openBookingForm = function(date, id, pre) {
       document.getElementById('f-service').value = b.service||'';
       document.getElementById('f-artist').value = b.artist||'PRO';
       document.getElementById('f-price').value = b.price||'';
+      // service2
+      const hasSvc2 = !!(b.service2);
+      document.getElementById('has-svc2').checked = hasSvc2;
+      document.getElementById('svc2-wrap').style.display = hasSvc2 ? 'block' : 'none';
+      document.getElementById('f-service2').value = b.service2||'';
+      document.getElementById('f-price2').value = b.price2||'';
+      window.updateTotalPrice();
       window.setDeposit(b.depositStatus||'จ่ายแล้ว');
       document.getElementById('f-paych').value = b.payChannel||'โอน/แม่มณี';
       document.getElementById('f-status').value = b.status||'จอง';
@@ -907,6 +942,11 @@ window.openBookingForm = function(date, id, pre) {
     window.updateServices();
     document.getElementById('f-artist').value = pre?.artist || 'PRO';
     document.getElementById('f-price').value = '';
+    // reset service2
+    document.getElementById('has-svc2').checked = false;
+    document.getElementById('svc2-wrap').style.display = 'none';
+    document.getElementById('f-price2').value = '';
+    window.updateTotalPrice();
     window.setDeposit('จ่ายแล้ว');
     document.getElementById('f-paych').value = 'โอน/แม่มณี';
     document.getElementById('f-status').value = 'จอง';
@@ -928,6 +968,9 @@ window.saveBooking = async function() {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { alert('กรุณากรอกชื่อลูกค้า'); return; }
   const id = editingId || genId();
+  const hasSvc2 = document.getElementById('has-svc2').checked;
+  const price1 = +document.getElementById('f-price').value||0;
+  const price2 = hasSvc2 ? (+document.getElementById('f-price2').value||0) : 0;
   const bk = {
     id,
     date: document.getElementById('f-date').value,
@@ -938,8 +981,12 @@ window.saveBooking = async function() {
     channel: document.getElementById('f-channel').value,
     shop: document.getElementById('f-shop').value,
     service: document.getElementById('f-service').value,
+    price: price1,
+    ...(hasSvc2 && {
+      service2: document.getElementById('f-service2').value,
+      price2: price2,
+    }),
     artist: document.getElementById('f-artist').value,
-    price: +document.getElementById('f-price').value||0,
     deposit: DEPOSIT_AMOUNT,
     depositStatus: depositStatus,
     payChannel: document.getElementById('f-paych').value,
@@ -995,19 +1042,28 @@ async function syncToRevenue(bk) {
     const svcKey = SERVICE_TO_SVC[bk.service] || null;
     const artistIdx = ARTIST_IDX[bk.artist] ?? -1;
     
-    if (bk.shop === 'HAE-IN') {
-      // HAE-IN → haein section
-      if (bk.service === 'สระ-ไดร์') dayData.haein.sadryi = (dayData.haein.sadryi||0) + price;
-      else if (bk.service === 'Henna') dayData.haein.henna = (dayData.haein.henna||0) + price;
-      else dayData.haein.product = (dayData.haein.product||0) + price;
-    } else if (svcKey && artistIdx >= 0) {
-      // ร้านหลัก → svc ของช่างนั้น
-      if (!dayData.svc[artistIdx]) dayData.svc[artistIdx] = {...empty};
-      dayData.svc[artistIdx][svcKey] = (dayData.svc[artistIdx][svcKey]||0) + price;
-    } else if (svcKey === null && price > 0) {
-      // บริการไม่ตรง → other income
-      if (!Array.isArray(dayData.other)) dayData.other = [];
-      dayData.other.push({n: bk.service + ' (' + bk.name + ')', a: price, w: bk.artist||''});
+    // helper to add one service+price to dayData
+    function addSvcToDay(svc, p, artist) {
+      const k = SERVICE_TO_SVC[svc] || null;
+      const ai = ARTIST_IDX[artist] ?? -1;
+      if (bk.shop === 'HAE-IN') {
+        if (svc === 'สระ-ไดร์') dayData.haein.sadryi = (dayData.haein.sadryi||0) + p;
+        else if (svc === 'Henna') dayData.haein.henna = (dayData.haein.henna||0) + p;
+        else dayData.haein.product = (dayData.haein.product||0) + p;
+      } else if (k && ai >= 0) {
+        if (!dayData.svc[ai]) dayData.svc[ai] = {...empty};
+        dayData.svc[ai][k] = (dayData.svc[ai][k]||0) + p;
+      } else if (p > 0) {
+        if (!Array.isArray(dayData.other)) dayData.other = [];
+        dayData.other.push({n: svc + ' (' + bk.name + ')', a: p, w: artist||''});
+      }
+    }
+    
+    // service 1
+    addSvcToDay(bk.service, price, bk.artist);
+    // service 2 (if exists)
+    if (bk.service2 && bk.price2 > 0) {
+      addSvcToDay(bk.service2, +bk.price2, bk.artist);
     }
     
     // อัปเดต channel
@@ -1114,7 +1170,7 @@ function renderList() {
         <td>${b.date?fmtDate(b.date):'–'}<br><span style="font-size:10px;color:var(--green-mid)">${b.time||''} (${b.duration||1}ชม.)</span></td>
         <td><strong>${b.name}</strong>${b.phone?'<br><span style="font-size:10px;color:#aaa">'+b.phone+'</span>':''}</td>
         <td style="font-size:11px;color:${b.shop==='HAE-IN'?'#6d28d9':'var(--green-dark)'};font-weight:600">${b.shop}</td>
-        <td>${b.service||'–'}</td>
+        <td>${b.service||'–'}${b.service2?`<br><span style="color:#059669;font-size:11px;">+ ${b.service2}</span>`:''}</td>
         <td style="color:${(b.artist||PRO_COL)===PRO_COL?'#B5934B':'var(--green-dark)'};font-weight:600">${(b.artist||PRO_COL)===PRO_COL?'⭐ PRO':b.artist}</td>
         <td style="text-align:center">${b.duration||1} ชม.</td>
         <td style="font-weight:600">${fmt(b.price)}</td>
@@ -1419,8 +1475,8 @@ function buildLineMessage(dateStr) {
       const artist = b.artist && b.artist !== 'PRO' ? b.artist : '⭐ PRO';
       const dep = b.depositStatus === 'จ่ายแล้ว' ? '💰มัดจำแล้ว' : '⏳รอมัดจำ';
       msg += `${icon} ${b.time||'?'} — ${b.name}\n`;
-      msg += `   🎨 ${b.service||'–'}  👩 ${artist}\n`;
-      if (b.price) msg += `   💵 ฿${Number(b.price).toLocaleString('th-TH')}  ${dep}\n`;
+      msg += `   🎨 ${b.service||'–'}${b.service2?' + '+b.service2:''}  👩 ${artist}\n`;
+      if (b.price) msg += `   💵 ฿${Number((+b.price)+(+b.price2||0)).toLocaleString('th-TH')}  ${dep}\n`;
       if (i < dayBks.length - 1) msg += `\n`;
     });
   }
@@ -1563,8 +1619,8 @@ window.genLineMsg = function(mode) {
       bks.forEach(b=>{
         const ic = b.status==='เสร็จแล้ว'?'✅':b.status==='กำลังทำ'?'🔄':b.status==='ยืนยัน'?'✔️':'📋';
         msg += ic+' '+(b.time||'–')+' น. — '+b.name+NL;
-        msg += '   บริการ: '+(b.service||'–')+' | ช่าง: '+(b.artist||'PRO')+NL;
-        msg += '   ฿'+(+b.price||0).toLocaleString('th-TH')+' | '+b.status+NL;
+        msg += '   บริการ: '+(b.service||'–')+(b.service2?' + '+b.service2:'')+' | ช่าง: '+(b.artist||'PRO')+NL;
+        msg += '   ฿'+(((+b.price||0)+(+b.price2||0))).toLocaleString('th-TH')+' | '+b.status+NL;
       });
       msg += LINE+NL+'📊 รวม '+bks.length+' คิว | 💰 ฿'+totRev.toLocaleString('th-TH')+NL;
     }
@@ -1580,7 +1636,7 @@ window.genLineMsg = function(mode) {
     } else {
       bks.forEach(b=>{
         msg += '🕐 '+(b.time||'–')+' น. — '+b.name+NL;
-        msg += '   บริการ: '+(b.service||'–')+' | ช่าง: '+(b.artist||'PRO')+NL;
+        msg += '   บริการ: '+(b.service||'–')+(b.service2?' + '+b.service2:'')+' | ช่าง: '+(b.artist||'PRO')+NL;
         msg += '   '+(b.depositStatus==='จ่ายแล้ว'?'✅ มัดจำแล้ว':'⏳ รอมัดจำ')+NL;
       });
       msg += LINE+NL+'📋 พรุ่งนี้ '+bks.length+' คิว'+NL;
