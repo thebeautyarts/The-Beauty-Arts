@@ -249,6 +249,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
   <div class="tab active" onclick="switchTab('cal')">🗓️ ปฏิทิน</div>
   <div class="tab" onclick="switchTab('booking')">📅 จองคิว & บันทึกรายได้</div>
   <div class="tab" onclick="switchTab('yearly')">📈 สรุปรายปี</div>
+  <div class="tab" onclick="switchTab('salary')">💰 เงินเดือน & คอมมิชชั่น</div>
   <div class="tab" onclick="switchTab('line')">💬 ส่งไลน์</div>
 </div>
 
@@ -278,16 +279,6 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
     <div class="ms-card green"><div class="ms-lbl">กำไรสุทธิ</div><div class="ms-val" id="ms-profit">฿0</div></div>
     <div class="ms-card gold"><div class="ms-lbl">คอมมิชชั่น</div><div class="ms-val" id="ms-comm">฿0</div></div>
     <div class="ms-card"><div class="ms-lbl">บริการทั้งหมด</div><div class="ms-val" id="ms-days">0 ครั้ง</div></div>
-  </div>
-
-  <!-- Salary -->
-  <div class="salary-box">
-    <h4>💰 สรุปเงินเดือน ช่างไอซ์ — <span id="ms-month-lbl"></span></h4>
-    <div class="salary-grid">
-      <div class="s-field"><label>ฐานเงินเดือน</label><div class="s-val">฿15,000</div></div>
-      <div class="s-field"><label>ค่าคอมมิชชั่น (20%)</label><div class="s-val" id="sal-comm">฿0</div></div>
-      <div class="s-field"><label>รวมรับทั้งหมด</label><div class="s-val" id="sal-total">฿15,000</div></div>
-    </div>
   </div>
 
   <!-- Monthly table -->
@@ -367,7 +358,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       </div>
     </div>
 
-    <div class="comm-banner">💡 ทุกบริการ: คอมมิชชั่น <strong>20%</strong> &nbsp;|&nbsp; ฐานเงินเดือนช่างไอซ์ <strong>฿15,000</strong></div>
+    <div class="comm-banner">💡 บริการทั่วไป: คอมมิชชั่น <strong>20%</strong> &nbsp;|&nbsp; 🎓 คอร์สเรียน: <strong>กรอกค่าคอมเอง</strong> &nbsp;|&nbsp; ฐานเงินเดือนช่างไอซ์ <strong>฿15,000</strong></div>
 
     <!-- Holiday -->
     <div class="sec-label">🏖️ วันหยุดของช่างไอซ์</div>
@@ -448,17 +439,6 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
     <div class="card gold"><div class="c-lbl">คอมมิชชั่นทั้งปี</div><div class="c-val" id="yr-comm">฿0</div></div>
   </div>
 
-  <!-- Yearly salary -->
-  <div class="yr-salary-box">
-    <h4>💰 สรุปเงินเดือนรายปี — ช่างไอซ์</h4>
-    <div class="yr-salary-grid">
-      <div class="s-field"><label>ฐานเงินเดือน/ปี</label><div class="s-val" id="yr-sal-base">฿0</div></div>
-      <div class="s-field"><label>คอมมิชชั่นรวม/ปี</label><div class="s-val" id="yr-sal-comm">฿0</div></div>
-      <div class="s-field"><label>วันทำงาน</label><div class="s-val" id="yr-work-days">0 วัน</div></div>
-      <div class="s-field"><label>รวมรับทั้งปี</label><div class="s-val" id="yr-sal-total">฿0</div></div>
-    </div>
-  </div>
-
   <!-- Monthly grid cards -->
   <div class="yr-grid" id="yr-grid"></div>
 
@@ -475,6 +455,78 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
         <td id="yft-profit">฿0</td><td id="yft-comm">฿0</td><td id="yft-days">0</td>
       </tr></tfoot>
     </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 4: เงินเดือน & คอมมิชชั่น
+═══════════════════════════════════════════════════════ -->
+<div class="panel" id="p-salary">
+<div class="container">
+
+  <div class="box">
+    <div class="cal-box-nav">
+      <h3 style="margin:0;">💰 เงินเดือน & คอมมิชชั่น — ช่างไอซ์</h3>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="cal-nav-btn" onclick="changeSalaryMonth(-1)">‹</button>
+        <span class="cal-month-lbl" id="sal-month-lbl"></span>
+        <button class="cal-nav-btn" onclick="changeSalaryMonth(1)">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Salary breakdown cards -->
+  <div class="salary-box">
+    <h4>📋 สรุปยอดรับ — <span id="sal-month-lbl2"></span></h4>
+    <div class="salary-grid">
+      <div class="s-field"><label>ฐานเงินเดือน</label><div class="s-val">฿15,000</div></div>
+      <div class="s-field"><label>คอมจากบริการทั่วไป (20%)</label><div class="s-val" id="sal-auto-comm">฿0</div></div>
+      <div class="s-field"><label>คอมจากคอร์สเรียน (กรอกเอง)</label><div class="s-val" id="sal-course-comm">฿0</div></div>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1.5px solid var(--gold-light);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <span style="font-size:13px;font-weight:700;color:var(--brown);">💵 รวมรับทั้งหมดเดือนนี้</span>
+      <span style="font-size:22px;font-weight:800;color:var(--gold);" id="sal-grand-total">฿15,000</span>
+    </div>
+  </div>
+
+  <!-- Commission breakdown by service -->
+  <div class="box">
+    <h3>📊 คอมมิชชั่นแยกตามบริการ</h3>
+    <div class="table-wrap" style="box-shadow:none;margin-bottom:0;">
+      <table>
+        <thead><tr><th>บริการ</th><th>ยอดขาย</th><th>อัตรา</th><th>คอมมิชชั่น</th></tr></thead>
+        <tbody id="sal-svc-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Daily course commission log -->
+  <div class="box">
+    <h3>🎓 บันทึกค่าคอมคอร์สเรียนรายวัน</h3>
+    <p style="font-size:11px;color:var(--text-mid);margin-bottom:10px;">ค่าคอมคอร์สเรียนแต่ละครั้งจะไม่เท่ากัน ช่างไอซ์กรอกเองในหน้า "จองคิว & บันทึกรายได้" ช่องคอร์สเรียน</p>
+    <div class="table-wrap" style="box-shadow:none;margin-bottom:0;">
+      <table>
+        <thead><tr><th>วัน</th><th>ยอดคอร์ส</th><th>ค่าคอมที่กรอก</th></tr></thead>
+        <tbody id="sal-course-tbody"></tbody>
+        <tfoot><tr><td>รวม</td><td id="sal-course-tot-rev">฿0</td><td id="sal-course-tot-comm">฿0</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- Yearly salary summary -->
+  <div class="box">
+    <h3>📈 สรุปเงินเดือนรายปี <span id="sal-yr-lbl" style="font-weight:400;color:var(--text-mid);"></span></h3>
+    <div class="salary-grid">
+      <div class="s-field"><label>ฐานเงินเดือน/ปี</label><div class="s-val" id="sal-yr-base">฿0</div></div>
+      <div class="s-field"><label>คอมบริการทั่วไป/ปี</label><div class="s-val" id="sal-yr-auto">฿0</div></div>
+      <div class="s-field"><label>คอมคอร์สเรียน/ปี</label><div class="s-val" id="sal-yr-course">฿0</div></div>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1.5px solid var(--gold-light);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <span style="font-size:13px;font-weight:700;color:var(--brown);">💵 รวมรับทั้งปี</span>
+      <span style="font-size:20px;font-weight:800;color:var(--gold);" id="sal-yr-total">฿0</span>
+    </div>
   </div>
 
 </div>
@@ -665,7 +717,7 @@ const app = initializeApp({
 const db = getDatabase(app);
 
 // ── Constants ──
-const BASE_SALARY = 15000, COMM = 0.20, COMM_COURSE = 0.10;
+const BASE_SALARY = 15000, COMM = 0.20;
 const SERVICES = [
   {key:'brow',  label:'🎨 สักคิ้ว',       comm:COMM},
   {key:'lip',   label:'💋 สักปาก',         comm:COMM},
@@ -673,7 +725,7 @@ const SERVICES = [
   {key:'laser', label:'⚡ เลเซอร์',         comm:COMM},
   {key:'hair',  label:'💇 ผม (SMP)',        comm:COMM},
   {key:'item',  label:'🛍️ ขายสินค้า',      comm:COMM},
-  {key:'course',label:'🎓 คอร์สเรียน',     comm:COMM_COURSE},
+  {key:'course',label:'🎓 คอร์สเรียน',     comm:'manual'},
   {key:'other_svc',label:'✨ บริการอื่นๆ', comm:COMM},
 ];
 const CHANNELS=['cash','qr','credit'];
@@ -689,6 +741,7 @@ const TIMES=[];for(let h=10;h<=19;h++){TIMES.push(`${String(h).padStart(2,'0')}:
 const today=new Date();
 let calMonth=today.getMonth(), calYear=today.getFullYear()+543;
 let yrYear=today.getFullYear()+543;
+let salMonth=today.getMonth(), salYear=today.getFullYear()+543;
 let monthCache={};          // mk → {day→data}
 let bookings={}, bkHols={};
 let editBkId=null, depPaid=false;
@@ -715,11 +768,20 @@ async function loadMonth(m,y){
 
 function getSvcTot(dd){return Object.values(dd.svc||{}).reduce((a,b)=>a+b,0);}
 function getSvcComm(dd){
+  // คำนวณคอมมิชชั่นอัตโนมัติ (ไม่รวมคอร์สเรียน ซึ่งกรอกเองแยกต่างหาก)
   if(!dd.svc) return 0;
   return SERVICES.reduce((sum,s)=>{
+    if(s.comm==='manual') return sum;
     const v=+(dd.svc[s.key]||0);
     return sum + v*(s.comm||COMM);
   },0);
+}
+function getCourseComm(dd){
+  // คอมมิชชั่นคอร์สเรียน — กรอกเองโดยช่าง
+  return +(dd.course_comm||0);
+}
+function getTotalComm(dd){
+  return getSvcComm(dd)+getCourseComm(dd);
 }
 function getExp(dd){return(dd.expenses||[]).reduce((s,e)=>s+(+e.a||0),0);}
 function getOth(dd){return(dd.other||[]).reduce((s,e)=>s+(+e.a||0),0);}
@@ -847,7 +909,7 @@ async function renderMonthlySummary(data){
     const dd=data[d]||{};
     if(!dd||typeof dd!=='object') continue;
     const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
-    const grand=sv+oth,profit=grand-exp,comm=getSvcComm(dd);
+    const grand=sv+oth,profit=grand-exp,comm=getTotalComm(dd);
     const isHol=!!dd.is_holiday;
     const daySvcs=bkCounts[d]||0;
     if(grand>0||exp>0||isHol){
@@ -1025,16 +1087,28 @@ function renderBkSum(){
 
 // ── Daily Revenue Form ──
 function buildSvcInputs(){
-  document.getElementById('svc-inputs').innerHTML=SERVICES.map(sv=>`
-    <div class="svc-box">
+  document.getElementById('svc-inputs').innerHTML=SERVICES.map(sv=>{
+    if(sv.comm==='manual'){
+      return `<div class="svc-box" style="background:#fdf3e3;border-color:var(--gold-light);">
+      <label>${sv.label}</label>
+      <input type="number" id="svc-${sv.key}" placeholder="0" oninput="updatePreview()">
+      <label style="margin-top:6px;font-size:10px;color:var(--gold);">ค่าคอมที่จ่ายจริง (กรอกเอง)</label>
+      <input type="number" id="course-comm" placeholder="0" oninput="updatePreview()" style="border-color:var(--gold-light);">
+      <div class="comm-prev" id="comm-${sv.key}" style="color:var(--gold);">คอมกรอกเอง ไม่คงที่</div>
+    </div>`;
+    }
+    return `<div class="svc-box">
       <label>${sv.label}</label>
       <input type="number" id="svc-${sv.key}" placeholder="0" oninput="updatePreview()">
       <div class="comm-prev" id="comm-${sv.key}">คอม: ฿0</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function loadDayForm(dd){
   SERVICES.forEach(sv=>{const el=document.getElementById('svc-'+sv.key);if(el)el.value=dd.svc?.[sv.key]||'';});
+  const courseEl=document.getElementById('course-comm');
+  if(courseEl) courseEl.value=dd.course_comm||'';
   const isHol=!!dd.is_holiday;
   document.getElementById('is-holiday').checked=isHol;
   document.getElementById('hol-reason').value=dd.holiday_reason||'';
@@ -1056,9 +1130,17 @@ window.updatePreview=function(){
   let sv=0,comm=0;
   SERVICES.forEach(s=>{
     const v=+(document.getElementById('svc-'+s.key)?.value||0);
-    const c=v*(s.comm||COMM);sv+=v;comm+=c;
-    const el=document.getElementById('comm-'+s.key);
-    if(el)el.textContent=`คอม ${Math.round(s.comm*100)}%: ${fN(c)}`;
+    sv+=v;
+    if(s.comm==='manual'){
+      const cc=+(document.getElementById('course-comm')?.value||0);
+      comm+=cc;
+      const el=document.getElementById('comm-'+s.key);
+      if(el)el.textContent=cc?`คอมกรอกเอง: ${fN(cc)}`:'คอมกรอกเอง ไม่คงที่';
+    } else {
+      const c=v*(s.comm||COMM);comm+=c;
+      const el=document.getElementById('comm-'+s.key);
+      if(el)el.textContent=`คอม ${Math.round(s.comm*100)}%: ${fN(c)}`;
+    }
   });
   let oth=0;document.querySelectorAll('#other-list .oa').forEach(el=>oth+=(+el.value||0));
   document.getElementById('prev-svc').textContent=fN(sv);
@@ -1084,11 +1166,12 @@ window.addOtherRow=function(name='',amount=''){
 window.saveDay=async function(){
   const m=curBkDate.getMonth(),y=curBkDate.getFullYear()+543,d=curBkDate.getDate();
   const svc={};SERVICES.forEach(sv=>{svc[sv.key]=+(document.getElementById('svc-'+sv.key)?.value||0);});
+  const courseComm=+(document.getElementById('course-comm')?.value||0);
   const channels={};CHANNELS.forEach(ch=>{channels[ch]=+(document.getElementById('ch-'+ch)?.value||0);});
   const expenses=[...document.querySelectorAll('#exp-list .exp-row')].map(r=>({n:r.querySelector('.en')?.value.trim()||'',a:+(r.querySelector('.ea')?.value||0)})).filter(e=>e.n||e.a);
   const other=[...document.querySelectorAll('#other-list .other-row')].map(r=>({n:r.querySelector('.on')?.value.trim()||'',a:+(r.querySelector('.oa')?.value||0)})).filter(e=>e.n||e.a);
   const isHol=document.getElementById('is-holiday').checked;
-  const dayData={svc,channels,expenses,other,is_holiday:isHol,
+  const dayData={svc,course_comm:courseComm,channels,expenses,other,is_holiday:isHol,
     holiday_reason:document.getElementById('hol-reason').value.trim(),
     note:document.getElementById('day-note').value.trim(),updatedAt:new Date().toISOString()};
   const k=mkKey(m,y);
@@ -1106,6 +1189,7 @@ window.saveDay=async function(){
 window.clearForm=function(){
   if(!confirm('ล้างข้อมูลวันนี้?'))return;
   SERVICES.forEach(sv=>{const el=document.getElementById('svc-'+sv.key);if(el)el.value='';});
+  const courseEl=document.getElementById('course-comm');if(courseEl)courseEl.value='';
   CHANNELS.forEach(ch=>{const el=document.getElementById('ch-'+ch);if(el)el.value='';});
   document.getElementById('exp-list').innerHTML='';addExpRow();
   document.getElementById('other-list').innerHTML='';addOtherRow();
@@ -1306,7 +1390,7 @@ async function buildYearly(){
       const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
       const grand=sv+oth;
       if(grand>0){mWdays++;}
-      mRev+=grand;mExp+=exp;mOth+=oth;mComm+=getSvcComm(dd);
+      mRev+=grand;mExp+=exp;mOth+=oth;mComm+=getTotalComm(dd);
     }
     const mProfit=mRev-mExp;
     totRev+=mRev;totExp+=mExp;totComm+=mComm;totWdays+=mWdays;
@@ -1349,6 +1433,108 @@ async function buildYearly(){
 }
 
 window.changeYear=function(delta){yrYear+=delta;buildYearly();};
+
+// ════════════════════════════════════════════════════════
+// TAB: เงินเดือน & คอมมิชชั่น
+// ════════════════════════════════════════════════════════
+window.changeSalaryMonth=async function(delta){
+  salMonth+=delta;
+  if(salMonth>11){salMonth=0;salYear++;}
+  if(salMonth<0){salMonth=11;salYear--;}
+  await buildSalaryTab();
+};
+
+async function buildSalaryTab(){
+  const data=await loadMonth(salMonth,salYear);
+  const lbl=`${ML[salMonth]} ${salYear}`;
+  document.getElementById('sal-month-lbl').textContent=lbl;
+  document.getElementById('sal-month-lbl2').textContent=lbl;
+
+  const dim=new Date(salYear-543,salMonth+1,0).getDate();
+
+  // ── สรุปรวมเดือนนี้ ──
+  let autoComm=0, courseComm=0, courseRevTot=0;
+  const svcTotals={}; // key → {rev, comm}
+  SERVICES.forEach(s=>{svcTotals[s.key]={rev:0,comm:0};});
+  const courseRows=[];
+
+  for(let d=1;d<=dim;d++){
+    const dd=data[d]||{};
+    if(!dd||typeof dd!=='object') continue;
+    SERVICES.forEach(s=>{
+      const v=+(dd.svc?.[s.key]||0);
+      if(!v) return;
+      svcTotals[s.key].rev+=v;
+      if(s.comm!=='manual'){
+        svcTotals[s.key].comm+=v*s.comm;
+        autoComm+=v*s.comm;
+      }
+    });
+    const cRev=+(dd.svc?.course||0);
+    const cComm=+(dd.course_comm||0);
+    if(cRev||cComm){
+      courseRevTot+=cRev; courseComm+=cComm;
+      const dt=new Date(salYear-543,salMonth,d);
+      courseRows.push({d,dow:DS[dt.getDay()],rev:cRev,comm:cComm});
+    }
+  }
+  svcTotals.course.comm=courseComm; // reflect manual entries
+
+  const grandTotal=BASE_SALARY+autoComm+courseComm;
+  document.getElementById('sal-auto-comm').textContent=fN(autoComm);
+  document.getElementById('sal-course-comm').textContent=fN(courseComm);
+  document.getElementById('sal-grand-total').textContent=fN(grandTotal);
+
+  // ── ตารางคอมมิชชั่นแยกตามบริการ ──
+  const svcBody=document.getElementById('sal-svc-tbody');
+  svcBody.innerHTML=SERVICES.map(s=>{
+    const t=svcTotals[s.key];
+    const rateStr=s.comm==='manual'?'กรอกเอง':Math.round(s.comm*100)+'%';
+    return `<tr>
+      <td>${s.label}</td>
+      <td>${t.rev?fN(t.rev):'–'}</td>
+      <td style="color:${s.comm==='manual'?'var(--gold)':'#888'}">${rateStr}</td>
+      <td style="color:var(--gold);font-weight:700;">${t.comm?fN(t.comm):'–'}</td>
+    </tr>`;
+  }).join('');
+
+  // ── ตารางบันทึกคอร์สเรียนรายวัน ──
+  const courseBody=document.getElementById('sal-course-tbody');
+  if(courseRows.length===0){
+    courseBody.innerHTML=`<tr><td colspan="3" style="text-align:center;color:#aaa;padding:16px;">ยังไม่มีรายการคอร์สเรียนเดือนนี้</td></tr>`;
+  } else {
+    courseBody.innerHTML=courseRows.map(r=>`<tr>
+      <td>${r.dow} ${r.d} ${MS[salMonth]}</td>
+      <td>${r.rev?fN(r.rev):'–'}</td>
+      <td style="color:var(--gold);font-weight:700;">${r.comm?fN(r.comm):'ยังไม่กรอก'}</td>
+    </tr>`).join('');
+  }
+  document.getElementById('sal-course-tot-rev').textContent=fN(courseRevTot);
+  document.getElementById('sal-course-tot-comm').textContent=fN(courseComm);
+
+  // ── สรุปรายปี ──
+  document.getElementById('sal-yr-lbl').textContent=`(${salYear})`;
+  let yrAuto=0,yrCourse=0;
+  const yrAllData=await Promise.all(MKL.map((_,m)=>loadMonth(m,salYear)));
+  yrAllData.forEach(yd=>{
+    const ydim=Object.keys(yd).length?Math.max(...Object.keys(yd).map(Number)):0;
+    for(let d=1;d<=31;d++){
+      const dd=yd[d];
+      if(!dd||typeof dd!=='object') continue;
+      SERVICES.forEach(s=>{
+        const v=+(dd.svc?.[s.key]||0);
+        if(!v||s.comm==='manual') return;
+        yrAuto+=v*s.comm;
+      });
+      yrCourse+=+(dd.course_comm||0);
+    }
+  });
+  const yrBase=BASE_SALARY*12;
+  document.getElementById('sal-yr-base').textContent=fN(yrBase);
+  document.getElementById('sal-yr-auto').textContent=fN(yrAuto);
+  document.getElementById('sal-yr-course').textContent=fN(yrCourse);
+  document.getElementById('sal-yr-total').textContent=fN(yrBase+yrAuto+yrCourse);
+}
 
 // ════════════════════════════════════════════════════════
 // LINE MESSAGING
@@ -1412,7 +1598,7 @@ function buildLineMsg(type){
     const m=now.getMonth(),y=now.getFullYear()+543,d=now.getDate();
     const dd=(monthCache[mkKey(m,y)]||{})[d]||{};
     const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
-    const grand=sv+oth,profit=grand-exp,comm=getSvcComm(dd);
+    const grand=sv+oth,profit=grand-exp,comm=getTotalComm(dd);
     const chStr=CHANNELS.map(ch=>{const v=+(dd.channels||{})[ch]||0;return v?`${CH_ICON[ch]}฿${fNN(v)}`:''}).filter(Boolean).join('  ');
     let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}📅 ${fmtThDate(todayDs)}${NL}${LINE}${NL}`;
     if(!bks.length){msg+='ไม่มีคิววันนี้'+NL;}
@@ -1442,7 +1628,7 @@ function buildLineMsg(type){
     for(let d=1;d<=dim;d++){
       const dd=data[d]||{};if(!dd||typeof dd!=='object')continue;
       const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
-      mRev+=sv+oth;mExp+=exp;mComm+=getSvcComm(dd);
+      mRev+=sv+oth;mExp+=exp;mComm+=getTotalComm(dd);
     }
     const mProfit=mRev-mExp;
     let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}📊 สรุปเดือน ${ML[calMonth]} ${calYear}${NL}${LINE}${NL}`;
@@ -1524,12 +1710,16 @@ window.copyLinePreview=function(){
 
 // ── Tab switch ──
 window.switchTab=async function(tab){
-  ['cal','booking','yearly','line'].forEach((t,i)=>{
+  ['cal','booking','yearly','salary','line'].forEach((t,i)=>{
     document.querySelectorAll('.tab')[i].classList.toggle('active',t===tab);
     document.getElementById('p-'+t).classList.toggle('active',t===tab);
   });
   if(tab==='booking'){renderBkHdr();await loadBk();}
   if(tab==='yearly'){await buildYearly();}
+  if(tab==='salary'){
+    salMonth=calMonth;salYear=calYear;
+    await buildSalaryTab();
+  }
   if(tab==='line'){
     loadLineConfig();
     updateLinePreview();
