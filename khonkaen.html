@@ -532,57 +532,33 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 </div>
 </div>
 
-<!-- ═══════ TAB 4: LINE ═══════ -->
+<!-- ═══════ TAB 4: สรุปข้อความ (LINE) ═══════ -->
 <div class="panel" id="p-line">
 <div class="container">
 
   <div class="box">
-    <h3>⚙️ ตั้งค่า LINE Messaging API</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-      <div>
-        <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:4px;text-transform:uppercase;">Channel Access Token</label>
-        <input type="password" id="line-token" placeholder="กรอก Channel Access Token..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:monospace;">
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:4px;text-transform:uppercase;">Group / Chat ID</label>
-        <input type="text" id="line-gid" placeholder="C... หรือ G..." style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:monospace;">
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <button class="btn btn-rose btn-sm" onclick="saveLineConfig()">💾 บันทึก</button>
-      <button class="btn btn-outline btn-sm" onclick="testLine()">🧪 ทดสอบส่ง</button>
-      <span id="line-cfg-msg" style="font-size:12px;font-weight:600;"></span>
-    </div>
-  </div>
-
-  <div class="box">
-    <h3>📤 ส่งข้อความ LINE</h3>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
-      <button class="btn btn-rose" onclick="sendLine('today')" style="padding:16px 10px;font-size:13px;line-height:1.4;">
+    <h3>💬 สรุปข้อความสำหรับแจ้งทีม</h3>
+    <p style="font-size:12px;color:var(--text-mid);margin-bottom:14px;">กดปุ่มเพื่อสร้างข้อความสรุป จากนั้นกด "คัดลอก" แล้วนำไปวางใน LINE ได้เลย</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+      <button class="btn btn-rose" onclick="setLinePreview('today')" style="padding:16px 10px;font-size:13px;line-height:1.4;">
         📅 สรุปคิว<br><span style="font-size:11px;opacity:.8;">+ รายรับวันนี้</span>
       </button>
-      <button class="btn btn-rose" onclick="sendLine('tomorrow')" style="padding:16px 10px;font-size:13px;line-height:1.4;">
+      <button class="btn btn-rose" onclick="setLinePreview('tomorrow')" style="padding:16px 10px;font-size:13px;line-height:1.4;">
         🔮 สรุปคิว<br><span style="font-size:11px;opacity:.8;">พรุ่งนี้</span>
       </button>
-      <button class="btn btn-gold" onclick="sendLine('monthly')" style="padding:16px 10px;font-size:13px;line-height:1.4;">
+      <button class="btn btn-gold" onclick="setLinePreview('monthly')" style="padding:16px 10px;font-size:13px;line-height:1.4;">
         📊 สรุปเดือน<br><span id="line-month-btn-lbl" style="font-size:11px;opacity:.9;"></span>
       </button>
     </div>
-    <div id="line-send-msg" style="font-size:12px;font-weight:600;padding:6px 0;min-height:24px;"></div>
   </div>
 
   <div class="box">
-    <h3>👁️ ตัวอย่างข้อความ</h3>
-    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-      <button class="btn btn-outline btn-sm" onclick="document.getElementById('line-preview-type').value='today';updateLinePreview()">📅 วันนี้</button>
-      <button class="btn btn-outline btn-sm" onclick="document.getElementById('line-preview-type').value='tomorrow';updateLinePreview()">🔮 พรุ่งนี้</button>
-      <button class="btn btn-outline btn-sm" onclick="document.getElementById('line-preview-type').value='monthly';updateLinePreview()">📊 เดือนนี้</button>
-      <input type="hidden" id="line-preview-type" value="today">
-    </div>
-    <textarea id="line-preview" readonly style="width:100%;min-height:220px;padding:10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf6f0;"></textarea>
+    <h3>📋 ข้อความที่จะส่ง</h3>
+    <textarea id="line-preview" readonly style="width:100%;min-height:260px;padding:10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf6f0;" placeholder="กดปุ่มด้านบนเพื่อสร้างข้อความสรุป..."></textarea>
     <div style="display:flex;gap:8px;margin-top:8px;">
-      <button class="btn btn-outline btn-sm" onclick="copyLinePreview()">📋 คัดลอก</button>
+      <button class="btn btn-rose btn-sm" onclick="copyLinePreview()">📋 คัดลอกข้อความ</button>
       <button class="btn btn-outline btn-sm" onclick="updateLinePreview()">🔄 รีเฟรช</button>
+      <span id="line-copy-msg" style="font-size:12px;font-weight:600;color:#16a34a;"></span>
     </div>
   </div>
 
@@ -663,7 +639,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       </div>
       <div style="font-size:12px;font-weight:700;color:#059669;">💰 ราคารวม 2 บริการ: <span id="bm-total-lbl">฿0</span></div>
     </div>
-    <div class="form-field"><label>มัดจำ ฿1,000</label>
+    <div class="form-field"><label id="dep-label">มัดจำ ฿1,000</label>
       <div class="dep-toggle unpaid" id="dep-toggle" onclick="toggleDep()">
         <span id="dep-icon">○</span> <span id="dep-txt">ยังไม่ชำระมัดจำ</span>
       </div>
@@ -1223,11 +1199,16 @@ window.refreshCopy=function(){
 window.copyClipboard=function(){const el=document.getElementById('copy-text');el.select();document.execCommand('copy');alert('คัดลอกแล้ว!');};
 
 // Booking modal
+function getDepositAmount(){
+  const sel=document.getElementById('bm-service-sel').value;
+  return sel==='คอร์สเรียน'?10000:1000;
+}
 window.onSvcSelChange=function(){
   const sel=document.getElementById('bm-service-sel').value;
   const otherEl=document.getElementById('bm-service-other');
   otherEl.style.display=sel==='อื่นๆ'?'block':'none';
   if(sel!=='อื่นๆ') otherEl.value='';
+  updateDep();
 };
 window.kkToggleSvc2=function(){
   const has=document.getElementById('bm-has-svc2').checked;
@@ -1298,9 +1279,12 @@ window.openBkModal=function(id=null,defTime=null){
 };
 window.toggleDep=function(){depPaid=!depPaid;updateDep();};
 function updateDep(){
+  const amt=getDepositAmount();
+  const amtStr='฿'+amt.toLocaleString('th-TH');
+  document.getElementById('dep-label').textContent='มัดจำ '+amtStr;
   document.getElementById('dep-toggle').className='dep-toggle '+(depPaid?'paid':'unpaid');
   document.getElementById('dep-icon').textContent=depPaid?'✓':'○';
-  document.getElementById('dep-txt').textContent=depPaid?'✅ ชำระมัดจำแล้ว ฿1,000':'ยังไม่ชำระมัดจำ';
+  document.getElementById('dep-txt').textContent=depPaid?'✅ ชำระมัดจำแล้ว '+amtStr:'ยังไม่ชำระมัดจำ';
 }
 function updateGcal(){
   const ds=bkDs(curBkDate),time=document.getElementById('bm-time')?.value||'11:00';
@@ -1343,7 +1327,7 @@ window.saveBk=async function(){
     payment:document.getElementById('bm-pay').value,
     note:document.getElementById('bm-note').value.trim(),
     status:document.getElementById('bm-status').value,
-    depositPaid:depPaid,dateStr:ds,updatedAt:new Date().toISOString()};
+    depositPaid:depPaid,depositAmount:getDepositAmount(),dateStr:ds,updatedAt:new Date().toISOString()};
   await set(ref(db,bkPath(ds)+'/'+id),b);
   bookings[id]=b;closeModal('bk-modal');
   renderGrid();renderBkSum();refreshCopy();fbOk('✅ บันทึกการจองแล้ว');
@@ -1539,38 +1523,6 @@ async function buildSalaryTab(){
 // ════════════════════════════════════════════════════════
 // LINE MESSAGING
 // ════════════════════════════════════════════════════════
-const LINE_CFG_KEY='kk_line_config';
-function saveLineConfig(){
-  const token=document.getElementById('line-token').value.trim();
-  const gid=document.getElementById('line-gid').value.trim();
-  localStorage.setItem(LINE_CFG_KEY,JSON.stringify({token,gid}));
-  const m=document.getElementById('line-cfg-msg');
-  m.textContent='✅ บันทึกแล้ว';setTimeout(()=>m.textContent='',3000);
-}
-function loadLineConfig(){
-  try{const c=JSON.parse(localStorage.getItem(LINE_CFG_KEY)||'{}');
-    if(c.token)document.getElementById('line-token').value=c.token;
-    if(c.gid)document.getElementById('line-gid').value=c.gid;
-  }catch(e){}
-}
-function getLineConfig(){
-  try{return JSON.parse(localStorage.getItem(LINE_CFG_KEY)||'{}');}
-  catch(e){return {};}
-}
-
-async function pushLine(msg){
-  const{token,gid}=getLineConfig();
-  if(!token||!gid){alert('กรุณาตั้งค่า LINE Token และ Group ID ก่อน');return false;}
-  try{
-    const res=await fetch('https://api.line.me/v2/bot/message/push',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body:JSON.stringify({to:gid,messages:[{type:'text',text:msg}]})
-    });
-    return res.ok;
-  }catch(e){return false;}
-}
-
 function buildLineMsg(type){
   const NL='\n',LINE='─'.repeat(26);
   const now=new Date();
@@ -1593,8 +1545,6 @@ function buildLineMsg(type){
   if(type==='today'){
     const bks=Object.values(bookings).filter(b=>!b._blocked).sort((a,b)=>a.time.localeCompare(b.time));
     const done=bks.filter(b=>b.status==='เสร็จแล้ว');
-    const bkRev=done.reduce((s,b)=>s+(+b.price||0)+(+b.price2||0),0);
-    // Revenue data
     const m=now.getMonth(),y=now.getFullYear()+543,d=now.getDate();
     const dd=(monthCache[mkKey(m,y)]||{})[d]||{};
     const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
@@ -1612,11 +1562,6 @@ function buildLineMsg(type){
     msg+=`🎯 คอมมิชชั่น: ฿${fNN(comm)}${NL}`;
     if(chStr)msg+=`💳 ${chStr}`;
     return msg.trim();
-  }
-
-  // ── พรุ่งนี้ (placeholder — loaded async in sendLine) ──
-  if(type==='tomorrow'){
-    return `💗 The Beauty Arts สาขาขอนแก่น${NL}🔮 คิวพรุ่งนี้ ${fmtThDate(tmrDs)}${NL}${LINE}${NL}(กำลังโหลด...)`;
   }
 
   // ── สรุปเดือน ──
@@ -1645,11 +1590,13 @@ function buildLineMsg(type){
   return '';
 }
 
-window.sendLine=async function(type){
-  const msgEl=document.getElementById('line-send-msg');
-  msgEl.style.color='#475569';msgEl.textContent='⏳ กำลังส่ง...';
-  let msg='';
+let curLineType='today';
+
+window.setLinePreview=async function(type){
+  curLineType=type;
+  const el=document.getElementById('line-preview');
   if(type==='tomorrow'){
+    el.value='⏳ กำลังโหลดข้อมูลพรุ่งนี้...';
     const tmrDate=new Date();tmrDate.setDate(tmrDate.getDate()+1);
     const tmrDs=bkDs(tmrDate);
     const snap=await get(ref(db,bkPath(tmrDs))).catch(()=>({val:()=>({})}));
@@ -1657,7 +1604,7 @@ window.sendLine=async function(type){
     const NL='\n',LINE='─'.repeat(26);
     const thY=tmrDate.getFullYear()+543;
     const lbl=`${DL[tmrDate.getDay()]}ที่ ${tmrDate.getDate()} ${ML[tmrDate.getMonth()]} ${thY}`;
-    msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}🔮 คิวพรุ่งนี้ ${lbl}${NL}${LINE}${NL}`;
+    let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}🔮 คิวพรุ่งนี้ ${lbl}${NL}${LINE}${NL}`;
     if(!tmrBks.length){msg+='ไม่มีคิวพรุ่งนี้';}
     else{
       tmrBks.forEach(b=>{
@@ -1668,44 +1615,23 @@ window.sendLine=async function(type){
       });
       msg+=`${LINE}${NL}📋 ${tmrBks.length} คิว`;
     }
+    el.value=msg;
   } else {
-    msg=buildLineMsg(type);
+    el.value=buildLineMsg(type);
   }
-  const ok=await pushLine(msg);
-  if(ok){msgEl.style.color='#16a34a';msgEl.textContent='✅ ส่งสำเร็จแล้ว!';}
-  else{msgEl.style.color='#dc2626';msgEl.textContent='❌ ส่งไม่สำเร็จ — ตรวจสอบ Token และ Group ID';}
-  setTimeout(()=>msgEl.textContent='',5000);
 };
 
-window.toggleCustomLine=function(){
-  const w=document.getElementById('custom-msg-wrap');
-  w.style.display=w.style.display==='none'?'block':'none';
-};
-window.sendCustomLine=async function(){
-  const msg=document.getElementById('custom-line-msg').value.trim();
-  if(!msg){alert('กรุณาพิมพ์ข้อความก่อน');return;}
-  const msgEl=document.getElementById('line-send-msg');
-  msgEl.style.color='#475569';msgEl.textContent='⏳ กำลังส่ง...';
-  const ok=await pushLine(msg);
-  if(ok){msgEl.style.color='#16a34a';msgEl.textContent='✅ ส่งสำเร็จแล้ว!';}
-  else{msgEl.style.color='#dc2626';msgEl.textContent='❌ ส่งไม่สำเร็จ';}
-  setTimeout(()=>msgEl.textContent='',5000);
-};
-window.testLine=async function(){
-  const msg=`🧪 ทดสอบ LINE — The Beauty Arts สาขาขอนแก่น\n✅ เชื่อมต่อสำเร็จ!`;
-  const msgEl=document.getElementById('line-cfg-msg');
-  msgEl.textContent='⏳ กำลังทดสอบ...';
-  const ok=await pushLine(msg);
-  if(ok){msgEl.style.color='#16a34a';msgEl.textContent='✅ ทดสอบสำเร็จ!';}
-  else{msgEl.style.color='#dc2626';msgEl.textContent='❌ ไม่สำเร็จ — ตรวจสอบ Token/Group ID';}
-  setTimeout(()=>{msgEl.textContent='';msgEl.style.color='#16a34a';},5000);
-};
 window.updateLinePreview=function(){
-  const type=document.getElementById('line-preview-type').value;
-  document.getElementById('line-preview').value=buildLineMsg(type);
+  setLinePreview(curLineType);
 };
+
 window.copyLinePreview=function(){
-  const el=document.getElementById('line-preview');el.select();document.execCommand('copy');alert('คัดลอกแล้ว!');
+  const el=document.getElementById('line-preview');
+  if(!el.value.trim()){alert('กรุณากดปุ่มสร้างข้อความก่อน');return;}
+  el.select();document.execCommand('copy');
+  const m=document.getElementById('line-copy-msg');
+  m.textContent='✅ คัดลอกแล้ว! นำไปวางใน LINE ได้เลย';
+  setTimeout(()=>m.textContent='',4000);
 };
 
 // ── Tab switch ──
@@ -1721,10 +1647,9 @@ window.switchTab=async function(tab){
     await buildSalaryTab();
   }
   if(tab==='line'){
-    loadLineConfig();
-    updateLinePreview();
     const lbl=document.getElementById('line-month-btn-lbl');
     if(lbl) lbl.textContent=ML[calMonth]+' '+calYear;
+    document.getElementById('line-preview').value='';
   }
 };
 
