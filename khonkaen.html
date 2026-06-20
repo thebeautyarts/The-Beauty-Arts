@@ -216,17 +216,100 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
 .gcal-link:hover{text-decoration:underline;}
 
 @media(max-width:768px){
-  .svc-grid,.yr-grid{grid-template-columns:repeat(2,1fr);}
-  .channel-grid{grid-template-columns:1fr 1fr;}
-  .exp-other-grid{grid-template-columns:1fr;}
-  .sum-row,.ms-grid{grid-template-columns:repeat(2,1fr);}
-  .salary-grid,.yr-salary-grid{grid-template-columns:repeat(2,1fr);}
-  .bk-day-sum,.yr-sum-row{grid-template-columns:repeat(2,1fr);}
-  header h1{font-size:14px;}
-  .container{padding:0 8px;}
-  .box{padding:12px;}
-  .cal-day{min-height:70px;padding:3px 2px;}
+  body{font-size:13px;}
+  header{padding:10px 14px;}
+  .hdr-left h1{font-size:14px;line-height:1.3;}
+  .hdr-left p{font-size:10px;}
+  .hdr-badge{font-size:10px;padding:3px 9px;}
+  .tabs{padding:0 6px;gap:0;}
+  .tab{padding:10px 10px;font-size:11px;flex:1;text-align:center;}
+  .fb-bar{padding:5px 10px;font-size:10px;}
+  .container{padding:0 8px;margin:10px auto;}
+  .box{padding:12px;margin-bottom:10px;}
+  .svc-grid{grid-template-columns:repeat(2,1fr);}
+  .yr-grid{grid-template-columns:repeat(2,1fr);}
+  .channel-grid{grid-template-columns:repeat(3,1fr);gap:6px;}
+  .ch-card{padding:7px 4px;}
+  .ch-card .ch-icon{font-size:15px;}
+  .ch-card .ch-label{font-size:9px;}
+  .exp-other-grid{grid-template-columns:1fr;gap:10px;}
+  .sum-row{grid-template-columns:repeat(2,1fr);}
+  .ms-grid{grid-template-columns:repeat(2,1fr);}
+  .salary-grid,.yr-salary-grid{grid-template-columns:1fr;gap:8px;}
+  .bk-day-sum{grid-template-columns:repeat(3,1fr);gap:6px;}
+  .yr-sum-row{grid-template-columns:repeat(2,1fr);}
+  .card{padding:9px 6px;}
+  .card .c-lbl{font-size:9px;}
+  .card .c-val{font-size:14px;}
+  .ms-card{padding:9px 6px;}
+  .ms-card .ms-lbl{font-size:9px;}
+  .ms-card .ms-val{font-size:13px;}
+
+  /* Calendar */
+  .cal-box-nav{flex-direction:column;align-items:stretch;gap:6px;}
+  .cal-box-nav>div{justify-content:center;}
+  .cal-month-lbl{font-size:13px;}
+  .cal-day{min-height:64px;padding:3px 2px;}
   .cal-hdr{font-size:10px;padding:3px 1px;}
+  .d-num{font-size:11px;}
+  .d-bk-item{padding:1px 2px;}
+  .d-bk-time,.d-bk-name{font-size:7px;}
+  .d-bk-svc,.d-bk-price{font-size:6px;}
+
+  /* Tables: allow horizontal scroll, keep readable */
+  .table-wrap{margin-bottom:10px;}
+  table{font-size:10px;}
+  thead th{padding:6px 5px;font-size:10px;}
+  td{padding:6px 5px;}
+  td:first-child{padding-left:8px;}
+  thead th:first-child{padding-left:8px;}
+
+  /* Booking grid */
+  .sch-grid{grid-template-columns:52px 1fr;}
+  .g-time-cell{font-size:10px;padding:3px 4px;min-height:58px;}
+  .g-slot{min-height:58px;padding:3px;}
+  .bk-card{padding:4px 6px;}
+  .bc-name{font-size:11px;}
+  .bc-svc{font-size:9px;}
+  .bc-status{font-size:8px;}
+  .bc-amt{font-size:9px;}
+
+  /* Buttons */
+  .btn{padding:9px 12px;font-size:12px;min-height:38px;}
+  .btn-sm{padding:7px 10px;font-size:11px;min-height:32px;}
+  .bk-hdr{flex-direction:column;align-items:stretch;gap:10px;}
+  .bk-hdr>div{justify-content:center;}
+  .date-nav{justify-content:center;flex-wrap:wrap;}
+  .bk-date-lbl{font-size:13px;}
+
+  /* Modal — full width sheet on mobile */
+  .modal-overlay{padding:0;align-items:flex-end;}
+  .modal{max-width:100%;width:100%;border-radius:16px 16px 0 0;max-height:92vh;padding:16px;}
+  .form-row{grid-template-columns:1fr 1fr;gap:6px;}
+  .form-field input,.form-field select,.form-field textarea{font-size:16px;padding:9px 10px;}
+  .modal-btns{flex-direction:column;}
+  .modal-btns .btn{width:100%;}
+  .modal-btns .btn-red{margin-left:0!important;}
+
+  /* Entry form */
+  .entry-hdr{flex-direction:column;align-items:stretch;gap:8px;}
+  .entry-hdr>div{justify-content:center;flex-wrap:wrap;}
+  .comm-banner{font-size:11px;}
+  .holiday-box{flex-direction:column;align-items:stretch;}
+
+  /* Yearly cards */
+  .yr-card .yr-rev{font-size:14px;}
+  .yr-card{padding:10px;}
+
+  /* LINE tab buttons */
+  .line-btn-grid{grid-template-columns:1fr!important;gap:8px!important;}
+}
+
+@media(max-width:420px){
+  .channel-grid{grid-template-columns:1fr;}
+  .bk-day-sum{grid-template-columns:1fr;}
+  .sum-row,.ms-grid{grid-template-columns:1fr 1fr;}
+  .svc-grid,.yr-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -539,7 +622,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
   <div class="box">
     <h3>💬 สรุปข้อความสำหรับแจ้งทีม</h3>
     <p style="font-size:12px;color:var(--text-mid);margin-bottom:14px;">กดปุ่มเพื่อสร้างข้อความสรุป จากนั้นกด "คัดลอก" แล้วนำไปวางใน LINE ได้เลย</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+    <div class="line-btn-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
       <button class="btn btn-rose" onclick="setLinePreview('today')" style="padding:16px 10px;font-size:13px;line-height:1.4;">
         📅 สรุปคิว<br><span style="font-size:11px;opacity:.8;">+ รายรับวันนี้</span>
       </button>
@@ -769,7 +852,6 @@ async function buildCal(){
   const data=await loadMonth(calMonth,calYear);
   const lbl=`${ML[calMonth]} ${calYear}`;
   document.getElementById('cal-month-lbl').textContent=lbl;
-  document.getElementById('ms-month-lbl').textContent=lbl;
   const dim=new Date(calYear-543,calMonth+1,0).getDate();
   const fd=new Date(calYear-543,calMonth,1).getDay();
   const adYear=calYear-543;
@@ -917,8 +999,6 @@ async function renderMonthlySummary(data){
   document.getElementById('mft-oth').textContent=fN(totOth);
   document.getElementById('mft-profit').textContent=fN(totProfit);
   document.getElementById('mft-comm').textContent=fN(totComm);
-  document.getElementById('sal-comm').textContent=fN(totComm);
-  document.getElementById('sal-total').textContent=fN(BASE_SALARY+totComm);
 }
 
 // ════════════════════════════════════════════════════════
@@ -1400,15 +1480,10 @@ async function buildYearly(){
     }
   });
   const totProfit=totRev-totExp;
-  const yrBase=BASE_SALARY*12;
   document.getElementById('yr-rev').textContent=fN(totRev);
   document.getElementById('yr-exp').textContent=fN(totExp);
   document.getElementById('yr-profit').textContent=fN(totProfit);
   document.getElementById('yr-comm').textContent=fN(totComm);
-  document.getElementById('yr-work-days').textContent=totWdays+' วัน';
-  document.getElementById('yr-sal-base').textContent=fN(yrBase);
-  document.getElementById('yr-sal-comm').textContent=fN(totComm);
-  document.getElementById('yr-sal-total').textContent=fN(yrBase+totComm);
   document.getElementById('yft-rev').textContent=fN(totRev);
   document.getElementById('yft-exp').textContent=fN(totExp);
   document.getElementById('yft-profit').textContent=fN(totProfit);
