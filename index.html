@@ -150,16 +150,6 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
 .fb-dot.error { background: #ef4444; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 @keyframes spin { to { transform: rotate(360deg); } }
-@media (max-width: 768px) {
-  .artist-grid { grid-template-columns: 1fr; }
-  .channel-grid { grid-template-columns: repeat(3,1fr); }
-  .summary-row { grid-template-columns: repeat(2,1fr); }
-  .ch-summary { grid-template-columns: repeat(2,1fr); }
-  .haein-row { grid-template-columns: 1fr 1fr; }
-  .expense-grid { grid-template-columns: 1fr; }
-  header h1 { font-size: 15px; }
-  .salary-grid { grid-template-columns: repeat(2,1fr); }
-}
 /* ── สรุปรายปี ── */
 .yr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
 .yr-card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.07);text-align:center;border-top:3px solid #0ea5e9;}
@@ -191,7 +181,105 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
 .line-status.ok{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;display:block;}
 .line-status.err{background:#fff5f5;color:#dc2626;border:1px solid #fecaca;display:block;}
 .line-preview{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;font-size:12px;white-space:pre-wrap;font-family:monospace;max-height:260px;overflow-y:auto;line-height:1.7;margin-bottom:12px;}
-@media(max-width:768px){.yr-grid{grid-template-columns:repeat(2,1fr);}}
+
+@media (max-width: 768px) {
+  /* ── Header ── */
+  header h1 { font-size: 13px; line-height: 1.3; }
+  header { padding: 10px 12px; gap: 6px; flex-wrap: wrap; }
+
+  /* ── Tabs ── */
+  .tabs { padding: 0; gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-wrap: nowrap; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 10px 11px; font-size: 10px; white-space: nowrap; flex-shrink: 0; }
+
+  /* ── FB status bar ── */
+  .fb-status { padding: 5px 10px; font-size: 10px; }
+
+  /* ── Container ── */
+  .container { padding: 0 10px; }
+
+  /* ── Summary cards ── */
+  .summary-row { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+  .card { padding: 10px; border-radius: 9px; }
+  .card .label { font-size: 9px; }
+  .card .value { font-size: 16px; }
+
+  /* ── Calendar ── */
+  .box { padding: 12px; margin-bottom: 12px; }
+  .cal-grid { gap: 2px; }
+  .cal-day { min-height: 62px; padding: 4px 3px; font-size: 11px; border-radius: 6px; }
+  .cal-day .day-num { font-size: 12px; }
+  .cal-day .day-rev { font-size: 9px; }
+  .day-header { font-size: 10px; padding: 4px 2px; }
+
+  /* ── Comm legend ── */
+  .comm-legend { gap: 5px; }
+  .comm-badge { font-size: 9px; padding: 3px 7px; }
+
+  /* ── Artist grid ── */
+  .artist-grid { grid-template-columns: 1fr; gap: 10px; }
+  .artist-card { padding: 12px; }
+
+  /* ── HAE-IN row ── */
+  .haein-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  /* ── Channel grid ── */
+  .channel-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .ch-card { padding: 8px; }
+  .ch-card .ch-icon { font-size: 16px; }
+  .ch-card .ch-label { font-size: 9px; }
+  .ch-card input { font-size: 15px !important; padding: 5px 6px; }
+
+  /* ── Expense grid ── */
+  .expense-grid { grid-template-columns: 1fr; gap: 10px; }
+
+  /* ── Summary tab table ── */
+  .monthly-table-wrap,
+  .yr-month-table { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  .monthly-table-wrap table,
+  .yr-month-table table { min-width: 480px; font-size: 11px; }
+  .monthly-table-wrap thead th,
+  .yr-month-table thead th { font-size: 10px; padding: 7px 6px; }
+  .monthly-table-wrap td,
+  .yr-month-table td,
+  .yr-month-table tfoot td { font-size: 11px; padding: 7px 6px; }
+
+  /* ── Channels tab ── */
+  .ch-summary { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  /* ── Payroll tab ── */
+  .salary-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .payroll-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+  .payroll-table-wrap table { min-width: 480px; font-size: 11px; }
+  .payroll-table-wrap thead th { font-size: 10px; padding: 7px 5px; white-space: nowrap; }
+  .payroll-table-wrap td { font-size: 11px; padding: 7px 5px; }
+
+  /* ── Yearly tab ── */
+  .yr-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+  .yr-card { padding: 10px; border-radius: 8px; }
+  .yr-card .yc-label { font-size: 9px; }
+  .yr-card .yc-val { font-size: 15px; }
+  .yr-bar-row { gap: 6px; margin-bottom: 6px; }
+  .yr-bar-label { width: 60px; font-size: 10px; }
+  .yr-bar-val { width: 80px; font-size: 10px; }
+
+  /* ── LINE tab ── */
+  .line-box { padding: 14px; }
+  .line-field input { font-size: 15px !important; }
+
+  /* ── Buttons ── */
+  .btn { padding: 8px 12px; font-size: 12px; min-height: 36px; }
+  .btn-sm { padding: 6px 10px; font-size: 11px; }
+}
+
+@media (max-width: 420px) {
+  header h1 { font-size: 11px; }
+  .tab { padding: 9px 8px; font-size: 9px; }
+  .card .value { font-size: 14px; }
+  .summary-row { gap: 6px; }
+  .salary-grid { grid-template-columns: 1fr; }
+  .yr-grid { grid-template-columns: repeat(2, 1fr); }
+}
 </style>
 </head>
 <body>
