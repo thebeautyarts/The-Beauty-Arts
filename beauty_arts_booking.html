@@ -119,8 +119,8 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
 .f-field input:focus,.f-field select:focus,.f-field textarea:focus{outline:none;border-color:var(--green-light);}
 .f-field textarea{resize:vertical;min-height:55px;}
 .modal-footer{display:flex;gap:8px;padding:14px 18px;border-top:1px solid var(--green-pale);justify-content:flex-end;}
-.dur-selector{display:flex;gap:6px;}
-.dur-btn{flex:1;padding:7px;border:1.5px solid var(--border);border-radius:7px;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-mid);text-align:center;transition:.15s;}
+.dur-selector{display:flex;gap:5px;flex-wrap:wrap;}
+.dur-btn{flex:1;min-width:44px;padding:7px 4px;border:1.5px solid var(--border);border-radius:7px;background:#fff;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-mid);text-align:center;transition:.15s;}
 .dur-btn.active{background:var(--green-pale);border-color:var(--green-light);color:var(--green-dark);}
 .dur-btn:hover{border-color:var(--green-light);}
 /* ═══ Calendar ═══ */
@@ -578,9 +578,17 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
         </div>
         <div class="f-field full"><label>ระยะเวลา</label>
           <div class="dur-selector">
-            <div class="dur-btn active" id="dur-1" onclick="setDur(1)">1 ชั่วโมง</div>
-            <div class="dur-btn" id="dur-2" onclick="setDur(2)">2 ชั่วโมง</div>
-            <div class="dur-btn" id="dur-3" onclick="setDur(3)">3 ชั่วโมง</div>
+            <div class="dur-btn active" id="dur-1" onclick="setDur(1)">1 ชม.</div>
+            <div class="dur-btn" id="dur-1.5" onclick="setDur(1.5)">1.5</div>
+            <div class="dur-btn" id="dur-2" onclick="setDur(2)">2 ชม.</div>
+            <div class="dur-btn" id="dur-2.5" onclick="setDur(2.5)">2.5</div>
+            <div class="dur-btn" id="dur-3" onclick="setDur(3)">3 ชม.</div>
+            <div class="dur-btn" id="dur-3.5" onclick="setDur(3.5)">3.5</div>
+            <div class="dur-btn" id="dur-4" onclick="setDur(4)">4 ชม.</div>
+            <div class="dur-btn" id="dur-4.5" onclick="setDur(4.5)">4.5</div>
+            <div class="dur-btn" id="dur-5" onclick="setDur(5)">5 ชม.</div>
+            <div class="dur-btn" id="dur-5.5" onclick="setDur(5.5)">5.5</div>
+            <div class="dur-btn" id="dur-6" onclick="setDur(6)">6 ชม.</div>
           </div>
         </div>
         <div class="f-field"><label>ชื่อลูกค้า *</label><input type="text" id="f-name" placeholder="K. ชื่อ..."></div>
@@ -738,7 +746,10 @@ function updateHeader() {
 // ═══ Duration ═══
 window.setDur = function(d) {
   dur = d;
-  [1,2,3].forEach(n => document.getElementById('dur-'+n).classList.toggle('active', n===d));
+  [1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6].forEach(n => {
+    const el = document.getElementById('dur-'+n);
+    if(el) el.classList.toggle('active', n===d);
+  });
 };
 
 // ═══ Deposit toggle ═══
