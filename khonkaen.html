@@ -332,6 +332,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
   <div class="tab active" onclick="switchTab('cal')">🗓️ ปฏิทิน</div>
   <div class="tab" onclick="switchTab('booking')">📅 จองคิว & บันทึกรายได้</div>
   <div class="tab" onclick="switchTab('yearly')">📈 สรุปรายปี</div>
+  <div class="tab" onclick="switchTab('customers')">👤 ข้อมูลลูกค้า</div>
   <div class="tab" onclick="switchTab('salary')">💰 เงินเดือน & คอมมิชชั่น</div>
   <div class="tab" onclick="switchTab('line')">💬 ส่งไลน์</div>
 </div>
@@ -493,6 +494,78 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       <button class="btn btn-rose" onclick="saveDay()">💾 บันทึกข้อมูล</button>
       <button class="btn btn-outline" onclick="clearForm()">🗑️ ล้างข้อมูล</button>
       <span class="save-msg" id="entry-msg2"></span>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB: ข้อมูลลูกค้า
+═══════════════════════════════════════════════════════ -->
+<div class="panel" id="p-customers">
+<div class="container">
+
+  <div class="box">
+    <h3>👤 ค้นหาข้อมูลลูกค้า</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:3px;text-transform:uppercase;">ชื่อลูกค้า</label>
+        <input type="text" id="cus-name" placeholder="🔍 พิมพ์ชื่อ..." oninput="searchCustomers()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:16px;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:3px;text-transform:uppercase;">เบอร์โทร</label>
+        <input type="tel" id="cus-phone" placeholder="🔍 พิมพ์เบอร์..." oninput="searchCustomers()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:16px;">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:3px;text-transform:uppercase;">วันที่เข้ารับบริการ</label>
+        <input type="date" id="cus-date" oninput="searchCustomers()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:16px;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:3px;text-transform:uppercase;">บริการ</label>
+        <input type="text" id="cus-service" placeholder="🔍 ชื่อบริการ..." oninput="searchCustomers()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:16px;">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div style="flex:1;">
+        <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:3px;text-transform:uppercase;">สถานะ</label>
+        <select id="cus-status" onchange="searchCustomers()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+          <option value="">ทุกสถานะ</option>
+          <option>ยืนยัน</option><option>กำลังทำ</option><option>เสร็จแล้ว</option><option>ยกเลิก</option>
+        </select>
+      </div>
+      <div style="flex:0;display:flex;align-items:flex-end;padding-bottom:2px;">
+        <button class="btn btn-outline btn-sm" onclick="clearCusSearch()">🗑️ ล้าง</button>
+      </div>
+    </div>
+    <div id="cus-count" style="font-size:12px;color:var(--text-mid);margin-top:10px;font-weight:600;"></div>
+  </div>
+
+  <!-- Loading indicator -->
+  <div id="cus-loading" style="display:none;text-align:center;padding:24px;color:var(--text-mid);">⏳ กำลังโหลดข้อมูล...</div>
+
+  <!-- Customer result cards -->
+  <div id="cus-cards" style="display:grid;gap:12px;margin-bottom:14px;"></div>
+
+  <!-- Detail rows table (appears when search active) -->
+  <div id="cus-table-wrap" style="display:none;">
+    <div class="box">
+      <h3>📋 รายการทั้งหมด</h3>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr>
+            <th>วัน / เวลา</th><th>ชื่อลูกค้า</th><th>บริการ</th><th>ราคา</th><th>สถานะ</th><th>หมายเหตุ</th><th></th>
+          </tr></thead>
+          <tbody id="cus-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -1709,14 +1782,153 @@ window.copyLinePreview=function(){
   setTimeout(()=>m.textContent='',4000);
 };
 
+// ════════════════════════════════════════════════════════
+// TAB: ข้อมูลลูกค้า
+// ════════════════════════════════════════════════════════
+let allCustomerBookings = [];   // cache of all bookings loaded
+let cusDataLoaded = false;
+
+async function loadAllBookingsForSearch(){
+  if(cusDataLoaded){ searchCustomers(); return; }
+  document.getElementById('cus-loading').style.display='block';
+  document.getElementById('cus-cards').innerHTML='';
+  document.getElementById('cus-count').textContent='';
+  try{
+    // Load booking data for last 24 months
+    const snap=await get(ref(db,'kk_branch/bookings'));
+    const raw=snap.val()||{};
+    allCustomerBookings=[];
+    // raw = { '2025_06_01': { bk_xxx: {...}, ... }, ... }
+    Object.entries(raw).forEach(([dateKey,dayData])=>{
+      if(!dayData||typeof dayData!=='object') return;
+      const ds=dateKey.replace(/_/g,'-'); // '2025-06-01'
+      Object.values(dayData).forEach(b=>{
+        if(!b||typeof b!=='object') return;
+        allCustomerBookings.push({...b, dateStr:ds});
+      });
+    });
+    // Sort newest first
+    allCustomerBookings.sort((a,b)=>(b.dateStr||'').localeCompare(a.dateStr||''));
+    cusDataLoaded=true;
+    fbOk('✅ โหลดข้อมูลลูกค้าแล้ว');
+  }catch(e){
+    fbErr('❌ โหลดข้อมูลลูกค้าไม่ได้');
+  }
+  document.getElementById('cus-loading').style.display='none';
+  searchCustomers();
+}
+
+window.searchCustomers=function(){
+  const fName=(document.getElementById('cus-name')?.value||'').toLowerCase().trim();
+  const fPhone=(document.getElementById('cus-phone')?.value||'').toLowerCase().trim();
+  const fDate=(document.getElementById('cus-date')?.value||'');
+  const fSvc=(document.getElementById('cus-service')?.value||'').toLowerCase().trim();
+  const fStatus=(document.getElementById('cus-status')?.value||'');
+
+  const hasFilter=fName||fPhone||fDate||fSvc||fStatus;
+
+  const filtered=allCustomerBookings.filter(b=>{
+    if(b._blocked) return false;
+    if(fName  && !(b.name||'').toLowerCase().includes(fName)) return false;
+    if(fPhone && !(b.phone||'').toLowerCase().includes(fPhone)) return false;
+    if(fDate  && b.dateStr!==fDate) return false;
+    if(fSvc   && !((b.service||'')+(b.service2||'')).toLowerCase().includes(fSvc)) return false;
+    if(fStatus && b.status!==fStatus) return false;
+    return true;
+  });
+
+  const countEl=document.getElementById('cus-count');
+  const cardsEl=document.getElementById('cus-cards');
+  const tableWrap=document.getElementById('cus-table-wrap');
+  const tbody=document.getElementById('cus-tbody');
+
+  if(!hasFilter){
+    countEl.textContent=`ข้อมูลทั้งหมด ${allCustomerBookings.length} รายการ — ใส่คำค้นหาเพื่อกรอง`;
+    // Show top recent 10 unique customers when no filter
+    const recent={};
+    allCustomerBookings.slice(0,100).forEach(b=>{
+      const k=(b.name||'')+'|'+(b.phone||'');
+      if(!recent[k]) recent[k]={...b,count:1};
+      else recent[k].count++;
+    });
+    cardsEl.innerHTML=Object.values(recent).slice(0,10).map(b=>buildCusCard(b,[b])).join('');
+    tableWrap.style.display='none';
+    return;
+  }
+
+  countEl.textContent=filtered.length>0?`พบ ${filtered.length} รายการ`:'ไม่พบข้อมูล';
+
+  // Group by customer name+phone
+  const byCustomer={};
+  filtered.forEach(b=>{
+    const k=(b.name||'–')+'|'+(b.phone||'');
+    if(!byCustomer[k]) byCustomer[k]={name:b.name,phone:b.phone,visits:[]};
+    byCustomer[k].visits.push(b);
+  });
+
+  cardsEl.innerHTML=Object.values(byCustomer).map(c=>buildCusCard(c.visits[0],c.visits)).join('');
+
+  // Table
+  tableWrap.style.display='block';
+  tbody.innerHTML=filtered.length===0
+    ?`<tr><td colspan="7" style="text-align:center;padding:20px;color:#aaa;">ไม่พบรายการ</td></tr>`
+    :filtered.map(b=>{
+      const priceTotal=(+b.price||0)+(+b.price2||0);
+      const sc=b.status==='เสร็จแล้ว'?'st-done':b.status==='กำลังทำ'?'st-doing':'st-confirm';
+      const dt=b.dateStr?new Date(b.dateStr+'T00:00:00'):null;
+      const dateLbl=dt?`${DS[dt.getDay()]} ${dt.getDate()} ${MS[dt.getMonth()]} ${dt.getFullYear()+543}`:'–';
+      const svc=(b.service||'–')+(b.service2?' + '+b.service2:'');
+      return `<tr>
+        <td style="white-space:nowrap;">${dateLbl}<br><span style="font-size:10px;color:var(--text-mid);">${b.time||''}</span></td>
+        <td><strong>${b.name||'–'}</strong>${b.phone?`<br><span style="font-size:11px;color:#888;">📞 ${b.phone}</span>`:''}</td>
+        <td>${svc}</td>
+        <td style="font-weight:700;color:var(--gold);">${priceTotal?fN(priceTotal):'ฟรี'}</td>
+        <td><span class="bc-status ${sc}">${b.status||'–'}</span></td>
+        <td style="font-size:11px;color:#888;">${b.note||''}</td>
+        <td><button onclick="switchTab('booking');curBkDate=new Date('${b.dateStr||bkDs(new Date())}');renderBkHdr();loadBk();"
+          class="btn btn-outline btn-sm">📅 ดูคิว</button></td>
+      </tr>`;
+    }).join('');
+};
+
+function buildCusCard(b, visits){
+  const totalSpent=visits.filter(v=>v.status==='เสร็จแล้ว').reduce((s,v)=>s+(+v.price||0)+(+v.price2||0),0);
+  const services=[...new Set(visits.flatMap(v=>[v.service,v.service2]).filter(Boolean))];
+  const lastDate=b.dateStr?new Date(b.dateStr+'T00:00:00'):null;
+  const lastLbl=lastDate?`${lastDate.getDate()} ${MS[lastDate.getMonth()]} ${lastDate.getFullYear()+543}`:'–';
+  return `<div style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:14px;border-left:4px solid var(--rose);">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#7c1d3c;">${b.name||'–'}</div>
+        ${b.phone?`<div style="font-size:12px;color:#888;margin-top:2px;">📞 ${b.phone}</div>`:''}
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:13px;font-weight:700;color:var(--rose);">${visits.length} ครั้ง</div>
+        <div style="font-size:11px;color:var(--gold);font-weight:600;">${totalSpent?fN(totalSpent):'–'}</div>
+      </div>
+    </div>
+    <div style="margin-top:8px;font-size:12px;color:var(--text-mid);">
+      🗓️ ล่าสุด: ${lastLbl} | ${b.time?b.time+' น.':''}
+    </div>
+    ${services.length?`<div style="margin-top:4px;font-size:11px;color:#475569;">💅 ${services.join(' · ')}</div>`:''}
+  </div>`;
+}
+
+window.clearCusSearch=function(){
+  ['cus-name','cus-phone','cus-date','cus-service'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('cus-status').value='';
+  searchCustomers();
+};
+
 // ── Tab switch ──
 window.switchTab=async function(tab){
-  ['cal','booking','yearly','salary','line'].forEach((t,i)=>{
+  ['cal','booking','yearly','customers','salary','line'].forEach((t,i)=>{
     document.querySelectorAll('.tab')[i].classList.toggle('active',t===tab);
     document.getElementById('p-'+t).classList.toggle('active',t===tab);
   });
   if(tab==='booking'){renderBkHdr();await loadBk();}
   if(tab==='yearly'){await buildYearly();}
+  if(tab==='customers'){await loadAllBookingsForSearch();}
   if(tab==='salary'){
     salMonth=calMonth;salYear=calYear;
     await buildSalaryTab();
