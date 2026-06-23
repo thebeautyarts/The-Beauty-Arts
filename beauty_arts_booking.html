@@ -272,7 +272,7 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
 <div class="tabs">
   <div class="tab" onclick="showTab('tab-cal')">🗓️ ปฏิทินรายเดือน</div>
   <div class="tab active" onclick="showTab('tab-sched')">📅 ตารางรายวัน</div>
-  <div class="tab" onclick="showTab('tab-list')">📋 รายการทั้งหมด</div>
+  <div class="tab" onclick="showTab('tab-list')">👤 ข้อมูลลูกค้า</div>
   <div class="tab" onclick="showTab('tab-sum')">📊 สรุปรายเดือน</div>
   <div class="tab" onclick="showTab('tab-line')" style="color:rgba(255,255,255,.5)">💬 ส่งไลน์</div>
 </div>
@@ -338,30 +338,81 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
 <!-- LIST -->
 <div id="tab-list" class="panel">
 <div class="container">
-  <div class="filter-bar">
-    <input type="date" id="fl-date" oninput="renderList()">
-    <select id="fl-artist" onchange="renderList()"><option value="">ช่างทุกคน</option></select>
-    <select id="fl-status" onchange="renderList()">
-      <option value="">ทุกสถานะ</option>
-      <option>จอง</option><option>ยืนยัน</option><option>กำลังทำ</option><option>เสร็จแล้ว</option><option>ยกเลิก</option>
-    </select>
-    <select id="fl-shop" onchange="renderList()">
-      <option value="">ทุกร้าน</option><option>The Beauty Arts</option><option>HAE-IN</option>
-    </select>
-    <select id="fl-dep" onchange="renderList()">
-      <option value="">มัดจำทุกสถานะ</option>
-      <option value="จ่ายแล้ว">จ่ายมัดจำแล้ว</option>
-      <option value="ยังไม่จ่าย">ยังไม่จ่ายมัดจำ</option>
-    </select>
-    <input type="text" id="fl-name" placeholder="ค้นหาชื่อ..." oninput="renderList()" style="flex:1;min-width:150px">
-    <button class="btn btn-outline btn-sm" onclick="clearFilters()">ล้าง</button>
+
+  <!-- Customer Search Box -->
+  <div style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(27,94,59,.1);padding:16px;margin-bottom:14px;">
+    <h3 style="font-size:14px;font-weight:700;color:var(--green-dark);margin-bottom:12px;">👤 ค้นหาข้อมูลลูกค้า</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">ชื่อลูกค้า</label>
+        <input type="text" id="fl-name" placeholder="🔍 พิมพ์ชื่อ..." oninput="renderList()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">เบอร์โทร</label>
+        <input type="text" id="fl-phone" placeholder="🔍 พิมพ์เบอร์..." oninput="renderList()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">วันที่เข้ารับบริการ</label>
+        <input type="date" id="fl-date" oninput="renderList()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">บริการ</label>
+        <input type="text" id="fl-service-search" placeholder="🔍 ชื่อบริการ..." oninput="renderList()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
+      <div style="flex:1;">
+        <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">ช่าง</label>
+        <select id="fl-artist" onchange="renderList()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+          <option value="">ช่างทุกคน</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">สถานะ</label>
+        <select id="fl-status" onchange="renderList()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+          <option value="">ทุกสถานะ</option>
+          <option>จอง</option><option>ยืนยัน</option><option>กำลังทำ</option><option>เสร็จแล้ว</option><option>ยกเลิก</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">ร้าน</label>
+        <select id="fl-shop" onchange="renderList()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+          <option value="">ทุกร้าน</option><option>The Beauty Arts</option><option>HAE-IN</option>
+        </select>
+      </div>
+      <div style="flex:1;">
+        <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">มัดจำ</label>
+        <select id="fl-dep" onchange="renderList()"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+          <option value="">ทุกสถานะ</option>
+          <option value="จ่ายแล้ว">จ่ายมัดจำแล้ว</option>
+          <option value="ยังไม่จ่าย">ยังไม่จ่ายมัดจำ</option>
+        </select>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="clearFilters()" style="margin-bottom:2px;">🗑️ ล้าง</button>
+    </div>
+    <div id="fl-result-count" style="font-size:11px;color:#888;margin-top:10px;"></div>
   </div>
+
+  <!-- Customer Cards -->
+  <div id="cust-cards" style="display:grid;gap:10px;margin-bottom:14px;"></div>
+
+  <!-- Full Table -->
   <div class="tbl-wrap">
     <table>
       <thead><tr>
-        <th>เลขที่</th><th>วัน / เวลา</th><th>ชื่อลูกค้า</th><th>ร้าน</th>
-        <th>บริการ</th><th>ช่าง</th><th>ระยะเวลา</th><th>ราคา</th><th>มัดจำ ฿1,000</th>
-        <th>ช่องทาง</th><th>สถานะ</th><th></th><th>📅</th>
+        <th>วัน / เวลา</th><th>ชื่อลูกค้า / เบอร์</th><th>ร้าน</th>
+        <th>บริการ</th><th>ช่าง</th><th>ราคา</th><th>มัดจำ</th>
+        <th>สถานะ</th><th>หมายเหตุ</th><th></th>
       </tr></thead>
       <tbody id="list-tbody"></tbody>
     </table>
@@ -1142,43 +1193,90 @@ function startHolidaySync() {
 }
 
 window.clearFilters = function() {
-  ['fl-date','fl-name'].forEach(id=>document.getElementById(id).value='');
-  ['fl-artist','fl-status','fl-shop','fl-dep'].forEach(id=>document.getElementById(id).value='');
+  ['fl-date','fl-name','fl-phone','fl-service-search'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['fl-artist','fl-status','fl-shop','fl-dep'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   renderList();
 };
 
 function renderList() {
-  const fD=document.getElementById('fl-date').value,
-        fA=document.getElementById('fl-artist').value,
-        fS=document.getElementById('fl-status').value,
-        fSh=document.getElementById('fl-shop').value,
-        fDep=document.getElementById('fl-dep').value,
-        fN=document.getElementById('fl-name').value.toLowerCase();
+  const fD  = document.getElementById('fl-date')?.value || '';
+  const fA  = document.getElementById('fl-artist')?.value || '';
+  const fS  = document.getElementById('fl-status')?.value || '';
+  const fSh = document.getElementById('fl-shop')?.value || '';
+  const fDep= document.getElementById('fl-dep')?.value || '';
+  const fN  = (document.getElementById('fl-name')?.value || '').toLowerCase().trim();
+  const fPh = (document.getElementById('fl-phone')?.value || '').toLowerCase().trim();
+  const fSvc= (document.getElementById('fl-service-search')?.value || '').toLowerCase().trim();
+
   const filtered = bkList().filter(b=>{
-    if(fD&&b.date!==fD) return false;
-    if(fA&&(b.artist||PRO_COL)!==fA) return false;
-    if(fS&&b.status!==fS) return false;
-    if(fSh&&b.shop!==fSh) return false;
-    if(fDep&&b.depositStatus!==fDep) return false;
-    if(fN&&!b.name.toLowerCase().includes(fN)) return false;
+    if(fD  && b.date!==fD) return false;
+    if(fA  && (b.artist||PRO_COL)!==fA) return false;
+    if(fS  && b.status!==fS) return false;
+    if(fSh && b.shop!==fSh) return false;
+    if(fDep&& b.depositStatus!==fDep) return false;
+    if(fN  && !(b.name||'').toLowerCase().includes(fN)) return false;
+    if(fPh && !(b.phone||'').toLowerCase().includes(fPh)) return false;
+    if(fSvc&& !((b.service||'')+(b.service2||'')).toLowerCase().includes(fSvc)) return false;
     return true;
   }).sort((a,b)=>((b.date||'')+(b.time||'')).localeCompare((a.date||'')+(a.time||'')));
+
+  const countEl = document.getElementById('fl-result-count');
+  if(countEl) countEl.textContent = filtered.length > 0
+    ? `พบ ${filtered.length} รายการ` : '';
+
+  // ── Customer cards (first 6 unique customers by name+phone) ──
+  const custCards = document.getElementById('cust-cards');
+  if(custCards){
+    const isSearching = fN||fPh||fSvc||fD||fA||fS||fSh||fDep;
+    if(isSearching && filtered.length > 0){
+      // Group by customer (name+phone)
+      const byCustomer = {};
+      filtered.forEach(b=>{
+        const key = (b.name||'–')+'|'+(b.phone||'');
+        if(!byCustomer[key]) byCustomer[key]={name:b.name,phone:b.phone,visits:[]};
+        byCustomer[key].visits.push(b);
+      });
+      custCards.innerHTML = Object.values(byCustomer).slice(0,20).map(c=>{
+        const visits=c.visits;
+        const totalSpent=visits.filter(v=>v.status==='เสร็จแล้ว').reduce((s,v)=>s+(+v.price||0)+(+v.price2||0),0);
+        const lastVisit=visits[0];
+        const services=[...new Set(visits.flatMap(v=>[v.service,v.service2]).filter(Boolean))];
+        return `<div style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(27,94,59,.09);padding:14px;border-left:4px solid var(--green-light);">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--green-dark);">${c.name||'–'}</div>
+              ${c.phone?`<div style="font-size:12px;color:#888;margin-top:2px;">📞 ${c.phone}</div>`:''}
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:13px;font-weight:700;color:var(--green-dark);">${visits.length} ครั้ง</div>
+              <div style="font-size:11px;color:#059669;">ยอดรวม ${totalSpent>0?'฿'+totalSpent.toLocaleString('th-TH'):'–'}</div>
+            </div>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:#64748b;">
+            🗓️ ล่าสุด: ${lastVisit.date?fmtDate(lastVisit.date):'–'} — ${(lastVisit.service||'–')}
+          </div>
+          ${services.length>1?`<div style="margin-top:4px;font-size:11px;color:#475569;">💅 บริการ: ${services.join(', ')}</div>`:''}
+        </div>`;
+      }).join('');
+    } else {
+      custCards.innerHTML='';
+    }
+  }
+
+  // ── Table rows ──
   document.getElementById('list-tbody').innerHTML = filtered.length===0
-    ? '<tr><td colspan="13" style="text-align:center;padding:24px;color:#aaa">ไม่พบรายการ</td></tr>'
+    ? '<tr><td colspan="10" style="text-align:center;padding:24px;color:#aaa">ไม่พบรายการ</td></tr>'
     : filtered.map(b=>`<tr>
-        <td style="font-size:10px;color:#aaa">${b.id}</td>
         <td>${b.date?fmtDate(b.date):'–'}<br><span style="font-size:10px;color:var(--green-mid)">${b.time||''} (${b.duration||1}ชม.)</span></td>
-        <td><strong>${b.name}</strong>${b.phone?'<br><span style="font-size:10px;color:#aaa">'+b.phone+'</span>':''}</td>
+        <td><strong>${b.name}</strong>${b.phone?`<br><span style="font-size:10px;color:#888;">📞 ${b.phone}</span>`:''}</td>
         <td style="font-size:11px;color:${b.shop==='HAE-IN'?'#6d28d9':'var(--green-dark)'};font-weight:600">${b.shop}</td>
         <td>${b.service||'–'}${b.service2?`<br><span style="color:#059669;font-size:11px;">+ ${b.service2}</span>`:''}</td>
         <td style="color:${(b.artist||PRO_COL)===PRO_COL?'#B5934B':'var(--green-dark)'};font-weight:600">${(b.artist||PRO_COL)===PRO_COL?'⭐ PRO':b.artist}</td>
-        <td style="text-align:center">${b.duration||1} ชม.</td>
-        <td style="font-weight:600">${fmt(b.price)}</td>
-        <td><span class="dep-badge ${b.depositStatus==='จ่ายแล้ว'?'dep-paid':'dep-unpaid'}">${b.depositStatus==='จ่ายแล้ว'?'✅ จ่ายแล้ว':'⏳ ยังไม่จ่าย'}</span></td>
-        <td style="font-size:11px">${b.channel||'–'}</td>
+        <td style="font-weight:600">${fmt((+b.price||0)+(+b.price2||0))}</td>
+        <td><span class="dep-badge ${b.depositStatus==='จ่ายแล้ว'?'dep-paid':'dep-unpaid'}">${b.depositStatus==='จ่ายแล้ว'?'✅':'⏳'}</span></td>
         <td><span class="status-badge" style="background:${STATUS_BG[b.status]||'#eee'}">${b.status}</span></td>
-        <td><button onclick="window._editBk('${b.id}')" style="background:var(--green-pale);border:none;border-radius:5px;padding:3px 10px;cursor:pointer;font-size:10px;color:var(--green-dark);font-weight:600">แก้ไข</button></td>
-        <td><button onclick="window._gcal('${b.id}',event)" style="background:#e8f0fe;border:1px solid #c5d4f6;border-radius:5px;padding:3px 10px;cursor:pointer;font-size:10px;color:#1a73e8;font-weight:700;white-space:nowrap">📅 GCal</button></td>
+        <td style="font-size:11px;color:#888;max-width:120px;overflow:hidden;text-overflow:ellipsis;">${b.note||''}</td>
+        <td><button onclick="window._editBk('${b.id}')" style="background:var(--green-pale);border:none;border-radius:5px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green-dark);font-weight:600;">แก้ไข</button></td>
       </tr>`).join('');
 }
 
