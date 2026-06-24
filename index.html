@@ -465,7 +465,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
     <h3 style="font-size:14px;font-weight:700;color:#0c4a6e">⚙️ ตั้งค่าเงินเดือนพื้นฐาน</h3>
     <div style="font-size:12px;color:#888;margin-bottom:10px">
       🔒 ฐานเงินเดือนล็อคแล้ว &nbsp;|&nbsp; 📌 วันหยุด 4 วัน/เดือน &nbsp;|&nbsp;
-      🎨 คอม: คิ้ว/ปาก/ตา 20% (ทำคิ้วใหม่จ่าย 2 รอบ) | เลเซอร์ 20% | ขนตา/ผม/เล็บ 10% | ขายของ ฿150→฿50 &nbsp;|&nbsp; 💜 HAE-IN 10%÷6 &nbsp;|&nbsp; 🌿 ชลาชล ฿1,161/คน/ครั้ง &nbsp;|&nbsp; โม: เงินเดือนอย่างเดียว
+      🎨 คอม: คิ้ว/ปาก/ตา 20% (ทำคิ้วใหม่จ่าย 2 รอบ) | เลเซอร์ 20% | ขนตา/ผม/เล็บ 10% | ขายของ ฿150→฿50 &nbsp;|&nbsp; 💜 HAE-IN 10%÷5 (ไม่รวมอ.หญิง) &nbsp;|&nbsp; 🌿 ชลาชล ฿1,161/คน/ครั้ง &nbsp;|&nbsp; โม: เงินเดือนอย่างเดียว
     </div>
     <div class="salary-grid">
       <div class="s-field"><label>ช่างมด 🔒</label><input type="number" id="sal-mod" value="15000" readonly style="background:#f5f5f5"></div>
@@ -1315,7 +1315,7 @@ window.calcPayroll = function() {
     if(dd.absent) (dd.absent||[]).forEach((a,i)=>{if(a)absentDays[i]++;});
     totHaeinRev+=haeinTotal(dd.haein||{});
   }
-  const haeinPool=totHaeinRev*0.10, haeinPP=haeinPool/6;
+  const haeinPool=totHaeinRev*0.10, haeinPP=haeinPool/5; // ÷5 ช่าง (ไม่รวมอ.หญิง)
   const totTat=totBrow.map((b,i)=>b+totEye[i]+totLip[i]);
   const totOther=totLash.map((l,i)=>l+totHair[i]+totNail[i]);
   const commTat=totTat.map((t,i)=>Math.max(0,t*0.20-totR2[i]));
@@ -1326,10 +1326,8 @@ window.calcPayroll = function() {
   const commOther=totOther.map(t=>t*0.10);
   const commItem=totItem.map(t=>calcItemComm(t));
   const commChalacol=totChalacol.map(t=>t*CHALACOL_RATE);
-  // คอมอั๋น: นับจำนวนบริการที่มียอด (ยกเว้น เล็บ ขนตา) × ฿200
-  // นับแยกตามวัน: ถ้าช่างคนใดมียอด brow/eye/lip/hair/laser/item/chalacol > 0 นับ 1 บริการ
   let anServiceCount = 0;
-  let anDailyDetails = []; // สำหรับแสดงรายละเอียด
+  let anDailyDetails = [];
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
     let dayCount = countDaySvc(dd);
@@ -1338,7 +1336,8 @@ window.calcPayroll = function() {
   }
   const anExtraComm = anServiceCount * AN_COMM_PER_SVC;
   const totalComm=ARTISTS.map((_,i)=>{
-    const base=commTat[i]+totR2[i]+commLaser[i]+commOther[i]+commItem[i]+commChalacol[i]+(i>=1?haeinPP:0);
+    if(i===0) return 0; // อ.หญิง — ไม่มีคอมมิชชั่น
+    const base=commTat[i]+totR2[i]+commLaser[i]+commOther[i]+commItem[i]+commChalacol[i]+haeinPP; // i>=1 เสมอ
     return i===5 ? base+anExtraComm : base; // index 5 = ช่างอั๋น
   });
   const leaveAdj=ATTEND_IDX.map((ai,i)=>Math.round((LEAVE_DAYS-absentDays[i])*bases[ai]/30*100)/100);
@@ -1350,7 +1349,7 @@ window.calcPayroll = function() {
   const totBrowAll=totBrow.reduce((a,b)=>a+b,0),totEyeAll=totEye.reduce((a,b)=>a+b,0),totLipAll=totLip.reduce((a,b)=>a+b,0);
   document.getElementById('payroll-cards').innerHTML=`
     <div class="card"><div class="label">ยอดรายรับร้านหลัก</div><div class="value">${fmtN(totShopRev)}</div></div>
-    <div class="card purple"><div class="label">💜 HAE-IN | pool 10%</div><div class="value">${fmtN(totHaeinRev)} | ${fmtN(haeinPool)}</div></div>
+    <div class="card purple"><div class="label">💜 HAE-IN | pool 10% ÷5</div><div class="value">${fmtN(totHaeinRev)} | ${fmtN(haeinPool)}</div></div>
     <div class="card green"><div class="label">คอมรวมทุกช่าง</div><div class="value">${fmtN(gComm)}</div></div>
     <div class="card"><div class="label">เงินเดือนพื้นฐาน</div><div class="value">${fmtN(gBase+salMo)}</div></div>
     <div class="card red"><div class="label">รวมจ่ายทั้งหมด</div><div class="value">${fmtN(grandTotal)}</div></div>`;
@@ -1369,7 +1368,7 @@ window.calcPayroll = function() {
       <td style="color:#1e40af">${totOther[i]>0?fmtN(totOther[i]):'–'}<br><span style="color:#16a34a;font-size:10px">${commOther[i]>0?'+'+fmtN(commOther[i]):''}</span></td>
       <td style="color:#9d174d">${totItem[i]>0?fmtN(totItem[i]):'–'}<br><span style="color:#16a34a;font-size:10px">${commItem[i]>0?'+'+fmtN(commItem[i]):''}</span></td>
       <td style="color:#065f46;font-weight:600">${totChalacol[i]>0?`${totChalacol[i]} ครั้ง`:'–'}<br><span style="color:#16a34a;font-size:10px">${commChalacol[i]>0?'+'+fmtN(commChalacol[i]):''}</span></td>
-      <td style="color:#6d28d9;font-weight:600">${i>=1?fmtN(haeinPP):'–'}</td>
+      <td style="color:#6d28d9;font-weight:600">${fmtN(haeinPP)}</td>
       <td style="font-weight:700">${fmtN(totalComm[i])}${i===5&&anExtraComm>0?`<br><span style="font-size:10px;color:#f59e0b">🎯 คอมบริการ: ${anServiceCount} ครั้ง×฿200=${fmtN(anExtraComm)}</span>`:''}</td>
       <td>${fmtN(bases[i])}</td>
       <td style="font-weight:700;color:#16a34a;font-size:13px">${fmtN(totPay[i])}</td>
