@@ -382,12 +382,13 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
       <div class="absent-grid" id="absent-inputs"></div>
     </div>
     <div class="section-label">💳 รายรับแยกช่องทางรับเงิน</div>
-    <div class="channel-grid">
+    <div class="channel-grid" style="grid-template-columns:repeat(3,1fr)">
       <div class="ch-card ch-cash"><div class="ch-icon">💵</div><div class="ch-label">เงินสด</div><input type="number" id="ch-cash" placeholder="0" min="0" oninput="syncChannelTotal()"></div>
       <div class="ch-card ch-transfer"><div class="ch-icon">📲</div><div class="ch-label">โอน / PromptPay / แม่มณี</div><input type="number" id="ch-transfer" placeholder="0" min="0" oninput="syncChannelTotal()"></div>
       <div class="ch-card ch-tap"><div class="ch-icon">📡</div><div class="ch-label">Tap To Pay</div><input type="number" id="ch-tap" placeholder="0" min="0" oninput="syncChannelTotal()"></div>
       <div class="ch-card ch-card-t"><div class="ch-icon">💳</div><div class="ch-label">เครดิตการ์ด</div><input type="number" id="ch-credit" placeholder="0" min="0" oninput="syncChannelTotal()"></div>
       <div class="ch-card ch-deposit"><div class="ch-icon">🔖</div><div class="ch-label">มัดจำ</div><input type="number" id="ch-deposit" placeholder="0" min="0" oninput="syncChannelTotal()"></div>
+      <div class="ch-card" style="border-color:#f0abfc;background:#fdf4ff"><div class="ch-icon">👩‍🏫</div><div class="ch-label" style="color:#86198f">ส่งให้อ.หญิง</div><input type="number" id="ch-forAj" placeholder="0" min="0" oninput="syncChannelTotal()"></div>
     </div>
     <div id="channel-diff" style="font-size:12px;color:#888;margin-bottom:14px;padding:6px 10px;background:#f9fafb;border-radius:6px"></div>
     <div class="section-label">💚 รายรับอื่นๆ (บริการพิเศษ เช่น สักลานนม ฯลฯ)</div>
@@ -448,7 +449,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
   <div class="table-wrap">
     <table>
       <thead><tr>
-        <th>วันที่</th><th>💵 เงินสด</th><th>📲 โอน/PromptPay</th><th>📡 Tap To Pay</th><th>💳 เครดิต</th><th>🔖 มัดจำ</th>
+        <th>วันที่</th><th>💵 เงินสด</th><th>📲 โอน/PromptPay</th><th>📡 Tap To Pay</th><th>💳 เครดิต</th><th>🔖 มัดจำ</th><th>👩‍🏫 ส่งให้อ.หญิง</th>
         <th>รวมช่องทาง</th><th>รวมช่าง</th><th>ผลต่าง</th>
       </tr></thead>
       <tbody id="ch-tbody"></tbody>
@@ -467,7 +468,6 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
       🎨 คอม: คิ้ว/ปาก/ตา 20% (ทำคิ้วใหม่จ่าย 2 รอบ) | เลเซอร์ 20% | ขนตา/ผม/เล็บ 10% | ขายของ ฿150→฿50 &nbsp;|&nbsp; 💜 HAE-IN 10%÷6 &nbsp;|&nbsp; 🌿 ชลาชล ฿1,161/คน/ครั้ง &nbsp;|&nbsp; โม: เงินเดือนอย่างเดียว
     </div>
     <div class="salary-grid">
-      <div class="s-field"><label>อ.หญิง</label><input type="number" id="sal-aj" value="0" readonly style="background:#f5f5f5;color:#aaa"></div>
       <div class="s-field"><label>ช่างมด 🔒</label><input type="number" id="sal-mod" value="15000" readonly style="background:#f5f5f5"></div>
       <div class="s-field"><label>ช่างบ๋อม 🔒</label><input type="number" id="sal-bom" value="20000" readonly style="background:#f5f5f5"></div>
       <div class="s-field"><label>ช่างมะลิ 🔒</label><input type="number" id="sal-mali" value="15000" readonly style="background:#f5f5f5"></div>
@@ -681,9 +681,9 @@ window.changeMonth = function() {
 
 const ARTISTS = ['อ.หญิง','ช่างมด','ช่างบ๋อม','ช่างมะลิ','ช่างเจน','ช่างอั๋น'];
 const COLORS = ['#a21caf','#2563eb','#16a34a','#ea580c','#0891b2','#9333ea'];
-const CHANNELS = ['cash','transfer','tap','credit','deposit'];
-const CH_LABELS = ['เงินสด','โอน/PromptPay','Tap To Pay','เครดิตการ์ด','มัดจำ'];
-const CH_ICONS = ['💵','📲','📡','💳','🔖'];
+const CHANNELS = ['cash','transfer','tap','credit','deposit','forAj'];
+const CH_LABELS = ['เงินสด','โอน/PromptPay','Tap To Pay','เครดิตการ์ด','มัดจำ','ส่งให้อ.หญิง'];
+const CH_ICONS = ['💵','📲','📡','💳','🔖','👩‍🏫'];
 const LEAVE_DAYS = 4;
 const ATTEND_ARTISTS = ['ช่างมด','ช่างบ๋อม','ช่างมะลิ','ช่างเจน','ช่างอั๋น'];
 const ATTEND_IDX = [1,2,3,4,5];
@@ -752,7 +752,7 @@ function getDay(d) {
   return {
     svc: ARTISTS.map(() => ({brow:0,eye:0,lip:0,lash:0,hair:0,nail:0,item:0,laser:0,facial:0,chalacol:0})),
     commR2: Array(6).fill(0),
-    channels: {cash:0,transfer:0,tap:0,credit:0,deposit:0},
+    channels: {cash:0,transfer:0,tap:0,credit:0,deposit:0,forAj:0},
     haein: {sadryi:0,henna:0,product:0,channel:'transfer'},
     expenses: [], other: [], note: '', absent: Array(5).fill(false)
   };
@@ -1295,7 +1295,7 @@ window.buildChannels = function() {
 };
 
 window.calcPayroll = function() {
-  const bases=['sal-aj','sal-mod','sal-bom','sal-mali','sal-jen','sal-an'].map(id=>+document.getElementById(id).value||0);
+  const bases=[0,...['sal-mod','sal-bom','sal-mali','sal-jen','sal-an'].map(id=>+document.getElementById(id).value||0)]; // index 0 = อ.หญิง (0 เพราะจ่ายผ่านช่องทาง "ส่งให้อ.หญิง")
   const salMo=+document.getElementById('sal-mo').value||0;
   let totBrow=Array(6).fill(0),totEye=Array(6).fill(0),totLip=Array(6).fill(0),totLaser=Array(6).fill(0),totLash=Array(6).fill(0),totHair=Array(6).fill(0),totNail=Array(6).fill(0),totItem=Array(6).fill(0),totChalacol=Array(6).fill(0),totR2=Array(6).fill(0),absentDays=Array(5).fill(0),totHaeinRev=0;
   for(let d=1;d<=getDaysInMonth();d++){
@@ -1343,8 +1343,8 @@ window.calcPayroll = function() {
   });
   const leaveAdj=ATTEND_IDX.map((ai,i)=>Math.round((LEAVE_DAYS-absentDays[i])*bases[ai]/30*100)/100);
   const totPay=ARTISTS.map((_,i)=>{const adjIdx=ATTEND_IDX.indexOf(i);return bases[i]+totalComm[i]+(adjIdx>=0?leaveAdj[adjIdx]:0);});
-  const grandTotal=totPay.reduce((a,b)=>a+b,0)+salMo;
-  const gComm=totalComm.reduce((a,b)=>a+b,0),gBase=bases.reduce((a,b)=>a+b,0);
+  const grandTotal=totPay.slice(1).reduce((a,b)=>a+b,0)+salMo; // ไม่รวม อ.หญิง (index 0)
+  const gComm=totalComm.reduce((a,b)=>a+b,0),gBase=bases.slice(1).reduce((a,b)=>a+b,0);
 
   const totShopRev=ARTISTS.reduce((s,_,i)=>s+totTat[i]+totLaser[i]+totOther[i]+totItem[i],0);
   const totBrowAll=totBrow.reduce((a,b)=>a+b,0),totEyeAll=totEye.reduce((a,b)=>a+b,0),totLipAll=totLip.reduce((a,b)=>a+b,0);
@@ -1356,6 +1356,7 @@ window.calcPayroll = function() {
     <div class="card red"><div class="label">รวมจ่ายทั้งหมด</div><div class="value">${fmtN(grandTotal)}</div></div>`;
 
   document.getElementById('pr-tbody').innerHTML=ARTISTS.map((name,i)=>{
+    if(i===0) return ''; // อ.หญิง — ไม่แสดงในตารางเงินเดือน (ส่งเงินผ่านช่องทาง "ส่งให้อ.หญิง" แทน)
     const adjIdx=ATTEND_IDX.indexOf(i),absent=adjIdx>=0?absentDays[adjIdx]:'–',adj=adjIdx>=0?leaveAdj[adjIdx]:0;
     const adjStr=adjIdx>=0?`<span style="color:${adj>0?'#16a34a':adj<0?'#dc2626':'#888'}">${adj>0?'+':''}${fmtN(adj)}</span><br><span style="font-size:10px;color:#888">${adj>0?`เหลือ${LEAVE_DAYS-absent}วัน`:adj<0?`เกิน${absent-LEAVE_DAYS}วัน`:'ใช้ครบ'}</span>`:'<span style="color:#aaa">–</span>';
     return `<tr>
