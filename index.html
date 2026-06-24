@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<link rel="manifest" href="manifest_main.json">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="BA สรุปยอด">
-<meta name="theme-color" content="#0c4a6e">
-<link rel="apple-touch-icon" href="icons/icon-main-192.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>สรุปยอด The Beauty Arts & HAE-IN</title>
@@ -121,7 +114,7 @@ tbody tr:hover { background: #e0f2fe; }
 td { padding: 8px; text-align: right; border-bottom: 1px solid #e0f2fe; white-space: nowrap; color: #1e293b; }
 td:first-child { text-align: left; padding-left: 14px; font-weight: 600; }
 tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e; color: #0c4a6e; }
-.ch-summary { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 20px; }
+.ch-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
 .ch-sum-card { background: white; border-radius: 8px; padding: 12px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 .ch-sum-card .ch-s-label { font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600; }
 .ch-sum-card .ch-s-val { font-size: 15px; font-weight: 700; color: #0c4a6e; }
@@ -451,7 +444,6 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
 
 <!-- ===== TAB 3: CHANNELS ===== -->
 <div id="p-channels" class="panel">
-  <div class="summary-row" id="ch-top-cards"></div>
   <div class="ch-summary" id="ch-summary-cards"></div>
   <div class="table-wrap">
     <table>
@@ -1294,8 +1286,9 @@ window.buildChannels = function() {
   const grandCt=CHANNELS.reduce((s,k)=>s+totCh[k],0);
   document.getElementById('ch-tbody').innerHTML=rows||`<tr><td colspan="9" style="text-align:center;padding:20px;color:#aaa">ยังไม่มีข้อมูล</td></tr>`;
   document.getElementById('ch-tfoot').innerHTML=`<tr><td>รวม</td>${CHANNELS.map(k=>`<td>${fmtN(totCh[k])}</td>`).join('')}<td>${fmtN(grandCt)}</td><td>${fmtN(totRevA)}</td><td></td></tr>`;
-  document.getElementById('ch-top-cards').innerHTML=`<div class="card"><div class="label">รายรับรวม</div><div class="value">${fmtN(totRevA)}</div></div>${CHANNELS.map((k,i)=>`<div class="card"><div class="label">${CH_ICONS[i]} ${CH_LABELS[i]}</div><div class="value">${fmtN(totCh[k])}</div></div>`).join('')}`;
-  document.getElementById('ch-summary-cards').innerHTML=CHANNELS.map((k,i)=>{
+  // สรุปช่องทาง — แสดงชุดเดียว (รวม "รายรับรวม" ไว้การ์ดแรก)
+  const totalCard=`<div class="ch-sum-card" style="border-top:3px solid #0c4a6e;"><div style="font-size:22px">💰</div><div class="ch-s-label">รายรับรวม</div><div class="ch-s-val">${fmtN(totRevA)}</div><div class="ch-s-pct">100%</div><div style="height:4px;background:#0c4a6e;border-radius:2px;margin-top:6px"></div></div>`;
+  document.getElementById('ch-summary-cards').innerHTML=totalCard+CHANNELS.map((k,i)=>{
     const pct=grandCt>0?(totCh[k]/grandCt*100).toFixed(1):0;
     return `<div class="ch-sum-card"><div style="font-size:22px">${CH_ICONS[i]}</div><div class="ch-s-label">${CH_LABELS[i]}</div><div class="ch-s-val">${fmtN(totCh[k])}</div><div class="ch-s-pct">${pct}%</div><div style="height:4px;background:#eee;border-radius:2px;margin-top:6px"><div style="height:4px;background:#0ea5e9;border-radius:2px;width:${pct}%"></div></div></div>`;
   }).join('');
