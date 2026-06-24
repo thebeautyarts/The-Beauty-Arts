@@ -922,9 +922,9 @@ function buildSchedGrid() {
     html += `<div class="grid-staff-header ${isPro?'pro-col':''}">
       <div class="staff-name">${isPro ? '⭐ PRO' : name}</div>
       <div class="staff-sub">${isPro ? 'ยังไม่ระบุช่าง' : bkCount > 0 ? bkCount+' คิว' : ''}</div>
-      ${!isPro ? `<button class="emg-btn ${hasEmg?'active':''}" onclick="window.openEmgModal('${name}')" title="ปิดรับคิวฉุกเฉิน">
+      <button class="emg-btn ${hasEmg?'active':''}" onclick="window.openEmgModal('${name}')" title="ปิดรับคิวฉุกเฉิน">
         ${hasEmg ? '🚫 ปิดรับอยู่' : '🚫 ปิดรับ'}
-      </button>` : ''}
+      </button>
     </div>`;
   });
 
@@ -942,7 +942,7 @@ function buildSchedGrid() {
         html += `<div class="grid-slot holiday"></div>`;
         return;
       }
-      const emgSlots = !isPro ? ((emergencyClose[schedDate]||{})[name]||[]) : [];
+      const emgSlots = ((emergencyClose[schedDate]||{})[name]||[]);
       const isEmg = emgSlots.includes('ALL') || emgSlots.includes(hToTime(h));
       if (isEmg) {
         html += `<div class="grid-slot emergency"></div>`;
