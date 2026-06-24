@@ -62,6 +62,11 @@ header{background:var(--green-dark);color:#fff;padding:12px 20px;display:flex;al
 .grid-slot{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:72px;padding:4px;background:#fff;cursor:pointer;transition:.1s;position:relative;}
 .grid-slot.holiday{background:repeating-linear-gradient(-45deg,#fee2e2,#fee2e2 4px,#fff 4px,#fff 10px);cursor:not-allowed;pointer-events:none;}
 .grid-slot.holiday::after{content:'🏖️ หยุด';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:#dc2626;font-weight:700;white-space:nowrap;}
+.grid-slot.emergency{background:repeating-linear-gradient(-45deg,#fed7aa,#fed7aa 4px,#fff7ed 4px,#fff7ed 10px);cursor:not-allowed;pointer-events:none;}
+.grid-slot.emergency::after{content:'🚫 ปิดรับ';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:#c2410c;font-weight:700;white-space:nowrap;}
+.emg-btn{background:none;border:none;cursor:pointer;font-size:11px;color:#f97316;font-weight:700;padding:2px 6px;border-radius:4px;opacity:.8;white-space:nowrap;}
+.emg-btn:hover{background:#fff7ed;opacity:1;}
+.emg-btn.active{color:#dc2626;opacity:1;}
 .grid-slot:hover{background:var(--green-pale);}
 .grid-slot.pro-slot{background:#fffdf0;}
 .grid-slot.pro-slot:hover{background:#fdf6d8;}
@@ -911,9 +916,15 @@ function buildSchedGrid() {
   cols.forEach(name => {
     const isPro = name === PRO_COL || name === PRO2_COL;
     const bkCount = dayBks.filter(b => (b.artist||PRO_COL) === name).length;
+    const emgSlots = (emergencyClose[schedDate]||{})[name]||[];
+    const isFullDay = emgSlots.includes('ALL');
+    const hasEmg = isFullDay || emgSlots.length > 0;
     html += `<div class="grid-staff-header ${isPro?'pro-col':''}">
       <div class="staff-name">${isPro ? '⭐ PRO' : name}</div>
       <div class="staff-sub">${isPro ? 'ยังไม่ระบุช่าง' : bkCount > 0 ? bkCount+' คิว' : ''}</div>
+      ${!isPro ? `<button class="emg-btn ${hasEmg?'active':''}" onclick="window.openEmgModal('${name}')" title="ปิดรับคิวฉุกเฉิน">
+        ${hasEmg ? '🚫 ปิดรับอยู่' : '🚫 ปิดรับ'}
+      </button>` : ''}
     </div>`;
   });
 
@@ -929,7 +940,13 @@ function buildSchedGrid() {
       const isHoliday = !isPro && (holidays[schedDate]||[]).includes(name);
       if (isHoliday) {
         html += `<div class="grid-slot holiday"></div>`;
-        return; // return ใน forEach = skip iteration
+        return;
+      }
+      const emgSlots = !isPro ? ((emergencyClose[schedDate]||{})[name]||[]) : [];
+      const isEmg = emgSlots.includes('ALL') || emgSlots.includes(hToTime(h));
+      if (isEmg) {
+        html += `<div class="grid-slot emergency"></div>`;
+        return;
       }
       html += `<div class="grid-slot ${isPro?'pro-slot':''}" onclick="window._slotClick('${hToTime(h)}','${name}')">`; 
       if (spanBks.length > 0) {
@@ -1225,6 +1242,94 @@ window.deleteBooking = async function() {
 // ═══ List ═══
 // ═══ Holiday Functions ═══
 let holidays = {}; // {date: [artistName, ...]}
+let emergencyClose = {}; // {date: {artistName: ['10:00','11:00',...] or ['ALL']}}
+let emgTargetArtist = null;
+
+// ── Emergency Close Modal ──
+window.openEmgModal = function(artist) {
+  emgTargetArtist = artist;
+  document.getElementById('emg-artist-lbl').textContent =
+    `${artist} · ${schedDate}`;
+  const existing = (emergencyClose[schedDate]||{})[artist]||[];
+  const isAll = existing.includes('ALL');
+  document.getElementById('emg-all-day').checked = isAll;
+  // Render time slots
+  const slotsEl = document.getElementById('emg-time-slots');
+  slotsEl.innerHTML = HOURS.map(h => {
+    const t = hToTime(h);
+    const checked = isAll || existing.includes(t);
+    return `<label style="display:flex;align-items:center;gap:5px;padding:6px 8px;border:1.5px solid ${checked?'#ea580c':'#e2e8f0'};border-radius:7px;cursor:pointer;background:${checked?'#fff7ed':'#fff'};font-size:12px;font-weight:600;color:${checked?'#9a3412':'#374151'};">
+      <input type="checkbox" value="${t}" ${checked?'checked':''} style="accent-color:#ea580c;" onchange="updateEmgSlotStyle(this)">
+      ${t}
+    </label>`;
+  }).join('');
+  document.getElementById('emg-times-wrap').style.opacity = isAll ? '0.4' : '1';
+  document.getElementById('emg-times-wrap').style.pointerEvents = isAll ? 'none' : '';
+  document.getElementById('emg-modal').style.display = 'flex';
+};
+
+window.toggleEmgAllDay = function() {
+  const isAll = document.getElementById('emg-all-day').checked;
+  const wrap = document.getElementById('emg-times-wrap');
+  wrap.style.opacity = isAll ? '0.4' : '1';
+  wrap.style.pointerEvents = isAll ? 'none' : '';
+};
+
+window.updateEmgSlotStyle = function(cb) {
+  const lbl = cb.closest('label');
+  lbl.style.borderColor = cb.checked ? '#ea580c' : '#e2e8f0';
+  lbl.style.background = cb.checked ? '#fff7ed' : '#fff';
+  lbl.style.color = cb.checked ? '#9a3412' : '#374151';
+};
+
+window.saveEmgClose = async function() {
+  const artist = emgTargetArtist;
+  const date = schedDate;
+  const isAll = document.getElementById('emg-all-day').checked;
+  let slots;
+  if (isAll) {
+    slots = ['ALL'];
+  } else {
+    slots = [...document.querySelectorAll('#emg-time-slots input:checked')].map(cb => cb.value);
+  }
+  if (!emergencyClose[date]) emergencyClose[date] = {};
+  if (slots.length === 0) {
+    delete emergencyClose[date][artist];
+  } else {
+    emergencyClose[date][artist] = slots;
+  }
+  try {
+    const path = 'emergency_close/' + date.replace(/-/g,'_') + '/' + artist.replace(/\./g,'_');
+    if (slots.length === 0) {
+      await remove(ref(db, path));
+    } else {
+      await set(ref(db, path), slots);
+    }
+    setBadge(slots.length ? '🚫 ปิดรับคิวแล้ว' : '✅ เปิดรับตามปกติ');
+  } catch(e) { setBadge('❌ บันทึกไม่สำเร็จ'); }
+  closeEmgModal();
+  renderSchedule();
+};
+
+window.clearEmgClose = async function() {
+  const artist = emgTargetArtist;
+  const date = schedDate;
+  if (emergencyClose[date]) delete emergencyClose[date][artist];
+  try {
+    const path = 'emergency_close/' + date.replace(/-/g,'_') + '/' + artist.replace(/\./g,'_');
+    await remove(ref(db, path));
+    setBadge('✅ เปิดรับตามปกติแล้ว');
+  } catch(e) {}
+  closeEmgModal();
+  renderSchedule();
+};
+
+window.closeEmgModal = function() {
+  document.getElementById('emg-modal').style.display = 'none';
+};
+document.getElementById('emg-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('emg-modal')) closeEmgModal();
+});
 
 window.openHolidayModal = function() {
   const el = document.getElementById('holiday-modal');
@@ -1275,6 +1380,25 @@ function startHolidaySync() {
       holidays[date] = Array.isArray(val[k]) ? val[k] : Object.values(val[k]);
     });
     buildSchedGrid();
+  });
+
+  // Load emergency close data
+  onValue(ref(db, 'emergency_close'), snap => {
+    const val = snap.val() || {};
+    emergencyClose = {};
+    Object.keys(val).forEach(dateKey => {
+      const date = dateKey.replace(/_/g,'-');
+      emergencyClose[date] = {};
+      const artists = val[dateKey];
+      if (artists && typeof artists === 'object') {
+        Object.keys(artists).forEach(aKey => {
+          const artist = aKey.replace(/_/g,'.');
+          const slots = artists[aKey];
+          emergencyClose[date][artist] = Array.isArray(slots) ? slots : Object.values(slots);
+        });
+      }
+    });
+    renderSchedule();
   });
 }
 
@@ -1899,5 +2023,42 @@ window.copyLineMsg = function() {
   }).catch(()=>{ ta.select(); document.execCommand('copy'); });
 };
 </script>
+<!-- ══ Emergency Close Modal ══ -->
+<div id="emg-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1002;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.25);">
+    <div style="background:#ea580c;color:#fff;padding:14px 18px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:15px;font-weight:700;">🚫 ปิดรับคิวฉุกเฉิน</div>
+        <div style="font-size:11px;opacity:.85;margin-top:2px;" id="emg-artist-lbl"></div>
+      </div>
+      <button onclick="closeEmgModal()" style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font-size:14px;">✕</button>
+    </div>
+    <div style="padding:16px;">
+      <p style="font-size:12px;color:#78350f;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px;margin-bottom:14px;">
+        ⚠️ ใช้เฉพาะกรณีฉุกเฉิน เช่น ป่วยกะทันหัน ไม่สามารถรับงานได้
+        <br>ลูกค้าที่จองไว้แล้วจะยังปรากฏในตาราง แต่จะไม่รับคิวเพิ่มได้
+      </p>
+
+      <!-- ปิดทั้งวัน -->
+      <label style="display:flex;align-items:center;gap:10px;padding:12px;background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;cursor:pointer;margin-bottom:12px;font-weight:700;font-size:13px;color:#9a3412;">
+        <input type="checkbox" id="emg-all-day" style="width:18px;height:18px;accent-color:#ea580c;" onchange="toggleEmgAllDay()">
+        🔴 ปิดรับทั้งวัน (ทุกช่วงเวลา)
+      </label>
+
+      <!-- เลือกช่วงเวลา -->
+      <div id="emg-times-wrap">
+        <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:8px;text-transform:uppercase;">หรือเลือกช่วงเวลาที่ปิด</div>
+        <div id="emg-time-slots" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+        <button onclick="saveEmgClose()" style="flex:1;padding:10px;background:#ea580c;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">🚫 ปิดรับคิว</button>
+        <button onclick="clearEmgClose()" style="padding:10px 14px;background:#fee2e2;color:#dc2626;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">🗑️ เปิดรับตามปกติ</button>
+        <button onclick="closeEmgModal()" style="padding:10px 14px;background:#f1f5f9;color:#475569;border:none;border-radius:8px;font-size:12px;cursor:pointer;">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
