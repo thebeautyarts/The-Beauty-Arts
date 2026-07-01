@@ -1270,7 +1270,7 @@ window.openEmgModal = function(artist) {
   const slotsEl = document.getElementById('emg-time-slots');
   slotsEl.innerHTML = HOURS.map(h => {
     const t = hToTime(h);
-    const checked = isAll || existing.includes(t);
+    const checked = existing.includes(t);
     return `<label style="display:flex;align-items:center;gap:5px;padding:6px 8px;border:1.5px solid ${checked?'#ea580c':'#e2e8f0'};border-radius:7px;cursor:pointer;background:${checked?'#fff7ed':'#fff'};font-size:12px;font-weight:600;color:${checked?'#9a3412':'#374151'};">
       <input type="checkbox" value="${t}" ${checked?'checked':''} style="accent-color:#ea580c;" onchange="updateEmgSlotStyle(this)">
       ${t}
@@ -1286,6 +1286,13 @@ window.toggleEmgAllDay = function() {
   const wrap = document.getElementById('emg-times-wrap');
   wrap.style.opacity = isAll ? '0.4' : '1';
   wrap.style.pointerEvents = isAll ? 'none' : '';
+  if (!isAll) {
+    // ยกเลิก "ปิดทั้งวัน" แล้ว — เคลียร์ช่องเวลาย่อยที่อาจติ๊กค้างไว้ ป้องกันปิดซ้ำโดยไม่ตั้งใจ
+    document.querySelectorAll('#emg-time-slots input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+      window.updateEmgSlotStyle(cb);
+    });
+  }
 };
 
 window.updateEmgSlotStyle = function(cb) {
