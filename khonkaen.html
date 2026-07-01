@@ -519,13 +519,13 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:3px;text-transform:uppercase;">ชื่อลูกค้า</label>
         <input type="text" id="cus-name" placeholder="พิมพ์ชื่อ..."
-          onkeydown="if(event.key==='Enter')searchCustomers()"
+          oninput="searchCustomers()"
           style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:16px;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:3px;text-transform:uppercase;">เบอร์โทร</label>
         <input type="tel" id="cus-phone" placeholder="พิมพ์เบอร์..."
-          onkeydown="if(event.key==='Enter')searchCustomers()"
+          oninput="searchCustomers()"
           style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:16px;">
       </div>
     </div>
@@ -533,12 +533,13 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:3px;text-transform:uppercase;">วันที่เข้ารับบริการ</label>
         <input type="date" id="cus-date"
+          onchange="searchCustomers()"
           style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:3px;text-transform:uppercase;">บริการ</label>
         <input type="text" id="cus-service" placeholder="เช่น สักคิ้ว..."
-          onkeydown="if(event.key==='Enter')searchCustomers()"
+          oninput="searchCustomers()"
           style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:16px;">
       </div>
     </div>
@@ -546,6 +547,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--text-mid);display:block;margin-bottom:3px;text-transform:uppercase;">สถานะ</label>
         <select id="cus-status"
+          onchange="searchCustomers()"
           style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
           <option value="">ทุกสถานะ</option>
           <option>ยืนยัน</option><option>กำลังทำ</option><option>เสร็จแล้ว</option><option>ยกเลิก</option>
