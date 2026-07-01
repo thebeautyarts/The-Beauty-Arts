@@ -49,15 +49,15 @@ async function run() {
     return;
   }
 
-  // normalize เหมือนระบบหลัก
-  const days = {};
+  // normalize เหมือนระบบหลัก — แต่เก็บ "คีย์ดิบจริง" ไว้ด้วย เพื่อใช้ลบให้ตรง path
+  const days = {}; // { dayNumber: { data, rawKey } }
   if (Array.isArray(val)) {
-    val.forEach((item, idx) => { if (item && idx > 0) days[idx] = item; });
+    val.forEach((item, idx) => { if (item && idx > 0) days[idx] = { data: item, rawKey: String(idx) }; });
   } else {
     Object.keys(val).forEach(k => {
       if (k.startsWith('_')) return; // ข้าม metadata เช่น _syncedBkIds ที่ระดับบนสุด (ไม่ควรมี แต่กันไว้)
       let num = k.startsWith('d') ? parseInt(k.slice(1)) : parseInt(k);
-      if (!isNaN(num)) days[num] = val[k];
+      if (!isNaN(num)) days[num] = { data: val[k], rawKey: k };
     });
   }
 
@@ -66,23 +66,41 @@ async function run() {
   statusEl.className = dayNums.some(d=>d>todayDay) ? 'status warn' : 'status ok';
 
   daysEl.innerHTML = dayNums.map(d => {
-    const dd = days[d];
+    const { data: dd, rawKey } = days[d];
     const isSuspect = d > todayDay;
-    return `<div class="day-card ${isSuspect?'suspect':''}" id="card-${d}">
+    return `<div class="day-card ${isSuspect?'suspect':''}" id="card-${rawKey}">
       <div class="day-head">
-        <span>${isSuspect?'⚠️ ':''}วันที่ ${d}/07/2569 ${isSuspect?'(อนาคต — ไม่ควรมีข้อมูล)':''}</span>
-        <button onclick="window.deleteDay(${d})">🗑️ ลบวันนี้ทิ้ง</button>
+        <span>${isSuspect?'⚠️ ':''}วันที่ ${d}/07/2569 (คีย์จริง: ${rawKey}) ${isSuspect?'(อนาคต — ไม่ควรมีข้อมูล)':''}</span>
+        <button onclick="window.deleteDay('${rawKey}')">🗑️ ลบวันนี้ทิ้ง</button>
       </div>
       <pre>${JSON.stringify(dd, null, 2)}</pre>
     </div>`;
   }).join('');
+
+  // ปุ่มลบทั้งหมดในคลิกเดียว
+  if (dayNums.length) {
+    daysEl.innerHTML = `<button onclick="window.deleteAll()" style="margin-bottom:14px;background:#991b1b">🗑️🗑️ ลบทุกวันที่เห็นทั้งหมดในครั้งเดียว</button>` + daysEl.innerHTML;
+  }
+  window._rawKeys = dayNums.map(d=>days[d].rawKey);
 }
 
-window.deleteDay = async function(d) {
-  if (!confirm(`ยืนยันลบข้อมูลวันที่ ${d}/07/2569 ทิ้งทั้งหมด?`)) return;
-  await remove(ref(db, `jul2569/${d}`));
-  document.getElementById(`card-${d}`).remove();
-  alert(`ลบวันที่ ${d} เรียบร้อยแล้วค่ะ`);
+window.deleteDay = async function(rawKey) {
+  if (!confirm(`ยืนยันลบข้อมูลที่คีย์ "${rawKey}" ใน jul2569 ทิ้งทั้งหมด?`)) return;
+  await remove(ref(db, `jul2569/${rawKey}`));
+  const card = document.getElementById(`card-${rawKey}`);
+  if (card) card.remove();
+  alert(`ลบ "${rawKey}" เรียบร้อยแล้วค่ะ`);
+};
+
+window.deleteAll = async function() {
+  const keys = window._rawKeys || [];
+  if (!keys.length) return;
+  if (!confirm(`ยืนยันลบข้อมูลทั้งหมด ${keys.length} วันใน jul2569 ทิ้งทั้งหมดในครั้งเดียว?`)) return;
+  for (const k of keys) {
+    await remove(ref(db, `jul2569/${k}`));
+  }
+  alert(`ลบทั้งหมด ${keys.length} วันเรียบร้อยแล้วค่ะ`);
+  run();
 };
 
 run();
