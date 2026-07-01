@@ -783,6 +783,7 @@ window.showTab = function(id) {
   const idx = ['tab-cal','tab-sched','tab-list','tab-sum','tab-line'].indexOf(id);
   document.querySelectorAll('.tab')[idx].classList.add('active');
   if (id==='tab-cal') buildCalendar();
+  if (id==='tab-sched') buildSchedGrid();
   if (id==='tab-list') renderList();
   if (id==='tab-sum') renderSummary();
   if (id==='tab-line') {
