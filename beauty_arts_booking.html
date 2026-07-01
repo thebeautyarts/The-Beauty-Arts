@@ -406,13 +406,13 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
       <div>
         <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">ชื่อลูกค้า</label>
         <input type="text" id="fl-name" placeholder="พิมพ์ชื่อ..."
-          onkeydown="if(event.key==='Enter')renderList()"
+          oninput="renderList()"
           style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">เบอร์โทร</label>
         <input type="text" id="fl-phone" placeholder="พิมพ์เบอร์..."
-          onkeydown="if(event.key==='Enter')renderList()"
+          oninput="renderList()"
           style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
       </div>
     </div>
@@ -420,38 +420,39 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
       <div>
         <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">วันที่เข้ารับบริการ</label>
         <input type="date" id="fl-date"
+          onchange="renderList()"
           style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">บริการ</label>
         <input type="text" id="fl-service-search" placeholder="เช่น สักคิ้ว..."
-          onkeydown="if(event.key==='Enter')renderList()"
+          oninput="renderList()"
           style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
       </div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
       <div style="flex:1;min-width:100px;">
         <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">ช่าง</label>
-        <select id="fl-artist" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
+        <select id="fl-artist" onchange="renderList()" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
           <option value="">ช่างทุกคน</option>
         </select>
       </div>
       <div style="flex:1;min-width:100px;">
         <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">สถานะ</label>
-        <select id="fl-status" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
+        <select id="fl-status" onchange="renderList()" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
           <option value="">ทุกสถานะ</option>
           <option>จอง</option><option>ยืนยัน</option><option>กำลังทำ</option><option>เสร็จแล้ว</option><option>ยกเลิก</option>
         </select>
       </div>
       <div style="flex:1;min-width:100px;">
         <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">ร้าน</label>
-        <select id="fl-shop" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
+        <select id="fl-shop" onchange="renderList()" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
           <option value="">ทุกร้าน</option><option>The Beauty Arts</option><option>HAE-IN</option>
         </select>
       </div>
       <div style="flex:1;min-width:100px;">
         <label style="font-size:11px;font-weight:700;color:#475569;display:block;margin-bottom:3px;">มัดจำ</label>
-        <select id="fl-dep" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
+        <select id="fl-dep" onchange="renderList()" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;">
           <option value="">ทุกสถานะ</option>
           <option value="จ่ายแล้ว">จ่ายมัดจำแล้ว</option>
           <option value="ยังไม่จ่าย">ยังไม่จ่ายมัดจำ</option>
@@ -535,6 +536,7 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
     <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
       <button class="btn btn-green" onclick="genLineMsg('today')">📋 สรุปวันนี้</button>
       <button class="btn btn-gold" onclick="genLineMsg('tomorrow')">📅 นัดพรุ่งนี้</button>
+      <button class="btn" style="background:#7c3aed;color:white;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer" onclick="genLineMsg('tomorrowByArtist')">👤 นัดพรุ่งนี้ แยกตามช่าง</button>
       <button class="btn" style="background:#0ea5e9;color:white;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer" onclick="genLineMsg('both')">💬 ทั้งสรุป + นัด</button>
     </div>
     <div style="position:relative">
@@ -949,8 +951,8 @@ function buildSchedGrid() {
         return;
       }
       html += `<div class="grid-slot ${isPro?'pro-slot':''}" onclick="window._slotClick('${hToTime(h)}','${name}')">`; 
-      if (spanBks.length > 0) {
-        // ปิดช่องที่เปิดไว้แล้ว แล้ว replace ด้วยช่องทึบ
+      if (spanBks.length > 0 && !isPro) {
+        // ปิดช่องที่เปิดไว้แล้ว แล้ว replace ด้วยช่องทึบ (เฉพาะช่างที่ระบุชื่อแล้ว ไม่ใช่ช่อง PRO)
         html = html.slice(0, html.lastIndexOf('<div class="grid-slot'));
         html += `<div class="grid-slot" style="background:repeating-linear-gradient(135deg,#bbf7d0 0px,#bbf7d0 4px,#f0fdf4 4px,#f0fdf4 10px);cursor:not-allowed;pointer-events:none;position:relative;min-height:72px">
           <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;padding:4px">
@@ -1319,7 +1321,7 @@ window.saveEmgClose = async function() {
     setBadge(slots.length ? '🚫 ปิดรับคิวแล้ว' : '✅ เปิดรับตามปกติ');
   } catch(e) { setBadge('❌ บันทึกไม่สำเร็จ'); }
   closeEmgModal();
-  renderSchedule();
+  buildSchedGrid();
 };
 
 window.clearEmgClose = async function() {
@@ -1332,7 +1334,7 @@ window.clearEmgClose = async function() {
     setBadge('✅ เปิดรับตามปกติแล้ว');
   } catch(e) {}
   closeEmgModal();
-  renderSchedule();
+  buildSchedGrid();
 };
 
 window.closeEmgModal = function() {
@@ -1409,7 +1411,7 @@ function startHolidaySync() {
         });
       }
     });
-    renderSchedule();
+    buildSchedGrid();
   });
 }
 
@@ -1923,6 +1925,36 @@ window.genLineMsg = function(mode) {
         msg += '   '+(b.depositStatus==='จ่ายแล้ว'?'✅ มัดจำแล้ว':'⏳ รอมัดจำ')+NL;
       });
       msg += LINE+NL+'📋 พรุ่งนี้ '+bks.length+' คิว'+NL;
+    }
+  }
+
+  if (mode==='tomorrowByArtist') {
+    const bks = bkList().filter(b=>b.date===tmrStr&&b.status!=='ยกเลิก').sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+    msg += '📅 นัดพรุ่งนี้ (แยกตามช่าง)'+NL+fmtTH(tmrStr)+NL+LINE+NL;
+    if (!bks.length) {
+      msg += 'ไม่มีคิวพรุ่งนี้'+NL;
+    } else {
+      const byArtist = {};
+      bks.forEach(b=>{
+        const a = b.artist || 'PRO (ยังไม่ระบุช่าง)';
+        if (!byArtist[a]) byArtist[a] = [];
+        byArtist[a].push(b);
+      });
+      const artistNames = Object.keys(byArtist).sort((a,b)=>{
+        if (a.startsWith('PRO')) return 1;
+        if (b.startsWith('PRO')) return -1;
+        return a.localeCompare(b,'th');
+      });
+      artistNames.forEach(a=>{
+        const list = byArtist[a];
+        msg += NL+'👤 '+a+' ('+list.length+' คิว)'+NL;
+        list.forEach(b=>{
+          msg += '🕐 '+(b.time||'–')+' น. — '+b.name+NL;
+          msg += '   บริการ: '+(b.service||'–')+(b.service2?' + '+b.service2:'')+NL;
+          msg += '   '+(b.depositStatus==='จ่ายแล้ว'?'✅ มัดจำแล้ว':'⏳ รอมัดจำ')+NL;
+        });
+      });
+      msg += NL+LINE+NL+'📋 รวมพรุ่งนี้ '+bks.length+' คิว'+NL;
     }
   }
 
