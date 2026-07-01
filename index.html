@@ -1260,7 +1260,7 @@ window.buildSummary = function() {
 };
 
 window.buildChannels = function() {
-  let totCh={cash:0,transfer:0,tap:0,credit:0,deposit:0},totRevA=0,rows='';
+  let totCh={cash:0,transfer:0,tap:0,credit:0,deposit:0,forAj:0},totRevA=0,rows='';
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
     const rev=(dd.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0);
