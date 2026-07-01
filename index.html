@@ -119,6 +119,17 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
 .ch-sum-card .ch-s-label { font-size: 12px; color: #475569; margin-bottom: 4px; font-weight: 600; }
 .ch-sum-card .ch-s-val { font-size: 15px; font-weight: 700; color: #0c4a6e; }
 .ch-sum-card .ch-s-pct { font-size: 11px; color: #888; margin-top: 2px; }
+.ch-donut-wrap { display: flex; align-items: center; gap: 28px; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 16px; flex-wrap: wrap; }
+.ch-donut { width: 190px; height: 190px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; position: relative; }
+.ch-donut-hole { width: 118px; height: 118px; border-radius: 50%; background: white; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1px #f1f5f9; }
+.ch-donut-hole .dh-label { font-size: 11px; color: #64748b; font-weight: 600; }
+.ch-donut-hole .dh-val { font-size: 15px; font-weight: 800; color: #0c4a6e; }
+.ch-legend { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 220px; }
+.ch-legend-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.ch-legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.ch-legend-name { flex: 1; color: #334155; font-weight: 600; }
+.ch-legend-val { color: #0c4a6e; font-weight: 700; }
+.ch-legend-pct { color: #888; font-size: 11px; width: 42px; text-align: right; }
 .haein-box { border: 2px solid #6d28d9; border-radius: 8px; padding: 14px; background: #faf5ff; margin-bottom: 18px; }
 .haein-box h4 { font-size: 13px; font-weight: 700; color: #6d28d9; margin-bottom: 12px; }
 .haein-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
@@ -430,7 +441,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
   <div class="table-wrap">
     <table>
       <thead><tr>
-        <th>วันที่</th><th>อ.หญิง</th><th>ช่างมด</th><th>ช่างบ๋อม</th><th>ช่างมะลิ</th><th>ช่างเจน</th><th>ช่างอั๋น</th>
+        <th>วันที่</th><th>🖊️ คิ้ว</th><th>👁️ ตา</th><th>💄 ปาก</th><th>⚡ เลเซอร์</th><th>🌫️ สลายฝ้า</th><th>✨ ขนตา</th><th>✂️ ผม</th><th>💅 เล็บ</th><th>🛍️ ขายของ</th>
         <th>ร้านหลัก</th><th style="background:#6d28d9">💜 HAE-IN</th><th style="background:#92400e">💛 อื่นๆ</th><th>รายจ่าย</th><th>กำไร</th><th>หมายเหตุ</th>
       </tr></thead>
       <tbody id="sum-tbody"></tbody>
@@ -445,7 +456,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
 
 <!-- ===== TAB 3: CHANNELS ===== -->
 <div id="p-channels" class="panel">
-  <div class="ch-summary" id="ch-summary-cards"></div>
+  <div class="ch-donut-wrap" id="ch-donut-wrap"></div>
   <div class="table-wrap">
     <table>
       <thead><tr>
@@ -465,7 +476,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
     <h3 style="font-size:14px;font-weight:700;color:#0c4a6e">⚙️ ตั้งค่าเงินเดือนพื้นฐาน</h3>
     <div style="font-size:12px;color:#888;margin-bottom:10px">
       🔒 ฐานเงินเดือนล็อคแล้ว &nbsp;|&nbsp; 📌 วันหยุด 4 วัน/เดือน &nbsp;|&nbsp;
-      🎨 คอม: คิ้ว/ปาก/ตา 20% (ทำคิ้วใหม่จ่าย 2 รอบ) | เลเซอร์ 20% | ขนตา/ผม/เล็บ 10% | ขายของ ฿150→฿50 &nbsp;|&nbsp; 💜 HAE-IN 10%÷5 (ไม่รวมอ.หญิง) &nbsp;|&nbsp; 🌿 ชลาชล ฿1,161/คน/ครั้ง &nbsp;|&nbsp; โม: เงินเดือนอย่างเดียว
+      🎨 คอม: คิ้ว/ปาก/ตา 20% (ทำคิ้วใหม่จ่าย 2 รอบ) | เลเซอร์ 20% | ขนตา/ผม/เล็บ 10% | ขายของ ฿150→฿50 &nbsp;|&nbsp; 💜 HAE-IN 10%÷5 (ไม่รวมอ.หญิง) &nbsp;|&nbsp; 🌿 ชลาชล ฿1,161/คน/ครั้ง &nbsp;|&nbsp; 🎓 คอมค่าสอน: ตามคอร์สที่สอนในเดือนนี้ &nbsp;|&nbsp; 🏥 หักประกันสังคมคนละ ฿600/เดือน &nbsp;|&nbsp; โม: เงินเดือนอย่างเดียว
     </div>
     <div class="salary-grid">
       <div class="s-field"><label>ช่างมด 🔒</label><input type="number" id="sal-mod" value="15000" readonly style="background:#f5f5f5"></div>
@@ -490,7 +501,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
         <th>เลเซอร์ (20%)</th>
         <th>ขนตา/ผม/เล็บ (10%)</th><th>ขายของ</th>
         <th>🌿 ชลาชล</th>
-        <th>💜 HAE-IN ÷6</th><th>รวมคอม</th><th>เงินเดือน</th><th>รวมรับ</th>
+        <th>💜 HAE-IN ÷6</th><th>🎓 คอมค่าสอน</th><th>รวมคอม</th><th>เงินเดือน</th><th>🏥 ประกันสังคม</th><th>รวมรับ</th>
       </tr></thead>
       <tbody id="pr-tbody"></tbody>
       <tfoot id="pr-tfoot"></tfoot>
@@ -587,13 +598,11 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
         <div class="s-field" style="grid-column:1/-1"><label>ชื่อคอร์ส *</label><input type="text" id="cr-name" placeholder="ชื่อคอร์ส..." style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px"></div>
         <div class="s-field"><label>จำนวนนักเรียน</label><input type="number" id="cr-students" placeholder="0" min="1" style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px" oninput="calcCourseTotal()"></div>
         <div class="s-field"><label>ราคา/คน (฿)</label><input type="number" id="cr-price" placeholder="0" min="0" style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px" oninput="calcCourseTotal()"></div>
-        <div class="s-field"><label>ผู้สอน</label>
-          <select id="cr-teacher" style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:12px">
-            <option>อ.หญิง</option><option>ช่างมด</option><option>ช่างบ๋อม</option>
-            <option>ช่างมะลิ</option><option>ช่างเจน</option><option>อั๋น</option><option>อื่นๆ</option>
-          </select>
+        <div class="s-field" style="grid-column:1/-1">
+          <label>ผู้สอน (เพิ่มได้หลายคน)</label>
+          <div id="cr-teacher-list" style="display:flex;flex-direction:column;gap:6px;margin-top:4px"></div>
+          <button type="button" class="btn" style="background:#ede9fe;color:#5b21b6;font-size:11px;padding:5px 10px;margin-top:6px" onclick="addTeacherRow()">➕ เพิ่มผู้สอน</button>
         </div>
-        <div class="s-field"><label>คอมผู้สอน (฿)</label><input type="number" id="cr-comm" placeholder="0" min="0" style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px" oninput="calcCourseTotal()"></div>
         <div class="s-field" style="grid-column:1/-1"><label>หมายเหตุ</label><input type="text" id="cr-note" placeholder="หมายเหตุ..." style="padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px"></div>
       </div>
       <div id="course-calc" style="background:#f5f3ff;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#5b21b6;font-weight:600;display:none"></div>
@@ -714,12 +723,39 @@ function calcSvcComm(sv) {
        + (sv.chalacol||0)*CHALACOL_RATE;
 }
 
+// ใช้เป็นค่าแนะนำเริ่มต้นตอนกรอกคอมมิชชั่นเอง (สำหรับข้อมูลเก่าที่ยังไม่เคยกรอกคอมเอง)
+function suggestComm(id, val) {
+  if (!val) return 0;
+  if (id === 'item') return calcItemComm(val);
+  if (id === 'chalacol') return Math.round(val * CHALACOL_RATE);
+  if (['brow','eye','lip','laser'].includes(id)) return Math.round(val * 0.20);
+  return Math.round(val * 0.10);
+}
+
 // chalacol ไม่นับรายได้ร้าน (ดีลนอก)
 function totalRevFromSvc(sv) {
   return (sv.brow||0)+(sv.eye||0)+(sv.lip||0)+(sv.laser||0)+(sv.facial||0)+(sv.lash||0)+(sv.hair||0)+(sv.nail||0)+(sv.item||0);
 }
 
 function haeinTotal(hi) { return (hi.sadryi||0)+(hi.henna||0)+(hi.product||0); }
+
+// รวมข้อมูลดิบจาก Firebase (Array หรือ Object, คีย์ d1/1/...) ให้เหลือ 1 ชุดต่อวัน
+// ป้องกันการนับซ้ำเวลามีทั้งฟอร์แมต "d15" และ "15" สำหรับวันเดียวกัน
+function normalizeMonthData(val) {
+  const out = {};
+  if (!val) return out;
+  if (Array.isArray(val)) {
+    val.forEach((item, idx) => { if (item && idx > 0) out[idx] = item; });
+  } else {
+    Object.keys(val).forEach(k => {
+      let num;
+      if (k.startsWith('d')) num = parseInt(k.slice(1));
+      else num = parseInt(k);
+      if (!isNaN(num)) out[num] = val[k]; // คีย์ซ้ำ → เขียนทับ ไม่บวกซ้ำ
+    });
+  }
+  return out;
+}
 
 function getDay(d) {
   const dd = data[d] || data['d'+d] || data[String(d)] || null;
@@ -956,37 +992,36 @@ function selectDay(d) {
   const dd = getDay(d);
   document.getElementById('artist-inputs').innerHTML = ARTISTS.map((name,i) => {
     const sv = dd.svc[i] || {brow:0,eye:0,lip:0,lash:0,hair:0,nail:0,item:0,laser:0,facial:0,chalacol:0};
+    const cm = id => sv[id+'_comm']!=null ? sv[id+'_comm'] : suggestComm(id, sv[id]||0);
 
     // ═══ การ์ดพิเศษสำหรับช่างอั๋น (index 5) ═══
     if (i === 5) {
-      // นับจำนวนบริการวันนี้จากทุกช่าง (ไม่นับ nail, lash)
+      // นับจำนวนบริการวันนี้จากทุกช่าง (ไม่นับ nail, lash) — แสดงเป็นข้อมูลอ้างอิง ไม่ได้บังคับคอม
       let todaySvcCount = countDaySvc(dd);
-      const anComm = todaySvcCount * AN_COMM_PER_SVC;
-      const laserComm = (sv.laser||0)*0.2;
+      const anCommSuggest = todaySvcCount * AN_COMM_PER_SVC;
+      const anCommVal = sv.an_comm!=null ? sv.an_comm : anCommSuggest;
       return `<div class="artist-card" style="border-color:#9333ea">
         <h4><span class="av" style="background:${COLORS[i]}">${name.charAt(name.length-1)}</span>${name} <span style="font-size:10px;color:#9333ea;font-weight:600">(ผู้จัดการ)</span></h4>
         <table class="svc-table">
-          <tr><th>บริการ</th><th>ยอด (฿)</th><th>คอม</th></tr>
+          <tr><th>บริการ</th><th>ยอด (฿)</th><th>คอม (กรอกเอง)</th></tr>
           <tr style="background:#fff7ed"><td>⚡ เลเซอร์</td>
             <td><input type="number" id="svc-${i}-laser" value="${sv.laser||0}" min="0" oninput="window._updateArtist(${i})"></td>
-            <td id="comm-${i}-laser" style="color:#92400e;font-size:10px">${(sv.laser||0)>0?fmt(laserComm):'–'}</td></tr>
-          <tr style="background:#faf5ff"><td>🎯 จำนวนบริการวันนี้</td>
-            <td colspan="2" style="text-align:center;font-weight:700;color:#7c3aed;font-size:13px">
-              ${todaySvcCount} ครั้ง × ฿200 = ${fmtN(anComm)}
+            <td><input type="number" id="comm-${i}-laser" value="${cm('laser')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
+          <tr style="background:#faf5ff"><td>🎯 จำนวนบริการวันนี้ <span style="font-size:9px;color:#aaa">(${todaySvcCount} ครั้ง อ้างอิง)</span></td>
+            <td colspan="2">
+              <input type="number" id="comm-5-an" value="${anCommVal}" min="0" oninput="window._updateArtist(5)" style="width:100%;text-align:center;font-weight:700;color:#7c3aed">
             </td></tr>
         </table>
-        <div class="svc-comm-preview" id="comm-preview-${i}">
-          คอมรวม: ${fmtN(laserComm + anComm)}
-          <span style="font-size:10px;color:#888"> (เลเซอร์ + บริการ)</span>
-        </div>
-        <input type="hidden" id="svc-${i}-brow" value="0">
-        <input type="hidden" id="svc-${i}-eye" value="0">
-        <input type="hidden" id="svc-${i}-lip" value="0">
-        <input type="hidden" id="svc-${i}-lash" value="0">
-        <input type="hidden" id="svc-${i}-hair" value="0">
-        <input type="hidden" id="svc-${i}-nail" value="0">
-        <input type="hidden" id="svc-${i}-item" value="0">
-        <input type="hidden" id="svc-${i}-chalacol" value="0">
+        <div class="svc-comm-preview" id="comm-preview-${i}">คอมรวม: ${fmtN((+cm('laser')||0) + (+anCommVal||0))}</div>
+        <input type="hidden" id="svc-${i}-brow" value="0"><input type="hidden" id="comm-${i}-brow" value="0">
+        <input type="hidden" id="svc-${i}-eye" value="0"><input type="hidden" id="comm-${i}-eye" value="0">
+        <input type="hidden" id="svc-${i}-lip" value="0"><input type="hidden" id="comm-${i}-lip" value="0">
+        <input type="hidden" id="svc-${i}-lash" value="0"><input type="hidden" id="comm-${i}-lash" value="0">
+        <input type="hidden" id="svc-${i}-hair" value="0"><input type="hidden" id="comm-${i}-hair" value="0">
+        <input type="hidden" id="svc-${i}-nail" value="0"><input type="hidden" id="comm-${i}-nail" value="0">
+        <input type="hidden" id="svc-${i}-item" value="0"><input type="hidden" id="comm-${i}-item" value="0">
+        <input type="hidden" id="svc-${i}-facial" value="0"><input type="hidden" id="comm-${i}-facial" value="0">
+        <input type="hidden" id="svc-${i}-chalacol" value="0"><input type="hidden" id="comm-${i}-chalacol" value="0">
         <input type="hidden" id="r2-${i}" value="0">
       </div>`;
     }
@@ -994,43 +1029,43 @@ function selectDay(d) {
     return `<div class="artist-card">
       <h4><span class="av" style="background:${COLORS[i]}">${name.charAt(name.length-1)}</span>${name}</h4>
       <table class="svc-table">
-        <tr><th>บริการ</th><th>ยอด (฿)</th><th>คอม</th></tr>
+        <tr><th>บริการ</th><th>ยอด (฿)</th><th>คอม (กรอกเอง)</th></tr>
         <tr style="background:#fef9c3"><td>🖊️ สักคิ้ว</td>
           <td><input type="number" id="svc-${i}-brow" value="${sv.brow||0}" min="0" oninput="window._updateArtist(${i})"></td>
-          <td id="comm-${i}-brow" style="color:#92400e;font-size:10px">${(sv.brow||0)>0?fmt((sv.brow||0)*0.2):'–'}</td></tr>
+          <td><input type="number" id="comm-${i}-brow" value="${cm('brow')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
         <tr style="background:#fef2f2"><td>👁️ สักตา</td>
           <td><input type="number" id="svc-${i}-eye" value="${sv.eye||0}" min="0" oninput="window._updateArtist(${i})"></td>
-          <td id="comm-${i}-eye" style="color:#92400e;font-size:10px">${(sv.eye||0)>0?fmt((sv.eye||0)*0.2):'–'}</td></tr>
+          <td><input type="number" id="comm-${i}-eye" value="${cm('eye')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
         <tr style="background:#fdf4ff"><td>💄 สักปาก</td>
           <td><input type="number" id="svc-${i}-lip" value="${sv.lip||0}" min="0" oninput="window._updateArtist(${i})"></td>
-          <td id="comm-${i}-lip" style="color:#92400e;font-size:10px">${(sv.lip||0)>0?fmt((sv.lip||0)*0.2):'–'}</td></tr>
+          <td><input type="number" id="comm-${i}-lip" value="${cm('lip')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
         <tr><td>👁️ ขนตา</td>
           <td><input type="number" id="svc-${i}-lash" value="${sv.lash||0}" min="0" oninput="window._updateArtist(${i})"></td>
-          <td id="comm-${i}-lash" style="color:#1e40af;font-size:10px">${sv.lash>0?fmt(sv.lash*0.1):'–'}</td></tr>
+          <td><input type="number" id="comm-${i}-lash" value="${cm('lash')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
         <tr><td>✂️ ผม</td>
           <td><input type="number" id="svc-${i}-hair" value="${sv.hair||0}" min="0" oninput="window._updateArtist(${i})"></td>
-          <td id="comm-${i}-hair" style="color:#1e40af;font-size:10px">${sv.hair>0?fmt(sv.hair*0.1):'–'}</td></tr>
+          <td><input type="number" id="comm-${i}-hair" value="${cm('hair')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
         <tr><td>💅 เล็บ</td>
           <td><input type="number" id="svc-${i}-nail" value="${sv.nail||0}" min="0" oninput="window._updateArtist(${i})"></td>
-          <td id="comm-${i}-nail" style="color:#1e40af;font-size:10px">${sv.nail>0?fmt(sv.nail*0.1):'–'}</td></tr>
+          <td><input type="number" id="comm-${i}-nail" value="${cm('nail')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
         <tr><td>🛍️ ขายของ</td>
           <td><input type="number" id="svc-${i}-item" value="${sv.item||0}" min="0" oninput="window._updateArtist(${i})"></td>
-          <td id="comm-${i}-item" style="color:#9d174d;font-size:10px">${sv.item>0?fmt(calcItemComm(sv.item)):'–'}</td></tr>
+          <td><input type="number" id="comm-${i}-item" value="${cm('item')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
         <tr style="background:#fff7ed"><td>⚡ เลเซอร์</td>
           <td><input type="number" id="svc-${i}-laser" value="${sv.laser||0}" min="0" oninput="window._updateArtist(${i})"></td>
-          <td id="comm-${i}-laser" style="color:#92400e;font-size:10px">${sv.laser>0?fmt(sv.laser*0.2):'–'}</td></tr>
+          <td><input type="number" id="comm-${i}-laser" value="${cm('laser')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
         <tr style="background:#ecfeff"><td>🌫️ สลายฝ้า/กระ</td>
           <td><input type="number" id="svc-${i}-facial" value="${sv.facial||0}" min="0" oninput="window._updateArtist(${i})"></td>
-          <td id="comm-${i}-facial" style="color:#1e40af;font-size:10px">${sv.facial>0?fmt(sv.facial*0.1):'–'}</td></tr>
+          <td><input type="number" id="comm-${i}-facial" value="${cm('facial')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
         <tr style="background:#f0fdf4"><td>🌿 ชลาชล (ครั้ง)</td>
           <td><input type="number" id="svc-${i}-chalacol" value="${sv.chalacol||0}" min="0" step="1" oninput="window._updateArtist(${i})" placeholder="ครั้ง"></td>
-          <td id="comm-${i}-chalacol" style="color:#065f46;font-size:10px">${sv.chalacol>0?fmt(sv.chalacol*CHALACOL_RATE):'–'}</td></tr>
+          <td><input type="number" id="comm-${i}-chalacol" value="${cm('chalacol')}" min="0" oninput="window._updateArtist(${i})" style="width:80px"></td></tr>
       </table>
       <div class="r2-row">
         <label>💜 คอมรอบ 2 (คิ้วใหม่)</label>
         <input type="number" id="r2-${i}" value="${dd.commR2[i]||0}" min="0" oninput="window._updateArtist(${i})">
       </div>
-      <div class="svc-comm-preview" id="comm-preview-${i}">คอมรวม: ${fmtN(calcSvcComm(sv)+(dd.commR2[i]||0))}</div>
+      <div class="svc-comm-preview" id="comm-preview-${i}">คอมรวม: ${fmtN(SVC_IDS.reduce((s,id)=>s+(+cm(id)||0),0)+(dd.commR2[i]||0))}</div>
     </div>`;
   }).join('');
 
@@ -1061,20 +1096,12 @@ function selectDay(d) {
 window._selectDay = selectDay;
 
 window._updateArtist = function(i) {
-  SVC_IDS.forEach(id => {
-    const val = +document.getElementById(`svc-${i}-${id}`)?.value||0;
-    const el = document.getElementById(`comm-${i}-${id}`);
-    if(!el) return;
-    if(val<=0){el.textContent='–';return;}
-    if(id==='item') el.textContent=fmt(calcItemComm(val));
-    else if(['brow','eye','lip','laser'].includes(id)) el.textContent=fmt(val*0.2);
-    else if(id==='chalacol') el.textContent=fmt(val*CHALACOL_RATE);
-    else el.textContent=fmt(val*0.1);
-  });
-  const sv=Object.fromEntries(SVC_IDS.map(id=>[id,+document.getElementById(`svc-${i}-${id}`)?.value||0]));
+  // ไม่คำนวณคอมให้อีกต่อไป — แค่รวมยอดจากช่องที่พนักงานกรอกเอง
+  let commSum = SVC_IDS.reduce((s,id)=>s+(+document.getElementById(`comm-${i}-${id}`)?.value||0),0);
   const r2=+document.getElementById(`r2-${i}`)?.value||0;
+  if (i===5) commSum += +document.getElementById('comm-5-an')?.value||0;
   const el=document.getElementById(`comm-preview-${i}`);
-  if(el) el.textContent=`คอมรวม: ${fmtN(calcSvcComm(sv)+r2)}`;
+  if(el) el.textContent=`คอมรวม: ${fmtN(commSum+r2)}`;
   updatePreview();
 };
 
@@ -1082,8 +1109,9 @@ function updatePreview() {
   let at=0,ct2=0;
   ARTISTS.forEach((_,i)=>{
     ['brow','eye','lip','lash','hair','nail','item','laser','facial'].forEach(id=>{at+=+document.getElementById(`svc-${i}-${id}`)?.value||0;});
-    const sv=Object.fromEntries(SVC_IDS.map(id=>[id,+document.getElementById(`svc-${i}-${id}`)?.value||0]));
-    ct2+=calcSvcComm(sv)+(+document.getElementById(`r2-${i}`)?.value||0);
+    let commSum = SVC_IDS.reduce((s,id)=>s+(+document.getElementById(`comm-${i}-${id}`)?.value||0),0);
+    if (i===5) commSum += +document.getElementById('comm-5-an')?.value||0;
+    ct2+=commSum+(+document.getElementById(`r2-${i}`)?.value||0);
   });
   const ct=CHANNELS.reduce((s,k)=>s+(+document.getElementById('ch-'+k)?.value||0),0);
   document.getElementById('artist-total-preview').textContent=fmtN(at);
@@ -1131,7 +1159,12 @@ window.addOtherRow = function() {
 
 window.saveDay = async function() {
   if(!selDay) return;
-  const svc=ARTISTS.map((_,i)=>Object.fromEntries(SVC_IDS.map(id=>[id,+document.getElementById(`svc-${i}-${id}`)?.value||0])));
+  const svc=ARTISTS.map((_,i)=>{
+    const o=Object.fromEntries(SVC_IDS.map(id=>[id,+document.getElementById(`svc-${i}-${id}`)?.value||0]));
+    SVC_IDS.forEach(id=>{ o[id+'_comm']=+document.getElementById(`comm-${i}-${id}`)?.value||0; });
+    if (i===5) o.an_comm = +document.getElementById('comm-5-an')?.value||0;
+    return o;
+  });
   const commR2=ARTISTS.map((_,i)=>+document.getElementById(`r2-${i}`)?.value||0);
   const channels=Object.fromEntries(CHANNELS.map(k=>[k,+document.getElementById('ch-'+k).value||0]));
   const names=[...document.querySelectorAll('.en')].map(e=>e.value.trim());
@@ -1189,7 +1222,7 @@ function buildSvcDashboard(daysData) {
       if (!svc.byArtist[i]) return '';
       const pct = Math.round(svc.byArtist[i]/svc.totRev*100);
       return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
-        <span class="av" style="background:${COLORS[i]};width:18px;height:18px;font-size:8px;flex-shrink:0">${name.charAt(name.length-1)}</span>
+        <span style="font-size:10px;color:#334155;font-weight:600;width:56px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}</span>
         <div style="flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden">
           <div style="height:8px;background:${svc.color};border-radius:4px;width:${pct}%"></div>
         </div>
@@ -1238,19 +1271,21 @@ function buildSvcDashboard(daysData) {
 }
 
 window.buildSummary = function() {
-  let totRevA=Array(6).fill(0),totRev=0,totExp=0,totHaein=0,totOther=0,rows='';
+  const SVC_COLS = ['brow','eye','lip','laser','facial','lash','hair','nail','item'];
+  let totSvcA=Array(SVC_COLS.length).fill(0),totRev=0,totExp=0,totHaein=0,totOther=0,rows='';
   const allDays=[];
+  const dd_ = String(curMonth+1).padStart(2,'0');
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
     allDays.push(dd);
-    const revA=(dd.svc||[]).map(sv=>totalRevFromSvc(sv));
-    const rev=revA.reduce((a,b)=>a+b,0);
+    const svcSums = SVC_COLS.map(k=>(dd.svc||[]).reduce((s,sv)=>s+(sv[k]||0),0));
+    const rev=(dd.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0);
     const exp=(dd.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);
     const hiT=haeinTotal(dd.haein||{});
     const otherRev=(dd.other||[]).reduce((a,e)=>a+(+e.a||0),0);
-    revA.forEach((r,i)=>totRevA[i]+=r); totRev+=rev; totExp+=exp; totHaein+=hiT; totOther+=otherRev;
+    svcSums.forEach((r,i)=>totSvcA[i]+=r); totRev+=rev; totExp+=exp; totHaein+=hiT; totOther+=otherRev;
     if(rev>0||exp>0||dd.note||hiT>0||otherRev>0) rows+=`<tr>
-      <td>${d}/06</td>${revA.map(r=>`<td>${r>0?fmt(r):'–'}</td>`).join('')}
+      <td>${d}/${dd_}</td>${svcSums.map(r=>`<td>${r>0?fmt(r):'–'}</td>`).join('')}
       <td style="font-weight:700;color:#0c4a6e">${fmtN(rev)}</td>
       <td style="color:#6d28d9;font-weight:600">${hiT>0?fmtN(hiT):'–'}</td>
       <td style="color:#92400e;font-weight:600">${otherRev>0?fmtN(otherRev):'–'}</td>
@@ -1259,8 +1294,8 @@ window.buildSummary = function() {
       <td style="text-align:left;font-size:11px;color:#888">${dd.note||''}</td></tr>`;
   }
   buildSvcDashboard(allDays);
-  document.getElementById('sum-tbody').innerHTML=rows||`<tr><td colspan="12" style="text-align:center;padding:20px;color:#aaa">ยังไม่มีข้อมูล</td></tr>`;
-  document.getElementById('sum-tfoot').innerHTML=`<tr><td>รวม</td>${totRevA.map(r=>`<td>${fmtN(r)}</td>`).join('')}<td>${fmtN(totRev)}</td><td style="color:#6d28d9">${fmtN(totHaein)}</td><td style="color:#92400e">${fmtN(totOther)}</td><td style="color:#dc2626">${fmtN(totExp)}</td><td style="color:#16a34a">${fmtN(totRev+totHaein+totOther-totExp)}</td><td></td></tr>`;
+  document.getElementById('sum-tbody').innerHTML=rows||`<tr><td colspan="15" style="text-align:center;padding:20px;color:#aaa">ยังไม่มีข้อมูล</td></tr>`;
+  document.getElementById('sum-tfoot').innerHTML=`<tr><td>รวม</td>${totSvcA.map(r=>`<td>${fmtN(r)}</td>`).join('')}<td>${fmtN(totRev)}</td><td style="color:#6d28d9">${fmtN(totHaein)}</td><td style="color:#92400e">${fmtN(totOther)}</td><td style="color:#dc2626">${fmtN(totExp)}</td><td style="color:#16a34a">${fmtN(totRev+totHaein+totOther-totExp)}</td><td></td></tr>`;
   document.getElementById('sum-cards').innerHTML=`
     <div class="card"><div class="label">รายรับร้านหลัก</div><div class="value">${fmtN(totRev)}</div></div>
     <div class="card purple"><div class="label">💜 HAE-IN</div><div class="value">${fmtN(totHaein)}</div></div>
@@ -1278,7 +1313,7 @@ window.buildChannels = function() {
     if(rev>0||ct>0){
       CHANNELS.forEach(k=>totCh[k]+=dd.channels[k]||0); totRevA+=rev;
       const diff=ct-rev;
-      rows+=`<tr><td>${d}/06</td>${CHANNELS.map(k=>`<td>${dd.channels[k]>0?fmt(dd.channels[k]):'–'}</td>`).join('')}
+      rows+=`<tr><td>${d}/${String(curMonth+1).padStart(2,'0')}</td>${CHANNELS.map(k=>`<td>${dd.channels[k]>0?fmt(dd.channels[k]):'–'}</td>`).join('')}
         <td style="font-weight:700">${fmtN(ct)}</td><td>${fmtN(rev)}</td>
         <td style="color:${Math.abs(diff)<1?'#16a34a':diff>0?'#f97316':'#ef4444'};font-size:11px">${Math.abs(diff)<1?'✅':diff>0?`+${fmt(diff)}`:`-${fmt(-diff)}`}</td></tr>`;
     }
@@ -1286,12 +1321,32 @@ window.buildChannels = function() {
   const grandCt=CHANNELS.reduce((s,k)=>s+totCh[k],0);
   document.getElementById('ch-tbody').innerHTML=rows||`<tr><td colspan="9" style="text-align:center;padding:20px;color:#aaa">ยังไม่มีข้อมูล</td></tr>`;
   document.getElementById('ch-tfoot').innerHTML=`<tr><td>รวม</td>${CHANNELS.map(k=>`<td>${fmtN(totCh[k])}</td>`).join('')}<td>${fmtN(grandCt)}</td><td>${fmtN(totRevA)}</td><td></td></tr>`;
-  // สรุปช่องทาง — แสดงชุดเดียว (รวม "รายรับรวม" ไว้การ์ดแรก)
-  const totalCard=`<div class="ch-sum-card" style="border-top:3px solid #0c4a6e;"><div style="font-size:22px">💰</div><div class="ch-s-label">รายรับรวม</div><div class="ch-s-val">${fmtN(totRevA)}</div><div class="ch-s-pct">100%</div><div style="height:4px;background:#0c4a6e;border-radius:2px;margin-top:6px"></div></div>`;
-  document.getElementById('ch-summary-cards').innerHTML=totalCard+CHANNELS.map((k,i)=>{
-    const pct=grandCt>0?(totCh[k]/grandCt*100).toFixed(1):0;
-    return `<div class="ch-sum-card"><div style="font-size:22px">${CH_ICONS[i]}</div><div class="ch-s-label">${CH_LABELS[i]}</div><div class="ch-s-val">${fmtN(totCh[k])}</div><div class="ch-s-pct">${pct}%</div><div style="height:4px;background:#eee;border-radius:2px;margin-top:6px"><div style="height:4px;background:#0ea5e9;border-radius:2px;width:${pct}%"></div></div></div>`;
+  // สรุปช่องทาง — กราฟวงกลม (donut) + legend เปอร์เซ็นต์
+  const DONUT_COLORS = ['#10b981','#0ea5e9','#f59e0b','#8b5cf6','#f43f5e','#a21caf'];
+  let gradParts = [], cursor = 0;
+  const legendRows = CHANNELS.map((k,i)=>{
+    const pct = grandCt>0 ? (totCh[k]/grandCt*100) : 0;
+    const pctStr = pct.toFixed(1);
+    const start = cursor, end = cursor + pct;
+    cursor = end;
+    if (pct > 0) gradParts.push(`${DONUT_COLORS[i]} ${start}% ${end}%`);
+    return `<div class="ch-legend-row">
+      <span class="ch-legend-dot" style="background:${DONUT_COLORS[i]}"></span>
+      <span>${CH_ICONS[i]}</span>
+      <span class="ch-legend-name">${CH_LABELS[i]}</span>
+      <span class="ch-legend-val">${fmtN(totCh[k])}</span>
+      <span class="ch-legend-pct">${pctStr}%</span>
+    </div>`;
   }).join('');
+  const donutBg = gradParts.length ? `conic-gradient(${gradParts.join(',')})` : '#e2e8f0';
+  document.getElementById('ch-donut-wrap').innerHTML = `
+    <div class="ch-donut" style="background:${donutBg}">
+      <div class="ch-donut-hole">
+        <div class="dh-label">รายรับรวม</div>
+        <div class="dh-val">${fmtN(grandCt)}</div>
+      </div>
+    </div>
+    <div class="ch-legend">${legendRows}</div>`;
 };
 
 window.calcPayroll = function() {
@@ -1335,24 +1390,46 @@ window.calcPayroll = function() {
     anServiceCount += dayCount;
   }
   const anExtraComm = anServiceCount * AN_COMM_PER_SVC;
+
+  // ═══ คอมค่าสอน — รวมจากคอร์สที่สอนในเดือน/ปีปัจจุบัน รองรับผู้สอนหลายคนต่อคอร์ส ═══
+  const teachComm = Array(6).fill(0);
+  Object.values(courses||{}).forEach(cr=>{
+    if(!cr.date) return;
+    const [cy,cm] = cr.date.split('-').map(Number); // cy=ค.ศ., cm=1-12
+    if(cy !== (curYear-543) || cm !== (curMonth+1)) return;
+    const teacherList = Array.isArray(cr.teachers) ? cr.teachers : (cr.teacher ? [{name:cr.teacher, comm:cr.comm}] : []);
+    teacherList.forEach(t=>{
+      const idx = ARTISTS.indexOf(t.name);
+      if(idx>=0) teachComm[idx] += (+t.comm||0);
+    });
+  });
+  const SOCIAL_SECURITY = 600; // หักประกันสังคมคนละ 600 บาท/เดือน
+
   const totalComm=ARTISTS.map((_,i)=>{
     if(i===0) return 0; // อ.หญิง — ไม่มีคอมมิชชั่น
-    const base=commTat[i]+totR2[i]+commLaser[i]+commOther[i]+commItem[i]+commChalacol[i]+haeinPP; // i>=1 เสมอ
+    const base=commTat[i]+totR2[i]+commLaser[i]+commOther[i]+commItem[i]+commChalacol[i]+haeinPP+teachComm[i]; // i>=1 เสมอ
     return i===5 ? base+anExtraComm : base; // index 5 = ช่างอั๋น
   });
   const leaveAdj=ATTEND_IDX.map((ai,i)=>Math.round((LEAVE_DAYS-absentDays[i])*bases[ai]/30*100)/100);
-  const totPay=ARTISTS.map((_,i)=>{const adjIdx=ATTEND_IDX.indexOf(i);return bases[i]+totalComm[i]+(adjIdx>=0?leaveAdj[adjIdx]:0);});
-  const grandTotal=totPay.slice(1).reduce((a,b)=>a+b,0)+salMo; // ไม่รวม อ.หญิง (index 0)
+  const totPay=ARTISTS.map((_,i)=>{
+    const adjIdx=ATTEND_IDX.indexOf(i);
+    const gross=bases[i]+totalComm[i]+(adjIdx>=0?leaveAdj[adjIdx]:0);
+    return i===0 ? gross : Math.max(0, gross-SOCIAL_SECURITY);
+  });
+  const salMoNet = Math.max(0, salMo - SOCIAL_SECURITY);
+  const grandTotal=totPay.slice(1).reduce((a,b)=>a+b,0)+salMoNet; // ไม่รวม อ.หญิง (index 0)
   const gComm=totalComm.reduce((a,b)=>a+b,0),gBase=bases.slice(1).reduce((a,b)=>a+b,0);
+  const gTeachComm=teachComm.reduce((a,b)=>a+b,0);
+  const gSocialSec=SOCIAL_SECURITY*(ATTEND_ARTISTS.length+1); // 5 ช่าง + โม
 
   const totShopRev=ARTISTS.reduce((s,_,i)=>s+totTat[i]+totLaser[i]+totOther[i]+totItem[i],0);
   const totBrowAll=totBrow.reduce((a,b)=>a+b,0),totEyeAll=totEye.reduce((a,b)=>a+b,0),totLipAll=totLip.reduce((a,b)=>a+b,0);
   document.getElementById('payroll-cards').innerHTML=`
     <div class="card"><div class="label">ยอดรายรับร้านหลัก</div><div class="value">${fmtN(totShopRev)}</div></div>
     <div class="card purple"><div class="label">💜 HAE-IN | pool 10% ÷5</div><div class="value">${fmtN(totHaeinRev)} | ${fmtN(haeinPool)}</div></div>
-    <div class="card green"><div class="label">คอมรวมทุกช่าง</div><div class="value">${fmtN(gComm)}</div></div>
+    <div class="card green"><div class="label">คอมรวมทุกช่าง (รวม 🎓 ${fmtN(gTeachComm)})</div><div class="value">${fmtN(gComm)}</div></div>
     <div class="card"><div class="label">เงินเดือนพื้นฐาน</div><div class="value">${fmtN(gBase+salMo)}</div></div>
-    <div class="card red"><div class="label">รวมจ่ายทั้งหมด</div><div class="value">${fmtN(grandTotal)}</div></div>`;
+    <div class="card red"><div class="label">รวมจ่ายทั้งหมด (หัก 🏥 ${fmtN(gSocialSec)} แล้ว)</div><div class="value">${fmtN(grandTotal)}</div></div>`;
 
   document.getElementById('pr-tbody').innerHTML=ARTISTS.map((name,i)=>{
     if(i===0) return ''; // อ.หญิง — ไม่แสดงในตารางเงินเดือน (ส่งเงินผ่านช่องทาง "ส่งให้อ.หญิง" แทน)
@@ -1369,14 +1446,16 @@ window.calcPayroll = function() {
       <td style="color:#9d174d">${totItem[i]>0?fmtN(totItem[i]):'–'}<br><span style="color:#16a34a;font-size:10px">${commItem[i]>0?'+'+fmtN(commItem[i]):''}</span></td>
       <td style="color:#065f46;font-weight:600">${totChalacol[i]>0?`${totChalacol[i]} ครั้ง`:'–'}<br><span style="color:#16a34a;font-size:10px">${commChalacol[i]>0?'+'+fmtN(commChalacol[i]):''}</span></td>
       <td style="color:#6d28d9;font-weight:600">${fmtN(haeinPP)}</td>
+      <td style="color:#0891b2;font-weight:600">${teachComm[i]>0?fmtN(teachComm[i]):'–'}</td>
       <td style="font-weight:700">${fmtN(totalComm[i])}${i===5&&anExtraComm>0?`<br><span style="font-size:10px;color:#f59e0b">🎯 คอมบริการ: ${anServiceCount} ครั้ง×฿200=${fmtN(anExtraComm)}</span>`:''}</td>
       <td>${fmtN(bases[i])}</td>
+      <td style="color:#dc2626">-${fmtN(SOCIAL_SECURITY)}</td>
       <td style="font-weight:700;color:#16a34a;font-size:13px">${fmtN(totPay[i])}</td>
     </tr>`;
   }).join('')+`<tr style="background:#fefce8">
     <td><span class="av" style="background:#78716c;margin-right:6px">ม</span>โม <span style="font-size:10px;color:#888">(กราฟิก)</span></td>
-    <td colspan="11" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว</td>
-    <td>${fmtN(salMo)}</td><td style="font-weight:700;color:#16a34a">${fmtN(salMo)}</td></tr>`;
+    <td colspan="12" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว</td>
+    <td>${fmtN(salMo)}</td><td style="color:#dc2626">-${fmtN(SOCIAL_SECURITY)}</td><td style="font-weight:700;color:#16a34a">${fmtN(salMoNet)}</td></tr>`;
 
   // แสดงรายละเอียดคอมอั๋นแต่ละวัน
   const anDetailEl = document.getElementById('an-comm-detail');
@@ -1385,7 +1464,7 @@ window.calcPayroll = function() {
       anDetailEl.innerHTML = `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px;margin-bottom:14px">
         <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:8px">🎯 รายละเอียดคอมอั๋น (${anServiceCount} บริการ × ฿200 = ${fmtN(anExtraComm)})</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px">
-          ${anDailyDetails.map(({d,count})=>`<span style="background:#fff;border:1px solid #fde68a;border-radius:5px;padding:3px 10px;font-size:11px;color:#92400e">${d}/06 — ${count} บริการ (${fmtN(count*AN_COMM_PER_SVC)})</span>`).join('')}
+          ${anDailyDetails.map(({d,count})=>`<span style="background:#fff;border:1px solid #fde68a;border-radius:5px;padding:3px 10px;font-size:11px;color:#92400e">${d}/${String(curMonth+1).padStart(2,'0')} — ${count} บริการ (${fmtN(count*AN_COMM_PER_SVC)})</span>`).join('')}
         </div>
       </div>`;
     } else {
@@ -1401,15 +1480,19 @@ window.calcPayroll = function() {
     <td>${fmtN(totItem.reduce((a,b)=>a+b,0))}</td>
     <td style="color:#065f46">${totChalacol.reduce((a,b)=>a+b,0)} ครั้ง</td>
     <td style="color:#6d28d9">${fmtN(haeinPool)}</td>
+    <td style="color:#0891b2">${fmtN(gTeachComm)}</td>
     <td>${fmtN(gComm)}</td>
     <td>${fmtN(gBase+salMo)}</td>
+    <td style="color:#dc2626">-${fmtN(gSocialSec)}</td>
     <td style="color:#16a34a">${fmtN(grandTotal)}</td></tr>`;
 };
 
 window.exportSummaryCSV=function(){
   const dim=getDaysInMonth(),root=getRoot(),mo=String(curMonth+1).padStart(2,'0'),yr=String(curYear).slice(2);
-  let rows=[['วันที่',...ARTISTS,'รายรับรวม','HAE-IN','รายจ่าย','กำไร','หมายเหตุ']];
-  for(let d=1;d<=dim;d++){const dd=getDay(d);const revA=(dd.svc||[]).map(sv=>totalRevFromSvc(sv));const rev=revA.reduce((a,b)=>a+b,0);const exp=(dd.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);const hi=haeinTotal(dd.haein||{});if(rev>0||exp>0||dd.note)rows.push([`${d}/${mo}/${yr}`,...revA,rev,hi,exp,rev+hi-exp,dd.note||'']);}
+  const SVC_COLS=['brow','eye','lip','laser','facial','lash','hair','nail','item'];
+  const SVC_LABELS=['คิ้ว','ตา','ปาก','เลเซอร์','สลายฝ้า','ขนตา','ผม','เล็บ','ขายของ'];
+  let rows=[['วันที่',...SVC_LABELS,'รายรับรวม','HAE-IN','รายจ่าย','กำไร','หมายเหตุ']];
+  for(let d=1;d<=dim;d++){const dd=getDay(d);const svcA=SVC_COLS.map(k=>(dd.svc||[]).reduce((s,sv)=>s+(sv[k]||0),0));const rev=(dd.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0);const exp=(dd.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);const hi=haeinTotal(dd.haein||{});if(rev>0||exp>0||dd.note)rows.push([`${d}/${mo}/${yr}`,...svcA,rev,hi,exp,rev+hi-exp,dd.note||'']);}
   dl('﻿'+rows.map(r=>r.join(',')).join('\n'),`daily_${root}.csv`);
 };
 window.exportChannelCSV=function(){
@@ -1418,7 +1501,7 @@ window.exportChannelCSV=function(){
   for(let d=1;d<=dim;d++){const dd=getDay(d);const rev=(dd.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0);const ct=chTotal(dd.channels);if(rev>0||ct>0)rows.push([`${d}/${mo}/${yr}`,...CHANNELS.map(k=>dd.channels[k]||0),ct,rev,ct-rev]);}
   dl('﻿'+rows.map(r=>r.join(',')).join('\n'),`channels_${root}.csv`);
 };
-window.exportPayrollCSV=function(){window.calcPayroll();const root=getRoot();const rows=[['พนักงาน','วันหยุด','ปรับวันหยุด','คิ้ว/ปาก/ตา','คอมรอบ2','เลเซอร์','ขนตา/ผม/เล็บ','ขายของ','ชลาชล','HAE-IN','รวมคอม','ฐาน','รวมรับ']];document.querySelectorAll('#pr-tbody tr').forEach(tr=>{rows.push([...tr.querySelectorAll('td')].map(td=>td.innerText.replace(/\n/g,' ').trim()));});dl('﻿'+rows.map(r=>r.join(',')).join('\n'),`payroll_${root}.csv`);};
+window.exportPayrollCSV=function(){window.calcPayroll();const root=getRoot();const rows=[['พนักงาน','วันหยุด','ปรับวันหยุด','คิ้ว/ปาก/ตา','คอมรอบ2','เลเซอร์','ขนตา/ผม/เล็บ','ขายของ','ชลาชล','HAE-IN','คอมค่าสอน','รวมคอม','ฐาน','ประกันสังคม','รวมรับ']];document.querySelectorAll('#pr-tbody tr').forEach(tr=>{rows.push([...tr.querySelectorAll('td')].map(td=>td.innerText.replace(/\n/g,' ').trim()));});dl('﻿'+rows.map(r=>r.join(',')).join('\n'),`payroll_${root}.csv`);};
 function dl(csv,fn){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=fn;a.click();}
 
 window.showPanel=function(id){
@@ -1446,7 +1529,7 @@ async function buildYearly() {
   for(let m=0;m<12;m++){
     const root = `${MONTH_SHORT_YR[m]}${yr}`;
     const snap = await get(ref(db, root));
-    const mData = snap.val() || {};
+    const mData = normalizeMonthData(snap.val());
     let mRev=0, mHaein=0, mExp=0, mDays=0;
     Object.values(mData).forEach(d=>{
       if(typeof d !== 'object') return;
@@ -1513,7 +1596,7 @@ window.exportYearlyCSV = async function() {
   for(let m=0;m<12;m++){
     const root=`${MONTH_SHORT_YR[m]}${yr}`;
     const snap=await get(ref(db,root));
-    const mData=snap.val()||{};
+    const mData=normalizeMonthData(snap.val());
     let mRev=0,mHaein=0,mExp=0,mDays=0;
     Object.values(mData).forEach(d=>{if(typeof d!=='object')return;mRev+=(d.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0);mHaein+=haeinTotal(d.haein||{});mExp+=(d.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);if((d.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0)>0)mDays++;});
     if(mRev>0||mHaein>0||mExp>0) rows.push([MONTH_TH_NAMES[m],mRev,mHaein,mExp,mRev+mHaein-mExp,mDays]);
@@ -1575,6 +1658,34 @@ const COURSE_CATALOG = {
 
 let courses = {};
 
+const TEACHER_OPTS = ['อ.หญิง','ช่างมด','ช่างบ๋อม','ช่างมะลิ','ช่างเจน','อั๋น','อื่นๆ'];
+
+function makeTeacherRow(name='', comm='') {
+  const div = document.createElement('div');
+  div.className = 'teacher-row';
+  div.style.cssText = 'display:flex;gap:8px;align-items:center';
+  const opts = TEACHER_OPTS.map(t=>`<option value="${t}"${t===name?' selected':''}>${t}</option>`).join('');
+  div.innerHTML = `<select class="tr-name" style="flex:1;padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:12px">${opts}</select>
+    <input type="number" class="tr-comm" placeholder="คอม (฿)" min="0" value="${comm}" style="width:120px;padding:8px;border:1.5px solid #e9d5ff;border-radius:7px;font-size:13px" oninput="calcCourseTotal()">
+    <button type="button" onclick="this.parentElement.remove();calcCourseTotal()" style="background:#fee2e2;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;color:#dc2626;font-size:12px">✕</button>`;
+  return div;
+}
+window.addTeacherRow = function() {
+  document.getElementById('cr-teacher-list').appendChild(makeTeacherRow());
+};
+function resetTeacherRows() {
+  const el = document.getElementById('cr-teacher-list');
+  if (!el) return;
+  el.innerHTML = '';
+  el.appendChild(makeTeacherRow());
+}
+function getTeacherRows() {
+  return [...document.querySelectorAll('#cr-teacher-list .teacher-row')].map(row => ({
+    name: row.querySelector('.tr-name').value,
+    comm: +row.querySelector('.tr-comm').value || 0
+  })).filter(t => t.name);
+}
+
 window.fillCourseName = function() {
   const code = document.getElementById('cr-code').value;
   if (code && COURSE_CATALOG[code]) {
@@ -1588,13 +1699,15 @@ window.fillCourseName = function() {
 window.calcCourseTotal = function() {
   const students = +document.getElementById('cr-students')?.value||0;
   const price = +document.getElementById('cr-price')?.value||0;
-  const comm = +document.getElementById('cr-comm')?.value||0;
+  const teachers = getTeacherRows();
+  const comm = teachers.reduce((s,t)=>s+t.comm,0);
   const total = students * price;
   const el = document.getElementById('course-calc');
   if (!el) return;
-  if (total > 0) {
+  if (total > 0 || comm > 0) {
     el.style.display='block';
-    el.textContent = `รายรับรวม: ${fmtN(total)} (${students} คน × ${fmtN(price)}) | คอมผู้สอน: ${fmtN(comm)} | สุทธิร้าน: ${fmtN(total-comm)}`;
+    const teacherStr = teachers.length ? teachers.map(t=>`${t.name} ฿${fmtN(t.comm)}`).join(', ') : '–';
+    el.textContent = `รายรับรวม: ${fmtN(total)} (${students} คน × ${fmtN(price)}) | คอมผู้สอน: ${fmtN(comm)} (${teacherStr}) | สุทธิร้าน: ${fmtN(total-comm)}`;
   } else { el.style.display='none'; }
 };
 
@@ -1604,19 +1717,21 @@ window.initCourseDate = function() {
     const today = new Date();
     el.value = today.toISOString().slice(0,10);
   }
+  if (!document.querySelector('#cr-teacher-list .teacher-row')) resetTeacherRows();
 };
 
 window.saveCourse = async function() {
   const name = document.getElementById('cr-name').value.trim();
   if (!name) { alert('กรุณากรอกชื่อคอร์ส'); return; }
+  const teachers = getTeacherRows();
   const id = 'CR-'+Date.now().toString(36).toUpperCase();
   const cr = {
     id, code: document.getElementById('cr-code').value,
     name, date: document.getElementById('cr-date').value,
     students: +document.getElementById('cr-students').value||0,
     price: +document.getElementById('cr-price').value||0,
-    comm: +document.getElementById('cr-comm').value||0,
-    teacher: document.getElementById('cr-teacher').value,
+    teachers, // [{name, comm}, ...] รองรับผู้สอนหลายคน
+    comm: teachers.reduce((s,t)=>s+t.comm,0), // รวมคอมทั้งหมด (เก็บไว้ backward-compat)
     note: document.getElementById('cr-note').value,
     createdAt: new Date().toISOString()
   };
@@ -1626,7 +1741,8 @@ window.saveCourse = async function() {
   renderCourseList();
   const m = document.getElementById('course-msg');
   if(m){m.textContent=`✓ บันทึกคอร์ส "${name}" แล้ว`;setTimeout(()=>m.textContent='',3000);}
-  ['cr-code','cr-name','cr-students','cr-price','cr-comm','cr-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['cr-code','cr-name','cr-students','cr-price','cr-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  resetTeacherRows();
   const cc=document.getElementById('course-calc');if(cc)cc.style.display='none';
 };
 
@@ -1642,7 +1758,10 @@ function renderCourseList() {
   if (!listEl) return;
   const list = Object.values(courses).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   const totRev = list.reduce((s,c)=>s+c.total,0);
-  const totComm = list.reduce((s,c)=>s+(+c.comm||0),0);
+  const totComm = list.reduce((s,c)=>{
+    const teachers = Array.isArray(c.teachers) ? c.teachers : (c.teacher?[{name:c.teacher,comm:c.comm}]:[]);
+    return s+teachers.reduce((a,t)=>a+(+t.comm||0),0);
+  },0);
   const totStudents = list.reduce((s,c)=>s+(+c.students||0),0);
   const csRev=document.getElementById('cs-rev'); if(csRev)csRev.textContent=fmtN(totRev);
   const csComm=document.getElementById('cs-comm'); if(csComm)csComm.textContent=fmtN(totComm);
@@ -1650,16 +1769,21 @@ function renderCourseList() {
   const csCt=document.getElementById('cs-count'); if(csCt)csCt.textContent=list.length+' คอร์ส';
   listEl.innerHTML = list.length===0
     ? '<div style="text-align:center;padding:20px;color:#aaa">ยังไม่มีคอร์สที่บันทึก</div>'
-    : list.map(c=>`<div class="course-list-item">
+    : list.map(c=>{
+        const teachers = Array.isArray(c.teachers) ? c.teachers : (c.teacher?[{name:c.teacher,comm:c.comm}]:[]);
+        const teacherStr = teachers.length ? teachers.map(t=>`${t.name} (฿${fmtN(t.comm)})`).join(', ') : '–';
+        const commSum = teachers.reduce((a,t)=>a+(+t.comm||0),0);
+        return `<div class="course-list-item">
         <div class="cli-info">
           <div class="cli-name">${c.code?`[${c.code}] `:''}${c.name}</div>
-          <div class="cli-detail">📅 ${c.date||'–'} | 👩‍🎓 ${c.students||0} คน × ${fmtN(c.price||0)} | 👩‍🏫 ${c.teacher||'–'} | คอม: ${fmtN(c.comm||0)}${c.note?' | '+c.note:''}</div>
+          <div class="cli-detail">📅 ${c.date||'–'} | 👩‍🎓 ${c.students||0} คน × ${fmtN(c.price||0)} | 👩‍🏫 ${teacherStr} | คอมรวม: ${fmtN(commSum)}${c.note?' | '+c.note:''}</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px">
           <div class="cli-rev">${fmtN(c.total)}</div>
           <button onclick="window.deleteCourse('${c.id}')" style="background:#fee2e2;border:none;border-radius:5px;padding:3px 8px;cursor:pointer;font-size:11px;color:#dc2626">🗑️</button>
         </div>
-      </div>`).join('');
+      </div>`;
+      }).join('');
 }
 
 function startCourseSync() {
