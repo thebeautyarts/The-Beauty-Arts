@@ -1510,6 +1510,7 @@ function renderList() {
         <td><button onclick="window._editBk('${b.id}')" style="background:var(--green-pale);border:none;border-radius:5px;padding:4px 10px;cursor:pointer;font-size:11px;color:var(--green-dark);font-weight:600;">แก้ไข</button></td>
       </tr>`).join('');
 }
+window.renderList = renderList; // เปิดให้ inline onclick/oninput ใน HTML เรียกใช้ได้ (นอก scope ของ module)
 
 // ═══ Summary ═══
 function renderSummary() {
@@ -1635,6 +1636,7 @@ function renderSummary() {
       💡 ${retCust>newCust?'ลูกค้าประจำมากกว่าครึ่ง — ดูแล Loyalty Program':'ลูกค้าใหม่เยอะ — โฟกัสการ Convert ให้กลายเป็นประจำ'}
     </div>`;
 }
+window.renderSummary = renderSummary; // เปิดให้ inline onchange ใน HTML เรียกใช้ได้
 
 // ═══ Auto Status Update ═══
 // ทุก 1 นาที: ยืนยัน → กำลังทำ เมื่อถึงเวลา, กำลังทำ → เสร็จแล้ว เมื่อครบเวลา
