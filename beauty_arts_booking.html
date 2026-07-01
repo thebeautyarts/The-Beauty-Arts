@@ -384,7 +384,7 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
       <button class="btn btn-gold" onclick="openBookingForm(schedDate)">➕ เพิ่มจอง</button>
       <button class="btn btn-white" onclick="openHolidayModal()" style="background:#fee2e2;color:#dc2626;border:none">🏖️ วันหยุดช่าง</button>
       <button class="btn btn-white" onclick="sendLineSummary(schedDate)" style="background:#06C755;border:none;" title="ส่งสรุปคิวไปไลน์กลุ่ม">💬 ส่งไลน์</button>
-      <button class="btn btn-white" onclick="manualSyncToJune(schedDate)" style="background:#0c4a6e;border:none;" title="Sync คิวเสร็จแล้วเข้า june2569">📥 Sync → บันทึกรายวัน</button>
+      <button class="btn btn-white" onclick="manualSyncToJune(schedDate)" style="background:#0c4a6e;border:none;" title="Sync คิวเสร็จแล้วเข้าไฟล์รายรับของเดือนนี้">📥 Sync → บันทึกรายวัน</button>
     </div>
   </div>
   <div class="grid-wrap">
@@ -1187,6 +1187,13 @@ async function syncToRevenue(bk) {
       haein: {sadryi:0,henna:0,product:0,channel:'transfer'},
       expenses: [], other: [], note: '', absent: Array(5).fill(false)
     };
+
+    // ═══ กันการ sync ซ้ำ — ถ้า booking id นี้เคย sync เข้าวันนี้แล้ว ข้ามไปเลย ═══
+    const syncedIds = new Set((dayData._syncedBkIds || '').split(',').filter(Boolean));
+    if (syncedIds.has(bk.id)) {
+      console.log('⏭️ ข้าม sync ซ้ำ:', bk.id, dbPath);
+      return;
+    }
     
     // normalize svc array
     if (!Array.isArray(dayData.svc)) dayData.svc = Object.values(dayData.svc);
@@ -1224,6 +1231,10 @@ async function syncToRevenue(bk) {
     const chKey = CHANNEL_MAP[bk.payChannel] || 'transfer';
     if (!dayData.channels) dayData.channels = {cash:0,transfer:0,tap:0,credit:0,deposit:0};
     dayData.channels[chKey] = (dayData.channels[chKey]||0) + price;
+    
+    // ทำเครื่องหมายว่า booking นี้ sync แล้ว กันการนับซ้ำ
+    syncedIds.add(bk.id);
+    dayData._syncedBkIds = [...syncedIds].join(',');
     
     // บันทึก
     await set(ref(db, dbPath), dayData);
@@ -1655,118 +1666,23 @@ async function autoUpdateStatus() {
     if (ap?.id === 'tab-cal') buildCalendar();
     if (ap?.id === 'tab-list') renderList();
     showToast(`🔄 อัปเดตสถานะ ${changed} คิวอัตโนมัติ`);
-    // auto sync คิวที่เพิ่งเสร็จเข้า june2569
-    await syncDoneBookingsToJune(todayDate);
+    // sync คิวที่เพิ่งเสร็จเข้าไฟล์รายรับของเดือนนั้นๆ (path ถูกต้องตามวันที่จริง + กันซ้ำในตัว)
+    for (const b of bkList()) {
+      if (b.date === todayDate && b.status === 'เสร็จแล้ว') {
+        await syncToRevenue(b);
+      }
+    }
   }
 }
 
-// ═══ Sync เสร็จแล้ว → june2569 ═══
-// แปลง service ชื่อ → field ใน svc ของ june2569
-const ARTIST_MAP = {
-  'อ.หญิง':0,'ช่างมด':1,'ช่างบ๋อม':2,'ช่างมะลิ':3,'ช่างเจน':4,'อั๋น':5,'ช่างอั๋น':5
-};
-const SVC_MAP = {
-  'สักคิ้ว':'tat','เติมคิ้ว':'tat',
-  'สักปาก':'tat','เติมปาก':'tat',
-  'สักขอบตา':'tat','เติมขอบตา':'tat',
-  'สักผม':'hair','เติมผม':'hair',
-  'กันคิ้ว':'tat',
-  'ขนตา':'lash','BB Glow':'lash',
-  'ทำเล็บ':'nail',
-  'เลเซอร์':'laser','สลายฝ้า กระ':'facial',
-  'สระ-ไดร์':'hair','Henna':'hair','ขายสินค้า':'item'
-};
-// แปลงช่องทางจอง → channels key ใน june2569
-const PAYCH_MAP = {
-  'เงินสด':'cash',
-  'โอน/แม่มณี':'transfer','โอน':'transfer','PromptPay':'transfer',
-  'Tap To Pay':'tap',
-  'เครดิตการ์ด':'credit'
-};
-const JUNE_ROOT = 'june2569';
-const EMPTY_SVC = () => ({tat:0,lash:0,hair:0,nail:0,item:0,laser:0,chalacol:0});
-
-async function syncDoneBookingsToJune(dateStr) {
-  // ดึง bookings เสร็จแล้ว ของวันนั้น ที่เป็นร้านหลัก (ไม่รวม HAE-IN ที่จัดการแยก)
-  const doneBks = bkList().filter(b =>
-    b.date === dateStr && b.status === 'เสร็จแล้ว' && b.price > 0
-  );
-  if (doneBks.length === 0) return;
-
-  // ดึงข้อมูลวันนั้นจาก june2569
-  const dayNum = parseInt(dateStr.slice(8)); // วันที่ 1-30
-  if (dayNum < 1 || dayNum > 30) return;
-
-  const snapRef = ref(db, `${JUNE_ROOT}/${dayNum}`);
-  const snap = await get(snapRef);
-  const existing = snap.val() || {
-    svc: Array(6).fill(null).map(EMPTY_SVC),
-    commR2: Array(6).fill(0),
-    channels: {cash:0,transfer:0,tap:0,credit:0,deposit:0},
-    haein: {sadryi:0,henna:0,product:0,channel:'transfer'},
-    expenses: [], note: '', absent: Array(5).fill(false)
-  };
-
-  // normalize svc array
-  if (!existing.svc) existing.svc = Array(6).fill(null).map(EMPTY_SVC);
-  existing.svc = existing.svc.map(s => ({...EMPTY_SVC(),...(s||{})}));
-  if (!existing.channels) existing.channels = {cash:0,transfer:0,tap:0,credit:0,deposit:0};
-
-  // เก็บ booking id ที่ sync แล้ว (ป้องกัน double-count)
-  const syncedIds = new Set((existing._syncedBkIds || '').split(',').filter(Boolean));
-  let anyNew = false;
-
-  for (const b of doneBks) {
-    if (syncedIds.has(b.id)) continue; // เคย sync แล้ว ข้ามไป
-
-    const aIdx = ARTIST_MAP[b.artist];
-    const svcKey = SVC_MAP[b.service];
-    const price = +b.price || 0;
-    const payKey = PAYCH_MAP[b.payChannel] || 'cash';
-
-    // เพิ่มยอดเข้า svc ของช่าง
-    if (aIdx !== undefined && svcKey && price > 0) {
-      existing.svc[aIdx][svcKey] = (existing.svc[aIdx][svcKey] || 0) + price;
-    }
-
-    // เพิ่มยอดเข้า channels
-    if (price > 0) {
-      existing.channels[payKey] = (existing.channels[payKey] || 0) + price;
-    }
-
-    // เพิ่มมัดจำเข้า deposit (ถ้าจ่ายแล้ว)
-    if (b.depositStatus === 'จ่ายแล้ว') {
-      existing.channels.deposit = (existing.channels.deposit || 0) + 1000;
-    }
-
-    syncedIds.add(b.id);
-    anyNew = true;
-  }
-
-  if (!anyNew) return;
-
-  // บันทึก id ที่ sync แล้วไว้ใน node
-  existing._syncedBkIds = [...syncedIds].join(',');
-
-  await set(snapRef, existing);
-  console.log(`[SyncJune] วันที่ ${dayNum} sync สำเร็จ`);
-  showToast(`📥 Sync ${[...syncedIds].length} คิว → june2569 วันที่ ${dayNum} แล้วค่ะ`);
-
-  // แสดงในแถบสถานะ
-  const bar = document.getElementById('sync-status-bar');
-  if (bar) {
-    const synced = doneBks.filter(b => syncedIds.has(b.id));
-    const totalSyncedPrice = synced.reduce((s,b) => s+(+b.price||0), 0);
-    bar.style.display = 'block';
-    bar.innerHTML = `📥 Sync ล่าสุด: ${synced.length} คิวเสร็จแล้ว รวม ฿${totalSyncedPrice.toLocaleString('th-TH')} → บันทึกใน june2569 วันที่ ${dayNum} แล้วค่ะ &nbsp;|&nbsp; <span style="color:#555">ซิงค์ล่าสุด ${new Date().toLocaleTimeString('th-TH')}</span>`;
-  }
-}
-
-// ═══ Manual Sync Button ═══
+// ═══ Manual Sync Button — sync คิวเสร็จแล้วของวันนั้นเข้าไฟล์รายรับเดือนที่ถูกต้อง (กันซ้ำในตัว) ═══
 window.manualSyncToJune = async function(dateStr) {
   dateStr = dateStr || schedDate || todayStr();
-  showToast('⏳ กำลัง sync เข้า june2569...');
-  await syncDoneBookingsToJune(dateStr);
+  const doneBks = bkList().filter(b => b.date === dateStr && b.status === 'เสร็จแล้ว' && b.price > 0);
+  if (doneBks.length === 0) { showToast('ไม่มีคิวที่เสร็จแล้วในวันนี้'); return; }
+  showToast(`⏳ กำลัง sync ${doneBks.length} คิว...`);
+  for (const b of doneBks) { await syncToRevenue(b); }
+  showToast(`📥 Sync ${doneBks.length} คิวเสร็จเรียบร้อยแล้วค่ะ`);
 };
 
 // ═══ Toast Notification ═══
