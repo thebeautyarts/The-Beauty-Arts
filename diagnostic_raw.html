@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>🔬 Raw Dump jul2569</title>
+<style>
+  body{font-family:'Segoe UI',sans-serif;background:#f8fafc;margin:0;padding:20px;color:#0f172a}
+  h1{font-size:16px;color:#0c4a6e}
+  pre{background:#0f172a;color:#e2e8f0;padding:14px;border-radius:8px;font-size:12px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+  .meta{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px}
+</style>
+</head>
+<body>
+<h1>🔬 ข้อมูลดิบทั้งหมดที่ path "jul2569" (ไม่มีการปรับแต่งใดๆ)</h1>
+<div class="meta" id="meta">กำลังโหลด...</div>
+<pre id="out">กำลังโหลด...</pre>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBuTHvh-4KJzrmjbmmu0RQaiW3RGzFrbGQ",
+  authDomain: "the-beauty-arts.firebaseapp.com",
+  databaseURL: "https://the-beauty-arts-default-rtdb.asia-southeast1.firebasedatabase.app"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+async function run() {
+  const snap = await get(ref(db, 'jul2569'));
+  const val = snap.val();
+  const metaEl = document.getElementById('meta');
+  const outEl = document.getElementById('out');
+
+  if (val === null) {
+    metaEl.textContent = '✅ path "jul2569" ว่างเปล่าจริงๆ — ไม่มีข้อมูลอะไรเลยใน Firebase';
+    outEl.textContent = 'null';
+    return;
+  }
+
+  const isArr = Array.isArray(val);
+  const keys = isArr ? val.map((v,i)=>i).filter(i=>val[i]!=null) : Object.keys(val);
+  metaEl.innerHTML = `ชนิดข้อมูล: <b>${isArr?'Array':'Object'}</b> | จำนวนคีย์ทั้งหมด: <b>${keys.length}</b> | รายชื่อคีย์: <b>${keys.join(', ')}</b>`;
+  outEl.textContent = JSON.stringify(val, null, 2);
+}
+
+run();
+</script>
+</body>
+</html>
