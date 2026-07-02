@@ -873,9 +873,10 @@ function buildCalendar() {
     // show up to 3 chips
     const showBks = dayBks.slice(0,3);
     const moreCount = dayBks.length - showBks.length;
-    const chipsHtml = showBks.map(b =>
-      `<div class="cal-chip st-${b.status}">${b.time||''} ${b.name}</div>`
-    ).join('');
+    const chipsHtml = showBks.map(b => {
+      const hasArtist = b.artist && b.artist !== PRO_COL && b.artist !== PRO2_COL;
+      return `<div class="cal-chip st-${b.status}">${b.time||''} ${b.name}${hasArtist?' — '+b.artist:''}</div>`;
+    }).join('');
 
     html += `<div class="${cls}" onclick="window._calDayClick('${dateStr}')">
       <div class="cal-day-num">
