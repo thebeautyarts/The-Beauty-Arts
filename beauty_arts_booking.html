@@ -387,6 +387,18 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
       <button class="btn btn-white" onclick="manualSyncToJune(schedDate)" style="background:#0c4a6e;border:none;" title="Sync คิวเสร็จแล้วเข้าไฟล์รายรับของเดือนนี้">📥 Sync → บันทึกรายวัน</button>
     </div>
   </div>
+  <div id="queue-holder-bar" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fdf4ff;border:1.5px solid #e9d5ff;border-radius:10px;padding:10px 14px;margin-bottom:12px;">
+    <span style="font-size:12px;font-weight:700;color:#6d28d9;white-space:nowrap;">🔄 คิวตอนนี้อยู่ที่:</span>
+    <span id="queue-holder-name" style="font-size:14px;font-weight:800;color:#5b21b6;min-width:70px;">–</span>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto;">
+      <button onclick="window.setQueueHolder('ช่างมด')" class="qh-btn" style="background:#fff;border:1.5px solid #e9d5ff;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:600;color:#6d28d9;cursor:pointer;">ช่างมด</button>
+      <button onclick="window.setQueueHolder('ช่างบ๋อม')" class="qh-btn" style="background:#fff;border:1.5px solid #e9d5ff;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:600;color:#6d28d9;cursor:pointer;">ช่างบ๋อม</button>
+      <button onclick="window.setQueueHolder('ช่างมะลิ')" class="qh-btn" style="background:#fff;border:1.5px solid #e9d5ff;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:600;color:#6d28d9;cursor:pointer;">ช่างมะลิ</button>
+      <button onclick="window.setQueueHolder('ช่างเจน')" class="qh-btn" style="background:#fff;border:1.5px solid #e9d5ff;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:600;color:#6d28d9;cursor:pointer;">ช่างเจน</button>
+      <button onclick="window.setQueueHolder('อั๋น')" class="qh-btn" style="background:#fff;border:1.5px solid #e9d5ff;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:600;color:#6d28d9;cursor:pointer;">อั๋น</button>
+      <button onclick="window.setQueueHolder('')" style="background:#f3f4f6;border:1.5px solid #e5e7eb;border-radius:7px;padding:5px 11px;font-size:11px;color:#6b7280;cursor:pointer;">ล้าง</button>
+    </div>
+  </div>
   <div class="grid-wrap">
     <div class="schedule-grid" id="sched-grid"></div>
     <div class="day-summary" id="day-summary"></div>
@@ -502,6 +514,7 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
     <div class="sum-section"><h3>💰 รายรับตามช่าง</h3><div id="sum-artists"></div></div>
+    <div class="sum-section"><h3>👤 ลูกค้าเลือกเอง vs 🔄 วนคิว</h3><div id="sum-assign-stats"></div></div>
     <div class="sum-section"><h3>📋 สถานะการจอง</h3><div id="sum-statuses"></div></div>
   </div>
 
@@ -875,7 +888,8 @@ function buildCalendar() {
     const moreCount = dayBks.length - showBks.length;
     const chipsHtml = showBks.map(b => {
       const hasArtist = b.artist && b.artist !== PRO_COL && b.artist !== PRO2_COL;
-      return `<div class="cal-chip st-${b.status}">${b.time||''} ${b.name}${hasArtist?' — '+b.artist:''}</div>`;
+      const badge = hasArtist && b.assignType ? (b.assignType==='named' ? '👤' : '🔄') : '';
+      return `<div class="cal-chip st-${b.status}">${b.time||''} ${b.name}${hasArtist?' — '+badge+b.artist:''}</div>`;
     }).join('');
 
     html += `<div class="${cls}" onclick="window._calDayClick('${dateStr}')">
@@ -965,9 +979,10 @@ function buildSchedGrid() {
       } else {
       slotBks.forEach(b => {
         const depIcon = b.depositStatus==='จ่ายแล้ว' ? '✅' : '⏳';
+        const assignBadge = b.assignType ? (b.assignType==='named' ? '👤' : '🔄') : '';
         html += `<div class="booking-chip chip-${b.status}" onclick="event.stopPropagation();window._editBk('${b.id}')">
           <span class="bc-dur">${b.duration||1}ชม.</span>
-          <div class="bc-name">${b.name}</div>
+          <div class="bc-name">${assignBadge} ${b.name}</div>
           <div class="bc-svc">${b.service||''}${b.service2?` + ${b.service2}`:''}</div>
           <div class="bc-price">${b.price ? fmt(b.price) : ''} ${depIcon}</div>
           <div style="margin-top:3px">
@@ -1129,6 +1144,15 @@ window.saveBooking = async function() {
   const hasSvc2 = document.getElementById('has-svc2').checked;
   const price1 = +document.getElementById('f-price').value||0;
   const price2 = hasSvc2 ? (+document.getElementById('f-price2').value||0) : 0;
+  const artistVal = document.getElementById('f-artist').value;
+  // ═══ แท็กประเภทคิว — บันทึกแค่ตอนสร้างใหม่เท่านั้น ไม่เปลี่ยนตามการแก้ไขทีหลัง ═══
+  // named = ลูกค้าเจาะจงช่างตั้งแต่ตอนจอง | queue = ปล่อย PRO/PRO2 ให้วนคิว
+  let assignType;
+  if (editingId && bookings[editingId]?.assignType) {
+    assignType = bookings[editingId].assignType; // คงค่าเดิมไว้เสมอตอนแก้ไข
+  } else {
+    assignType = (artistVal && artistVal !== PRO_COL && artistVal !== PRO2_COL) ? 'named' : 'queue';
+  }
   const bk = {
     id,
     date: document.getElementById('f-date').value,
@@ -1144,7 +1168,8 @@ window.saveBooking = async function() {
       service2: document.getElementById('f-service2').value,
       price2: price2,
     }),
-    artist: document.getElementById('f-artist').value,
+    artist: artistVal,
+    assignType,
     deposit: DEPOSIT_AMOUNT,
     depositStatus: depositStatus,
     payChannel: document.getElementById('f-paych').value,
@@ -1422,7 +1447,24 @@ function startHolidaySync() {
     });
     buildSchedGrid();
   });
+
+  // ═══ Queue holder — ตัวบอกว่าตอนนี้คิววนไปถึงใคร (ช่างกดปรับเองหน้างาน) ═══
+  onValue(ref(db, 'queue_status/current'), snap => {
+    const val = snap.val() || '';
+    const nameEl = document.getElementById('queue-holder-name');
+    if (nameEl) nameEl.textContent = val || '– ยังไม่ระบุ –';
+    document.querySelectorAll('.qh-btn').forEach(btn => {
+      const isActive = btn.textContent.trim() === val;
+      btn.style.background = isActive ? '#7c3aed' : '#fff';
+      btn.style.color = isActive ? '#fff' : '#6d28d9';
+    });
+  });
 }
+
+window.setQueueHolder = async function(name) {
+  await set(ref(db, 'queue_status/current'), name);
+  await set(ref(db, 'queue_status/updatedAt'), new Date().toISOString());
+};
 
 window.clearFilters = function() {
   ['fl-date','fl-name','fl-phone','fl-service-search'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1503,7 +1545,7 @@ function renderList() {
         <td><strong>${b.name}</strong>${b.phone?`<br><span style="font-size:10px;color:#888;">📞 ${b.phone}</span>`:''}</td>
         <td style="font-size:11px;color:${b.shop==='HAE-IN'?'#6d28d9':'var(--green-dark)'};font-weight:600">${b.shop}</td>
         <td>${b.service||'–'}${b.service2?`<br><span style="color:#059669;font-size:11px;">+ ${b.service2}</span>`:''}</td>
-        <td style="color:${(b.artist||PRO_COL)===PRO_COL?'#B5934B':'var(--green-dark)'};font-weight:600">${(b.artist||PRO_COL)===PRO_COL?'⭐ PRO':b.artist}</td>
+        <td style="color:${(b.artist||PRO_COL)===PRO_COL?'#B5934B':'var(--green-dark)'};font-weight:600">${(b.artist||PRO_COL)===PRO_COL?'⭐ PRO':(b.assignType?(b.assignType==='named'?'👤 ':'🔄 '):'')+b.artist}</td>
         <td style="font-weight:600">${fmt((+b.price||0)+(+b.price2||0))}</td>
         <td><span class="dep-badge ${b.depositStatus==='จ่ายแล้ว'?'dep-paid':'dep-unpaid'}">${b.depositStatus==='จ่ายแล้ว'?'✅':'⏳'}</span></td>
         <td><span class="status-badge" style="background:${STATUS_BG[b.status]||'#eee'}">${b.status}</span></td>
@@ -1552,6 +1594,34 @@ function renderSummary() {
     a===PRO_COL?'⭐ PRO':a, byA.rev[a]||0, byA.total[a]||0, maxA,
     a===PRO_COL?'#B5934B':STAFF_COLORS[i-1]||'var(--green-light)'
   )).join('');
+
+  // ── 👤 ลูกค้าเลือกเอง vs 🔄 วนคิว (นับเฉพาะคิวที่ไม่ยกเลิก, ระบุชื่อช่างแล้ว) ──
+  const assignStats = {}; // { artistName: {named:0, queue:0} }
+  allMb.forEach(b=>{
+    if (!b.artist || b.artist===PRO_COL || b.artist===PRO2_COL) return; // ยังไม่ระบุช่าง ไม่นับ
+    if (!assignStats[b.artist]) assignStats[b.artist] = {named:0, queue:0};
+    if (b.assignType === 'named') assignStats[b.artist].named++;
+    else if (b.assignType === 'queue') assignStats[b.artist].queue++;
+    // booking เก่าที่ไม่มี assignType (สร้างก่อนอัปเดตฟีเจอร์นี้) จะไม่ถูกนับในทั้งสองฝั่ง
+  });
+  const assignArtists = STAFF.filter(s=>assignStats[s]);
+  if (assignArtists.length === 0) {
+    document.getElementById('sum-assign-stats').innerHTML = `<div style="text-align:center;padding:16px;color:#aaa;font-size:12px;">ยังไม่มีข้อมูลเดือนนี้ (เริ่มเก็บสถิติจากคิวที่สร้างใหม่หลังอัปเดต)</div>`;
+  } else {
+    document.getElementById('sum-assign-stats').innerHTML = assignArtists.map(a=>{
+      const s = assignStats[a];
+      const total = s.named + s.queue;
+      const namedPct = total ? Math.round(s.named/total*100) : 0;
+      return `<div class="bar-row" style="align-items:center">
+        <span class="bar-name">${a}</span>
+        <div class="bar-track" style="display:flex;overflow:hidden;border-radius:6px;">
+          <div style="width:${namedPct}%;background:#7c3aed;height:100%;"></div>
+          <div style="width:${100-namedPct}%;background:#0ea5e9;height:100%;"></div>
+        </div>
+        <span class="bar-val" style="width:150px;font-size:10px;">👤 ${s.named} &nbsp;|&nbsp; 🔄 ${s.queue}</span>
+      </div>`;
+    }).join('');
+  }
 
   // ── สถานะ ──
   const bySt={};allMb.forEach(b=>{bySt[b.status]=(bySt[b.status]||0)+1;});
