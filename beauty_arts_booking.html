@@ -640,6 +640,19 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
             <option>ช่างมะลิ</option><option>ช่างเจน</option><option>อั๋น</option>
           </select>
         </div>
+        <div class="f-field full">
+          <label style="font-weight:700;color:#6d28d9;margin-bottom:6px;display:block;">ที่มาของคิวนี้</label>
+          <div style="display:flex;gap:8px;">
+            <label style="flex:1;display:flex;align-items:center;gap:6px;background:#faf5ff;border:1.5px solid #e9d5ff;border-radius:8px;padding:9px 12px;cursor:pointer;font-size:13px;font-weight:600;color:#6d28d9;">
+              <input type="radio" name="f-assign-type" id="f-assign-named" value="named" style="accent-color:#7c3aed;width:16px;height:16px;">
+              👤 ลูกค้าเลือกช่างเอง
+            </label>
+            <label style="flex:1;display:flex;align-items:center;gap:6px;background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:8px;padding:9px 12px;cursor:pointer;font-size:13px;font-weight:600;color:#0369a1;">
+              <input type="radio" name="f-assign-type" id="f-assign-queue" value="queue" checked style="accent-color:#0ea5e9;width:16px;height:16px;">
+              🔄 วนคิว
+            </label>
+          </div>
+        </div>
         <div class="f-field"><label>ราคา (฿)</label><input type="number" id="f-price" placeholder="0" oninput="updateTotalPrice()"></div>
         <div class="f-field full">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;color:#059669;">
@@ -1092,6 +1105,9 @@ window.openBookingForm = function(date, id, pre) {
       window.updateServices();
       document.getElementById('f-service').value = b.service||'';
       document.getElementById('f-artist').value = b.artist||'PRO';
+      const savedAssign = b.assignType || 'queue';
+      document.getElementById('f-assign-named').checked = savedAssign === 'named';
+      document.getElementById('f-assign-queue').checked = savedAssign !== 'named';
       document.getElementById('f-price').value = b.price||'';
       // service2
       const hasSvc2 = !!(b.service2);
@@ -1114,6 +1130,8 @@ window.openBookingForm = function(date, id, pre) {
     document.getElementById('f-shop').value = 'The Beauty Arts';
     window.updateServices();
     document.getElementById('f-artist').value = pre?.artist || 'PRO';
+    document.getElementById('f-assign-named').checked = false;
+    document.getElementById('f-assign-queue').checked = true;
     document.getElementById('f-price').value = '';
     // reset service2
     document.getElementById('has-svc2').checked = false;
@@ -1145,14 +1163,8 @@ window.saveBooking = async function() {
   const price1 = +document.getElementById('f-price').value||0;
   const price2 = hasSvc2 ? (+document.getElementById('f-price2').value||0) : 0;
   const artistVal = document.getElementById('f-artist').value;
-  // ═══ แท็กประเภทคิว — บันทึกแค่ตอนสร้างใหม่เท่านั้น ไม่เปลี่ยนตามการแก้ไขทีหลัง ═══
-  // named = ลูกค้าเจาะจงช่างตั้งแต่ตอนจอง | queue = ปล่อย PRO/PRO2 ให้วนคิว
-  let assignType;
-  if (editingId && bookings[editingId]?.assignType) {
-    assignType = bookings[editingId].assignType; // คงค่าเดิมไว้เสมอตอนแก้ไข
-  } else {
-    assignType = (artistVal && artistVal !== PRO_COL && artistVal !== PRO2_COL) ? 'named' : 'queue';
-  }
+  // ═══ แท็กประเภทคิว — พนักงานเลือกเองผ่านปุ่มเลือก ไม่ auto ตามช่างที่เลือก ═══
+  const assignType = document.querySelector('input[name="f-assign-type"]:checked')?.value || 'queue';
   const bk = {
     id,
     date: document.getElementById('f-date').value,
