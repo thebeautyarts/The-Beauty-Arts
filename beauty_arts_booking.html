@@ -558,6 +558,21 @@ td{padding:8px 10px;border-bottom:1px solid var(--border);}
     </div>
     <div id="line-copy-msg" style="color:#16a34a;font-size:12px;font-weight:600;margin-top:6px;text-align:right;height:18px"></div>
   </div>
+
+  <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(27,94,59,.1);margin-bottom:16px;border:2px solid #f9a8d4">
+    <h3 style="font-size:14px;font-weight:700;color:#be185d;margin-bottom:6px">💗 สรุปคิว อ.หญิง (รายเดือน)</h3>
+    <p style="font-size:12px;color:#888;margin-bottom:14px">รวมคิวทั้งเดือนของ อ.หญิง โดยเฉพาะ — อัปเดตให้อัตโนมัติทุกครั้งที่มีคิวใหม่เข้ามา ไม่ต้องกดปุ่มใดๆ</p>
+    <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
+      <select id="aj-line-month" onchange="renderAjLineSummary()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px"></select>
+      <select id="aj-line-year" onchange="renderAjLineSummary()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px"></select>
+      <span id="aj-line-count" style="font-size:12px;color:#be185d;font-weight:700;margin-left:auto"></span>
+    </div>
+    <div style="position:relative">
+      <textarea id="aj-line-text" readonly style="width:100%;min-height:280px;padding:12px;border:1.5px solid #f9a8d4;border-radius:8px;font-size:12px;font-family:inherit;resize:vertical;background:#fdf2f8;line-height:1.7;color:#831843"></textarea>
+      <button onclick="copyAjLineMsg()" style="position:absolute;top:8px;right:8px;background:#be185d;color:white;border:none;border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-weight:600">📋 Copy</button>
+    </div>
+    <div id="aj-line-copy-msg" style="color:#16a34a;font-size:12px;font-weight:600;margin-top:6px;text-align:right;height:18px"></div>
+  </div>
 </div>
 </div>
 
@@ -770,6 +785,7 @@ function startSync() {
     if (ap?.id === 'tab-cal') buildCalendar();
     if (ap?.id === 'tab-list') renderList();
     if (ap?.id === 'tab-sum') renderSummary();
+    window.renderAjLineSummary(); // อัปเดตสรุปคิว อ.หญิง อัตโนมัติทุกครั้งที่มีการเปลี่ยนแปลงคิว
   }, (err) => {
     setFb(false, '❌ Firebase ขาดการเชื่อมต่อ: '+err.message);
   });
@@ -813,6 +829,7 @@ window.showTab = function(id) {
   if (id==='tab-list') renderList();
   if (id==='tab-sum') renderSummary();
   if (id==='tab-line') {
+    window.renderAjLineSummary();
     const cfg = loadLineConfig();
     document.getElementById('line-token').value = cfg.token || '';
     document.getElementById('line-group').value = cfg.group || '';
@@ -2060,6 +2077,63 @@ window.copyLineMsg = function() {
   if (!ta.value) window.genLineMsg('both');
   navigator.clipboard.writeText(ta.value).then(()=>{
     const el=document.getElementById('line-copy-msg');
+    el.textContent='✅ Copy แล้ว! วางในไลน์ได้เลย';
+    setTimeout(()=>el.textContent='',3000);
+  }).catch(()=>{ ta.select(); document.execCommand('copy'); });
+};
+
+// ═══ สรุปคิว อ.หญิง รายเดือน — อัปเดตอัตโนมัติเมื่อมีคิวเปลี่ยนแปลง ═══
+window.initAjLineSelectors = function() {
+  const mSel = document.getElementById('aj-line-month');
+  const ySel = document.getElementById('aj-line-year');
+  if (!mSel || mSel.options.length) return; // ตั้งค่าแล้วไม่ต้องตั้งซ้ำ
+  const now = new Date();
+  mSel.innerHTML = MONTH_TH.map((m,i)=>`<option value="${i}"${i===now.getMonth()?' selected':''}>${m}</option>`).join('');
+  const curYr = now.getFullYear()+543;
+  ySel.innerHTML = [curYr-1,curYr,curYr+1].map(y=>`<option value="${y}"${y===curYr?' selected':''}>${y}</option>`).join('');
+};
+
+window.renderAjLineSummary = function() {
+  window.initAjLineSelectors();
+  const mSel = document.getElementById('aj-line-month');
+  const ySel = document.getElementById('aj-line-year');
+  if (!mSel || !ySel) return;
+  const month = +mSel.value, yearBE = +ySel.value, yearAD = yearBE - 543;
+
+  const bks = bkList().filter(b => {
+    if (b.artist !== 'อ.หญิง' || b.status === 'ยกเลิก') return false;
+    if (!b.date) return false;
+    const d = new Date(b.date+'T00:00:00');
+    return d.getFullYear() === yearAD && d.getMonth() === month;
+  }).sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+
+  const countEl = document.getElementById('aj-line-count');
+  if (countEl) countEl.textContent = `${bks.length} คิว`;
+
+  let msg = `💗 สรุปคิว อ.หญิง — ${MONTH_TH[month]} ${yearBE}\n${'━'.repeat(20)}\n`;
+  if (!bks.length) {
+    msg += 'ยังไม่มีคิวในเดือนนี้ค่ะ';
+  } else {
+    let totalRev = 0, doneCount = 0;
+    bks.forEach(b => {
+      const d = new Date(b.date+'T00:00:00');
+      msg += `\n📅 ${DAY_TH[d.getDay()]}ที่ ${d.getDate()} ${MONTH_TH[month]} — 🕐 ${b.time||'–'} น.\n`;
+      msg += `   👤 ${b.name}${b.phone?' ('+b.phone+')':''}\n`;
+      msg += `   💇 ${b.service||''}${b.service2?' + '+b.service2:''}\n`;
+      msg += `   ${b.depositStatus==='จ่ายแล้ว'?'✅ มัดจำแล้ว':'⏳ รอมัดจำ'} | สถานะ: ${b.status||'–'}\n`;
+      if (b.status === 'เสร็จแล้ว') { totalRev += (+b.price||0)+(+b.price2||0); doneCount++; }
+    });
+    msg += `\n${'━'.repeat(20)}\n📋 รวมทั้งเดือน ${bks.length} คิว | เสร็จแล้ว ${doneCount} คิว\n💰 รายรับ (เฉพาะที่เสร็จแล้ว): ${fmt(totalRev)}`;
+  }
+  const ta = document.getElementById('aj-line-text');
+  if (ta) ta.value = msg;
+};
+
+window.copyAjLineMsg = function() {
+  const ta = document.getElementById('aj-line-text');
+  if (!ta.value) window.renderAjLineSummary();
+  navigator.clipboard.writeText(ta.value).then(()=>{
+    const el=document.getElementById('aj-line-copy-msg');
     el.textContent='✅ Copy แล้ว! วางในไลน์ได้เลย';
     setTimeout(()=>el.textContent='',3000);
   }).catch(()=>{ ta.select(); document.execCommand('copy'); });
