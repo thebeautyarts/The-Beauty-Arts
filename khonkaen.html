@@ -419,6 +419,10 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
     <div class="card green"><div class="c-lbl">เสร็จแล้ว</div><div class="c-val" id="bk-done">0</div></div>
     <div class="card gold"><div class="c-lbl">รายได้วันนี้</div><div class="c-val" id="bk-rev">฿0</div></div>
   </div>
+  <div id="bk-artist-split" style="display:none;gap:10px;margin:-6px 0 14px;font-size:12px;">
+    <span style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:7px;padding:5px 12px;font-weight:700;color:#4338ca;">💇 ไอซ์: <span id="bk-rev-ice">฿0</span></span>
+    <span style="background:#fdf2f8;border:1px solid #f9a8d4;border-radius:7px;padding:5px 12px;font-weight:700;color:#be185d;">💗 อ.หญิง: <span id="bk-rev-aj">฿0</span></span>
+  </div>
 
   <!-- Booking grid -->
   <div class="grid-wrap">
@@ -736,17 +740,17 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
   </div>
 
   <div class="box" style="border:2px solid #f9a8d4">
-    <h3 style="color:#be185d;">💗 สรุปคิวไอซ์ (รายเดือน)</h3>
-    <p style="font-size:12px;color:var(--text-mid);margin-bottom:14px;">รวมคิวทั้งเดือน — อัปเดตให้อัตโนมัติทุกครั้งที่มีคิวใหม่เข้ามา ไม่ต้องกดปุ่มใดๆ</p>
+    <h3 style="color:#be185d;">💗 สรุปคิว อ.หญิง (รายเดือน)</h3>
+    <p style="font-size:12px;color:var(--text-mid);margin-bottom:14px;">รวมคิวของ อ.หญิง ทั้งเดือน — อัปเดตให้อัตโนมัติทุกครั้งที่มีคิวใหม่เข้ามา ไม่ต้องกดปุ่มใดๆ</p>
     <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
-      <select id="ice-line-month" onchange="renderIceLineSummary()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px"></select>
-      <select id="ice-line-year" onchange="renderIceLineSummary()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px"></select>
-      <span id="ice-line-count" style="font-size:12px;color:#be185d;font-weight:700;margin-left:auto"></span>
+      <select id="aj-line-month" onchange="renderAjLineSummary()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px"></select>
+      <select id="aj-line-year" onchange="renderAjLineSummary()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px"></select>
+      <span id="aj-line-count" style="font-size:12px;color:#be185d;font-weight:700;margin-left:auto"></span>
     </div>
-    <textarea id="ice-line-text" readonly style="width:100%;min-height:260px;padding:10px;border:1.5px solid #f9a8d4;border-radius:7px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf2f8;"></textarea>
+    <textarea id="aj-line-text" readonly style="width:100%;min-height:260px;padding:10px;border:1.5px solid #f9a8d4;border-radius:7px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf2f8;"></textarea>
     <div style="display:flex;gap:8px;margin-top:8px;">
-      <button class="btn btn-rose btn-sm" onclick="copyIceLineMsg()">📋 คัดลอกข้อความ</button>
-      <span id="ice-line-copy-msg" style="font-size:12px;font-weight:600;color:#16a34a;"></span>
+      <button class="btn btn-rose btn-sm" onclick="copyAjLineMsg()">📋 คัดลอกข้อความ</button>
+      <span id="aj-line-copy-msg" style="font-size:12px;font-weight:600;color:#16a34a;"></span>
     </div>
   </div>
 
@@ -760,6 +764,12 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
     <div class="form-row">
       <div class="form-field"><label>ชื่อลูกค้า</label><input type="text" id="bm-name" placeholder="ชื่อลูกค้า"></div>
       <div class="form-field"><label>เบอร์โทร</label><input type="tel" id="bm-phone" placeholder="08x-xxx-xxxx"></div>
+    </div>
+    <div class="form-field"><label>ช่าง</label>
+      <select id="bm-artist" style="width:100%;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;">
+        <option value="ช่างไอซ์">💇 ช่างไอซ์</option>
+        <option value="อ.หญิง">💗 อ.หญิง</option>
+      </select>
     </div>
     <div class="form-field"><label>บริการ</label>
       <select id="bm-service-sel" onchange="onSvcSelChange()" style="width:100%;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;margin-bottom:6px;">
@@ -1012,9 +1022,10 @@ async function buildCal(){
       const priceTotal=(+b.price||0)+(+b.price2||0);
       const priceStr=priceTotal?`฿${Math.round(priceTotal).toLocaleString('th-TH')}`:'';
       const sCls=b.status==='เสร็จแล้ว'?'s-done':b.status==='กำลังทำ'?'s-doing':'s-confirm';
+      const artistTag=b.artist==='อ.หญิง'?'💗':'';
       bkHtml+=`<div class="d-bk-item ${sCls}">
         <div class="d-bk-time">${b.time}</div>
-        <div class="d-bk-name">${b.name||'–'}</div>
+        <div class="d-bk-name">${artistTag} ${b.name||'–'}</div>
         <div class="d-bk-svc">${b.service||''}${b.service2?' + '+b.service2:''}</div>
         ${priceStr?`<div class="d-bk-price">${priceStr}</div>`:''}
       </div>`;
@@ -1199,7 +1210,7 @@ function renderGrid(){
       const cardCls=b.status==='เสร็จแล้ว'?'bk-done':b.status==='กำลังทำ'?'bk-doing':'bk-confirm';
       card.className=`bk-card ${cardCls}`;
       card.innerHTML=`
-        <div class="bc-name">${b.name||'–'}</div>
+        <div class="bc-name">${b.artist==='อ.หญิง'?'💗 ':''}${b.name||'–'}</div>
         <div class="bc-svc">${b.service||'–'}${b.service2?` + ${b.service2}`:''} <span style="font-size:9px;color:#aaa;">(${durLabel})</span></div>
         ${b.price?`<div class="bc-amt">${fN(b.price)}</div>`:''}
         <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
@@ -1255,6 +1266,12 @@ function renderBkSum(){
   document.getElementById('bk-done').textContent=done.length;
   document.getElementById('bk-rev').textContent=fN(rev);
   document.getElementById('bk-day-sum').style.display=list.length>0?'grid':'none';
+  // แยกยอดรายรับตามช่าง (ไอซ์ / อ.หญิง) — นับเฉพาะคิวที่เสร็จแล้ว
+  const revIce=done.filter(b=>b.artist!=='อ.หญิง').reduce((s,b)=>s+(+b.price||0),0);
+  const revAj=done.filter(b=>b.artist==='อ.หญิง').reduce((s,b)=>s+(+b.price||0),0);
+  document.getElementById('bk-rev-ice').textContent=fN(revIce);
+  document.getElementById('bk-rev-aj').textContent=fN(revAj);
+  document.getElementById('bk-artist-split').style.display=list.length>0?'flex':'none';
 }
 
 // ── Daily Revenue Form ──
@@ -1431,6 +1448,7 @@ window.openBkModal=function(id=null,defTime=null){
   document.getElementById('bm-title').textContent=id?'✏️ แก้ไขการจอง':'📅 จองคิว';
   document.getElementById('bm-name').value=b?.name||'';
   document.getElementById('bm-phone').value=b?.phone||'';
+  document.getElementById('bm-artist').value=b?.artist||'ช่างไอซ์';
   // Populate service select
   const svcVal=b?.service||'';
   const knownSvcs=['สักคิ้ว','สักขอบตา','สักปาก','สักผม','สลายฝ้ากระ','เลเซอร์'];
@@ -1512,6 +1530,7 @@ window.saveBk=async function(){
   const id=editBkId||('bk_'+Date.now()),ds=bkDs(curBkDate);
   const b={id,name,
     phone:document.getElementById('bm-phone').value.trim(),
+    artist:document.getElementById('bm-artist').value||'ช่างไอซ์',
     service:svcFinal,
     price:+document.getElementById('bm-price').value||0,
     ...(hasSvc2&&svc2Final&&{
@@ -1980,7 +1999,7 @@ window.switchTab=async function(tab){
     const lbl=document.getElementById('line-month-btn-lbl');
     if(lbl) lbl.textContent=ML[calMonth]+' '+calYear;
     document.getElementById('line-preview').value='';
-    window.renderIceLineSummary();
+    window.renderAjLineSummary();
   }
 };
 
@@ -2005,16 +2024,16 @@ async function init(){
   // Realtime listener สำหรับคิวทั้งหมด — ใช้ทำสรุปคิวรายเดือนของไอซ์ให้อัปเดตอัตโนมัติ
   onValue(ref(db,'kk_branch/bookings'),snap=>{
     allKkBookings=snap.val()||{};
-    window.renderIceLineSummary();
+    window.renderAjLineSummary();
   });
 }
 init();
 
-// ═══ สรุปคิวไอซ์ รายเดือน — อัปเดตอัตโนมัติเมื่อมีคิวเปลี่ยนแปลง ═══
+// ═══ สรุปคิว อ.หญิง รายเดือน — อัปเดตอัตโนมัติเมื่อมีคิวเปลี่ยนแปลง ═══
 let allKkBookings={};
-window.initIceLineSelectors=function(){
-  const mSel=document.getElementById('ice-line-month');
-  const ySel=document.getElementById('ice-line-year');
+window.initAjLineSelectors=function(){
+  const mSel=document.getElementById('aj-line-month');
+  const ySel=document.getElementById('aj-line-year');
   if(!mSel||mSel.options.length) return;
   const now=new Date();
   mSel.innerHTML=ML.map((m,i)=>`<option value="${i}"${i===now.getMonth()?' selected':''}>${m}</option>`).join('');
@@ -2022,10 +2041,10 @@ window.initIceLineSelectors=function(){
   ySel.innerHTML=[curYr-1,curYr,curYr+1].map(y=>`<option value="${y}"${y===curYr?' selected':''}>${y}</option>`).join('');
 };
 
-window.renderIceLineSummary=function(){
-  window.initIceLineSelectors();
-  const mSel=document.getElementById('ice-line-month');
-  const ySel=document.getElementById('ice-line-year');
+window.renderAjLineSummary=function(){
+  window.initAjLineSelectors();
+  const mSel=document.getElementById('aj-line-month');
+  const ySel=document.getElementById('aj-line-year');
   if(!mSel||!ySel) return;
   const month=+mSel.value, yearBE=+ySel.value, yearAD=yearBE-543;
 
@@ -2038,15 +2057,15 @@ window.renderIceLineSummary=function(){
     const dayBks=allKkBookings[dateKey];
     if(!dayBks||typeof dayBks!=='object') return;
     Object.values(dayBks).forEach(b=>{
-      if(b && b.status!=='ยกเลิก') all.push({...b, date:dateStr});
+      if(b && b.status!=='ยกเลิก' && b.artist==='อ.หญิง') all.push({...b, date:dateStr});
     });
   });
   all.sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
 
-  const countEl=document.getElementById('ice-line-count');
+  const countEl=document.getElementById('aj-line-count');
   if(countEl) countEl.textContent=`${all.length} คิว`;
 
-  let msg=`💗 สรุปคิวไอซ์ — ${ML[month]} ${yearBE}\n${'━'.repeat(20)}\n`;
+  let msg=`💗 สรุปคิว อ.หญิง — ${ML[month]} ${yearBE}\n${'━'.repeat(20)}\n`;
   if(!all.length){
     msg+='ยังไม่มีคิวในเดือนนี้ค่ะ';
   } else {
@@ -2061,15 +2080,15 @@ window.renderIceLineSummary=function(){
     });
     msg+=`\n${'━'.repeat(20)}\n📋 รวมทั้งเดือน ${all.length} คิว | เสร็จแล้ว ${doneCount} คิว\n💰 รายรับ (เฉพาะที่เสร็จแล้ว): ${fN(totalRev)}`;
   }
-  const ta=document.getElementById('ice-line-text');
+  const ta=document.getElementById('aj-line-text');
   if(ta) ta.value=msg;
 };
 
-window.copyIceLineMsg=function(){
-  const ta=document.getElementById('ice-line-text');
-  if(!ta.value) window.renderIceLineSummary();
+window.copyAjLineMsg=function(){
+  const ta=document.getElementById('aj-line-text');
+  if(!ta.value) window.renderAjLineSummary();
   navigator.clipboard.writeText(ta.value).then(()=>{
-    const el=document.getElementById('ice-line-copy-msg');
+    const el=document.getElementById('aj-line-copy-msg');
     el.textContent='✅ คัดลอกแล้ว! นำไปวางใน LINE ได้เลย';
     setTimeout(()=>el.textContent='',3000);
   }).catch(()=>{ ta.select(); document.execCommand('copy'); });
