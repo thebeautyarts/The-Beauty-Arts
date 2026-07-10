@@ -735,6 +735,21 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
     </div>
   </div>
 
+  <div class="box" style="border:2px solid #f9a8d4">
+    <h3 style="color:#be185d;">💗 สรุปคิวไอซ์ (รายเดือน)</h3>
+    <p style="font-size:12px;color:var(--text-mid);margin-bottom:14px;">รวมคิวทั้งเดือน — อัปเดตให้อัตโนมัติทุกครั้งที่มีคิวใหม่เข้ามา ไม่ต้องกดปุ่มใดๆ</p>
+    <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
+      <select id="ice-line-month" onchange="renderIceLineSummary()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px"></select>
+      <select id="ice-line-year" onchange="renderIceLineSummary()" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px"></select>
+      <span id="ice-line-count" style="font-size:12px;color:#be185d;font-weight:700;margin-left:auto"></span>
+    </div>
+    <textarea id="ice-line-text" readonly style="width:100%;min-height:260px;padding:10px;border:1.5px solid #f9a8d4;border-radius:7px;font-size:12px;font-family:'Courier New',monospace;resize:vertical;background:#fdf2f8;"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn btn-rose btn-sm" onclick="copyIceLineMsg()">📋 คัดลอกข้อความ</button>
+      <span id="ice-line-copy-msg" style="font-size:12px;font-weight:600;color:#16a34a;"></span>
+    </div>
+  </div>
+
 </div>
 </div>
 
@@ -1965,6 +1980,7 @@ window.switchTab=async function(tab){
     const lbl=document.getElementById('line-month-btn-lbl');
     if(lbl) lbl.textContent=ML[calMonth]+' '+calYear;
     document.getElementById('line-preview').value='';
+    window.renderIceLineSummary();
   }
 };
 
@@ -1979,15 +1995,85 @@ async function init(){
   renderBkHdr();
   await buildCal();
   startAutoComplete();
-  // Realtime booking listener
+  // Realtime booking listener (เฉพาะวันที่กำลังดูอยู่)
   onValue(ref(db,bkPath(bkDs(curBkDate))),snap=>{
     bookings=snap.val()||{};
     if(document.getElementById('p-booking').classList.contains('active')){
       renderGrid();renderBkSum();refreshCopy();
     }
   });
+  // Realtime listener สำหรับคิวทั้งหมด — ใช้ทำสรุปคิวรายเดือนของไอซ์ให้อัปเดตอัตโนมัติ
+  onValue(ref(db,'kk_branch/bookings'),snap=>{
+    allKkBookings=snap.val()||{};
+    window.renderIceLineSummary();
+  });
 }
 init();
+
+// ═══ สรุปคิวไอซ์ รายเดือน — อัปเดตอัตโนมัติเมื่อมีคิวเปลี่ยนแปลง ═══
+let allKkBookings={};
+window.initIceLineSelectors=function(){
+  const mSel=document.getElementById('ice-line-month');
+  const ySel=document.getElementById('ice-line-year');
+  if(!mSel||mSel.options.length) return;
+  const now=new Date();
+  mSel.innerHTML=ML.map((m,i)=>`<option value="${i}"${i===now.getMonth()?' selected':''}>${m}</option>`).join('');
+  const curYr=now.getFullYear()+543;
+  ySel.innerHTML=[curYr-1,curYr,curYr+1].map(y=>`<option value="${y}"${y===curYr?' selected':''}>${y}</option>`).join('');
+};
+
+window.renderIceLineSummary=function(){
+  window.initIceLineSelectors();
+  const mSel=document.getElementById('ice-line-month');
+  const ySel=document.getElementById('ice-line-year');
+  if(!mSel||!ySel) return;
+  const month=+mSel.value, yearBE=+ySel.value, yearAD=yearBE-543;
+
+  // แปลงโครงสร้าง kk_branch/bookings/{YYYY_MM_DD}/{id} ให้เป็น list เดียว กรองเฉพาะเดือน/ปีที่เลือก
+  const all=[];
+  Object.keys(allKkBookings).forEach(dateKey=>{
+    const dateStr=dateKey.replace(/_/g,'-');
+    const d=new Date(dateStr+'T00:00:00');
+    if(d.getFullYear()!==yearAD || d.getMonth()!==month) return;
+    const dayBks=allKkBookings[dateKey];
+    if(!dayBks||typeof dayBks!=='object') return;
+    Object.values(dayBks).forEach(b=>{
+      if(b && b.status!=='ยกเลิก') all.push({...b, date:dateStr});
+    });
+  });
+  all.sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
+
+  const countEl=document.getElementById('ice-line-count');
+  if(countEl) countEl.textContent=`${all.length} คิว`;
+
+  let msg=`💗 สรุปคิวไอซ์ — ${ML[month]} ${yearBE}\n${'━'.repeat(20)}\n`;
+  if(!all.length){
+    msg+='ยังไม่มีคิวในเดือนนี้ค่ะ';
+  } else {
+    let totalRev=0, doneCount=0;
+    all.forEach(b=>{
+      const d=new Date(b.date+'T00:00:00');
+      msg+=`\n📅 ${DL[d.getDay()]}ที่ ${d.getDate()} ${ML[month]} — 🕐 ${b.time||'–'} น.\n`;
+      msg+=`   👤 ${b.name||''}${b.phone?' ('+b.phone+')':''}\n`;
+      msg+=`   💇 ${b.service||''}${b.service2?' + '+b.service2:''}\n`;
+      msg+=`   ${b.depositStatus==='จ่ายแล้ว'?'✅ มัดจำแล้ว':'⏳ รอมัดจำ'} | สถานะ: ${b.status||'–'}\n`;
+      if(b.status==='เสร็จแล้ว'){ totalRev+=(+b.price||0)+(+b.price2||0); doneCount++; }
+    });
+    msg+=`\n${'━'.repeat(20)}\n📋 รวมทั้งเดือน ${all.length} คิว | เสร็จแล้ว ${doneCount} คิว\n💰 รายรับ (เฉพาะที่เสร็จแล้ว): ${fN(totalRev)}`;
+  }
+  const ta=document.getElementById('ice-line-text');
+  if(ta) ta.value=msg;
+};
+
+window.copyIceLineMsg=function(){
+  const ta=document.getElementById('ice-line-text');
+  if(!ta.value) window.renderIceLineSummary();
+  navigator.clipboard.writeText(ta.value).then(()=>{
+    const el=document.getElementById('ice-line-copy-msg');
+    el.textContent='✅ คัดลอกแล้ว! นำไปวางใน LINE ได้เลย';
+    setTimeout(()=>el.textContent='',3000);
+  }).catch(()=>{ ta.select(); document.execCommand('copy'); });
+};
 </script>
 </body>
 </html>
