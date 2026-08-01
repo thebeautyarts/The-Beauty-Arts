@@ -507,6 +507,18 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
       <tfoot id="pr-tfoot"></tfoot>
     </table>
   </div>
+
+  <div class="sum-section" style="margin-top:20px">
+    <h3 style="font-size:14px;font-weight:700;color:#0c4a6e;margin-bottom:10px">📅 ตารางคอมมิชชั่นรายวัน</h3>
+    <p style="font-size:12px;color:#888;margin-bottom:10px">คอมมิชชั่นที่แต่ละคนได้รับในแต่ละวัน (รวมคอมรอบ2 แล้ว) — ใช้เทียบกับที่ช่างคำนวณเองได้</p>
+    <div style="overflow-x:auto">
+      <table id="daily-comm-tbl" style="min-width:900px">
+        <thead><tr id="daily-comm-head"></tr></thead>
+        <tbody id="daily-comm-body"></tbody>
+        <tfoot><tr id="daily-comm-foot"></tr></tfoot>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- ===== TAB 5: YEARLY ===== -->
@@ -1047,7 +1059,12 @@ function selectDay(d) {
       <span class="av" style="background:${COLORS[ATTEND_IDX[i]]}">${name.charAt(name.length-1)}</span>
       <input type="checkbox" id="absent-${i}" ${dd.absent[i]?'checked':''}>
       <label for="absent-${i}">${name}</label>
-    </div>`).join('');
+    </div>`).join('') + `
+    <div class="absent-item">
+      <span class="av" style="background:#d97706">ผ</span>
+      <input type="checkbox" id="absent-nam" ${dd.absentNam?'checked':''}>
+      <label for="absent-nam">น้ำผึ้ง</label>
+    </div>`;
 
   document.getElementById('hi-sadryi').value  = dd.haein?.sadryi||0;
   document.getElementById('hi-henna').value   = dd.haein?.henna||0;
@@ -1150,8 +1167,9 @@ window.saveDay = async function() {
   const oworkers=[...document.querySelectorAll('.ow')].map(e=>e.value||'');
   const other=onames.map((n,i)=>({n,a:oamts[i],w:oworkers[i]})).filter(e=>e.n||e.a);
   const absent=ATTEND_ARTISTS.map((_,i)=>document.getElementById('absent-'+i)?.checked||false);
+  const absentNam=document.getElementById('absent-nam')?.checked||false;
   const haein={sadryi:+document.getElementById('hi-sadryi').value||0,henna:+document.getElementById('hi-henna').value||0,product:+document.getElementById('hi-product').value||0,channel:document.getElementById('hi-channel').value};
-  const dayData={svc,commR2,channels,haein,expenses,other,note:document.getElementById('day-note').value,absent};
+  const dayData={svc,commR2,channels,haein,expenses,other,note:document.getElementById('day-note').value,absent,absentNam};
   data[selDay]=dayData;
   await saveToFirebase('d'+selDay, dayData);
   buildCal();
@@ -1328,9 +1346,10 @@ window.calcPayroll = function() {
   const bases=[0,...['sal-mod','sal-bom','sal-mali','sal-jen','sal-an'].map(id=>+document.getElementById(id).value||0)]; // index 0 = อ.หญิง (0 เพราะจ่ายผ่านช่องทาง "ส่งให้อ.หญิง")
   const salMo=+document.getElementById('sal-mo').value||0;
   const salNam=+document.getElementById('sal-nampheung').value||0;
-  let totBrow=Array(6).fill(0),totEye=Array(6).fill(0),totLip=Array(6).fill(0),totLaser=Array(6).fill(0),totLash=Array(6).fill(0),totHair=Array(6).fill(0),totNail=Array(6).fill(0),totItem=Array(6).fill(0),totChalacol=Array(6).fill(0),totFacial=Array(6).fill(0),totR2=Array(6).fill(0),absentDays=Array(5).fill(0),totHaeinRev=0;
+  let totBrow=Array(6).fill(0),totEye=Array(6).fill(0),totLip=Array(6).fill(0),totLaser=Array(6).fill(0),totLash=Array(6).fill(0),totHair=Array(6).fill(0),totNail=Array(6).fill(0),totItem=Array(6).fill(0),totChalacol=Array(6).fill(0),totFacial=Array(6).fill(0),totR2=Array(6).fill(0),absentDays=Array(5).fill(0),absentNamDays=0,totHaeinRev=0;
   // คอมมิชชั่นที่ช่างกรอกเองรายวัน — รวมตามที่กรอกจริง ไม่คำนวณจากสูตรทับ
   let commBrow=Array(6).fill(0),commEye=Array(6).fill(0),commLip=Array(6).fill(0),mLaser=Array(6).fill(0),mLash=Array(6).fill(0),mHair=Array(6).fill(0),mNail=Array(6).fill(0),mItem=Array(6).fill(0),mChalacol=Array(6).fill(0),mFacial=Array(6).fill(0);
+  const dailyComm=Array(6).fill(null).map(()=>({})); // dailyComm[artistIdx][day] = คอมรวมของวันนั้น
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
     (dd.svc||[]).forEach((sv,i)=>{
@@ -1346,19 +1365,18 @@ window.calcPayroll = function() {
       totFacial[i]+=sv.facial||0;
       // ถ้าวันนั้นยังไม่เคยกรอกคอมเอง (บันทึกไว้ก่อนมีฟีเจอร์นี้) ให้ใช้สูตรแนะนำเดิมแทน เพื่อไม่ให้ตกหล่นเป็น 0
       const gc = (id,val) => sv[id+'_comm']!=null ? sv[id+'_comm'] : suggestComm(id, val||0);
-      commBrow[i]+=gc('brow', sv.brow);
-      commEye[i]+=gc('eye', sv.eye);
-      commLip[i]+=gc('lip', sv.lip);
-      mLaser[i]+=gc('laser', sv.laser);
-      mLash[i]+=gc('lash', sv.lash);
-      mHair[i]+=gc('hair', sv.hair);
-      mNail[i]+=gc('nail', sv.nail);
-      mItem[i]+=gc('item', sv.item);
-      mChalacol[i]+=gc('chalacol', sv.chalacol);
-      mFacial[i]+=gc('facial', sv.facial);
+      const dBrow=gc('brow',sv.brow), dEye=gc('eye',sv.eye), dLip=gc('lip',sv.lip), dLaser=gc('laser',sv.laser),
+            dLash=gc('lash',sv.lash), dHair=gc('hair',sv.hair), dNail=gc('nail',sv.nail), dItem=gc('item',sv.item),
+            dChalacol=gc('chalacol',sv.chalacol), dFacial=gc('facial',sv.facial);
+      commBrow[i]+=dBrow; commEye[i]+=dEye; commLip[i]+=dLip; mLaser[i]+=dLaser;
+      mLash[i]+=dLash; mHair[i]+=dHair; mNail[i]+=dNail; mItem[i]+=dItem; mChalacol[i]+=dChalacol; mFacial[i]+=dFacial;
+      const r2=(dd.commR2||[])[i]||0;
+      const dayTotal=dBrow+dEye+dLip+dLaser+dLash+dHair+dNail+dItem+dChalacol+dFacial+r2;
+      if(dayTotal>0) dailyComm[i][d]=dayTotal;
     });
     (dd.commR2||[]).forEach((r,i)=>totR2[i]+=r);
     if(dd.absent) (dd.absent||[]).forEach((a,i)=>{if(a)absentDays[i]++;});
+    if(dd.absentNam) absentNamDays++;
     totHaeinRev+=haeinTotal(dd.haein||{});
   }
   const haeinPool=totHaeinRev*0.10, haeinPP=haeinPool/5; // ÷5 ช่าง (ไม่รวมอ.หญิง)
@@ -1379,7 +1397,9 @@ window.calcPayroll = function() {
     if(dayCount > 0) anDailyDetails.push({d, count: dayCount});
     anServiceCount += dayCount;
     const anCommVal = dd.svc?.[5]?.an_comm;
-    anExtraComm += anCommVal!=null ? anCommVal : dayCount*AN_COMM_PER_SVC;
+    const anDayComm = anCommVal!=null ? anCommVal : dayCount*AN_COMM_PER_SVC;
+    anExtraComm += anDayComm;
+    if(anDayComm>0) dailyComm[5][d]=(dailyComm[5][d]||0)+anDayComm;
   }
 
   // ═══ คอมค่าสอน — รวมจากคอร์สที่สอนในเดือน/ปีปัจจุบัน รองรับผู้สอนหลายคนต่อคอร์ส ═══
@@ -1402,6 +1422,7 @@ window.calcPayroll = function() {
     return i===5 ? base+anExtraComm : base; // index 5 = ช่างอั๋น
   });
   const leaveAdj=ATTEND_IDX.map((ai,i)=>Math.round((LEAVE_DAYS-absentDays[i])*bases[ai]/30*100)/100);
+  const leaveAdjNam=Math.round((LEAVE_DAYS-absentNamDays)*salNam/30*100)/100;
   const ADV_KEYS=['','mod','bom','mali','jen','an']; // index ตรงกับ ARTISTS (0=อ.หญิง ไม่มีเบิก)
   const adv=i=>+advanceData[ADV_KEYS[i]]||0;
   const totPay=ARTISTS.map((_,i)=>{
@@ -1410,12 +1431,12 @@ window.calcPayroll = function() {
     return i===0 ? gross : Math.max(0, gross-SOCIAL_SECURITY-adv(i));
   });
   const advMo=+advanceData.mo||0, advNam=+advanceData.nampheung||0;
-  const salMoNet = Math.max(0, salMo - SOCIAL_SECURITY - advMo);
-  const salNamNet = Math.max(0, salNam - SOCIAL_SECURITY - advNam);
+  const salMoNet = Math.max(0, salMo - advMo); // โม ไม่หักประกันสังคม รับเต็ม
+  const salNamNet = Math.max(0, salNam + leaveAdjNam - SOCIAL_SECURITY - advNam); // น้ำผึ้ง คิดวันทำงานเหมือนช่างคนอื่น
   const grandTotal=totPay.slice(1).reduce((a,b)=>a+b,0)+salMoNet+salNamNet; // ไม่รวม อ.หญิง (index 0)
   const gComm=totalComm.reduce((a,b)=>a+b,0),gBase=bases.slice(1).reduce((a,b)=>a+b,0);
   const gTeachComm=teachComm.reduce((a,b)=>a+b,0);
-  const gSocialSec=SOCIAL_SECURITY*(ATTEND_ARTISTS.length+2); // 5 ช่าง + โม + น้ำผึ้ง
+  const gSocialSec=SOCIAL_SECURITY*(ATTEND_ARTISTS.length+1); // 5 ช่าง + น้ำผึ้ง (โม ไม่หักแล้ว)
   const gAdvance=[1,2,3,4,5].reduce((s,i)=>s+adv(i),0)+advMo+advNam;
 
   const totShopRev=ARTISTS.reduce((s,_,i)=>s+totTat[i]+totLaser[i]+totOther[i]+totItem[i],0);
@@ -1451,13 +1472,15 @@ window.calcPayroll = function() {
     </tr>`;
   }).join('')+`<tr style="background:#fefce8">
     <td><span class="av" style="background:#78716c;margin-right:6px">ม</span>โม <span style="font-size:10px;color:#888">(กราฟิก)</span></td>
-    <td colspan="11" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว</td>
-    <td>${fmtN(salMo)}</td><td style="color:#dc2626">-${fmtN(SOCIAL_SECURITY)}</td>
+    <td colspan="11" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว (ไม่หักประกันสังคม)</td>
+    <td>${fmtN(salMo)}</td><td style="color:#aaa;text-align:center">–</td>
     <td><input type="number" value="${advMo||''}" placeholder="0" min="0" onchange="window.saveAdvance('mo', this.value)" style="width:75px;padding:4px 6px;border:1.5px solid #fca5a5;border-radius:5px;font-size:12px;text-align:right;color:#dc2626"></td>
     <td style="font-weight:700;color:#16a34a">${fmtN(salMoNet)}</td></tr>
   <tr style="background:#fefce8">
     <td><span class="av" style="background:#d97706;margin-right:6px">ผ</span>น้ำผึ้ง <span style="font-size:10px;color:#888">(แม่บ้าน)</span></td>
-    <td colspan="11" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว</td>
+    <td style="text-align:center">${absentNamDays} วัน</td>
+    <td style="text-align:center"><span style="color:${leaveAdjNam>0?'#16a34a':leaveAdjNam<0?'#dc2626':'#888'}">${leaveAdjNam>0?'+':''}${fmtN(leaveAdjNam)}</span><br><span style="font-size:10px;color:#888">${leaveAdjNam>0?`เหลือ${LEAVE_DAYS-absentNamDays}วัน`:leaveAdjNam<0?`เกิน${absentNamDays-LEAVE_DAYS}วัน`:'ใช้ครบ'}</span></td>
+    <td colspan="9" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว (คิดวันทำงานเหมือนพนักงานคนอื่น)</td>
     <td>${fmtN(salNam)}</td><td style="color:#dc2626">-${fmtN(SOCIAL_SECURITY)}</td>
     <td><input type="number" value="${advNam||''}" placeholder="0" min="0" onchange="window.saveAdvance('nampheung', this.value)" style="width:75px;padding:4px 6px;border:1.5px solid #fca5a5;border-radius:5px;font-size:12px;text-align:right;color:#dc2626"></td>
     <td style="font-weight:700;color:#16a34a">${fmtN(salNamNet)}</td></tr>`;
@@ -1491,6 +1514,31 @@ window.calcPayroll = function() {
     <td style="color:#dc2626">-${fmtN(gSocialSec)}</td>
     <td style="color:#dc2626">-${fmtN(gAdvance)}</td>
     <td style="color:#16a34a">${fmtN(grandTotal)}</td></tr>`;
+
+  // ═══ ตารางคอมมิชชั่นรายวัน ═══
+  const dim=getDaysInMonth();
+  const dcHead=document.getElementById('daily-comm-head');
+  const dcBody=document.getElementById('daily-comm-body');
+  const dcFoot=document.getElementById('daily-comm-foot');
+  if(dcHead&&dcBody&&dcFoot){
+    dcHead.innerHTML=`<th style="text-align:left;min-width:80px">ช่าง</th>`+Array.from({length:dim},(_,d)=>`<th>${d+1}</th>`).join('')+`<th style="background:#e0f2fe">รวม</th>`;
+    dcBody.innerHTML=ATTEND_IDX.map((ai,i)=>{
+      const name=ARTISTS[ai];
+      let rowTotal=0;
+      const cells=Array.from({length:dim},(_,idx)=>{
+        const d=idx+1, v=dailyComm[ai][d]||0;
+        rowTotal+=v;
+        return `<td style="text-align:center;font-size:11px">${v>0?fmtN(v):'–'}</td>`;
+      }).join('');
+      return `<tr><td style="text-align:left;font-weight:600"><span class="av" style="background:${COLORS[ai]};margin-right:4px;width:20px;height:20px;font-size:9px">${name.charAt(name.length-1)}</span>${name}</td>${cells}<td style="background:#e0f2fe;font-weight:700">${fmtN(rowTotal)}</td></tr>`;
+    }).join('');
+    const dayTotals=Array.from({length:dim},(_,idx)=>{
+      const d=idx+1;
+      return ATTEND_IDX.reduce((s,ai)=>s+(dailyComm[ai][d]||0),0);
+    });
+    const grandDailyTotal=dayTotals.reduce((a,b)=>a+b,0);
+    dcFoot.innerHTML=`<td>รวม</td>`+dayTotals.map(v=>`<td style="text-align:center;font-size:11px">${v>0?fmtN(v):'–'}</td>`).join('')+`<td style="background:#e0f2fe">${fmtN(grandDailyTotal)}</td>`;
+  }
 };
 
 window.exportSummaryCSV=function(){
