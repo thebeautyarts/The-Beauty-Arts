@@ -475,7 +475,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
     <h3 style="font-size:14px;font-weight:700;color:#0c4a6e">⚙️ ตั้งค่าเงินเดือนพื้นฐาน</h3>
     <div style="font-size:12px;color:#888;margin-bottom:10px">
       🔒 ฐานเงินเดือนล็อคแล้ว &nbsp;|&nbsp; 📌 วันหยุด 4 วัน/เดือน &nbsp;|&nbsp;
-      🎨 คอม: คิ้ว/ปาก/ตา 20% (ทำคิ้วใหม่จ่าย 2 รอบ) | เลเซอร์ 20% | ขนตา/ผม/เล็บ 10% | ขายของ ฿150→฿50 &nbsp;|&nbsp; 💜 HAE-IN 10%÷5 (ไม่รวมอ.หญิง) &nbsp;|&nbsp; 🌿 ชลาชล ฿1,161/คน/ครั้ง &nbsp;|&nbsp; 🎓 คอมค่าสอน: ตามคอร์สที่สอนในเดือนนี้ &nbsp;|&nbsp; 🏥 หักประกันสังคมคนละ ฿600/เดือน &nbsp;|&nbsp; 💸 เบิกล่วงหน้า: กรอกเองต่อคน หักออกจากยอดรับสุทธิ &nbsp;|&nbsp; โม/น้ำผึ้ง: เงินเดือนอย่างเดียว ไม่มีคอม
+      🎨 คอมมิชชั่น: รวมจากตัวเลขที่ช่างกรอกเองในหน้าบันทึกรายวัน (ไม่ใช่สูตรคำนวณอัตโนมัติ) &nbsp;|&nbsp; 💜 HAE-IN 10%÷5 (ไม่รวมอ.หญิง) &nbsp;|&nbsp; 🌿 ชลาชล/สลายฝ้า รวมอยู่ในคอมที่กรอกเอง &nbsp;|&nbsp; 🎓 คอมค่าสอน: ตามคอร์สที่สอนในเดือนนี้ &nbsp;|&nbsp; 🏥 หักประกันสังคมคนละ ฿600/เดือน &nbsp;|&nbsp; 💸 เบิกล่วงหน้า: กรอกเองต่อคน หักออกจากยอดรับสุทธิ &nbsp;|&nbsp; โม/น้ำผึ้ง: เงินเดือนอย่างเดียว ไม่มีคอม
     </div>
     <div class="salary-grid">
       <div class="s-field"><label>ช่างมด 🔒</label><input type="number" id="sal-mod" value="15000" readonly style="background:#f5f5f5"></div>
@@ -1328,7 +1328,9 @@ window.calcPayroll = function() {
   const bases=[0,...['sal-mod','sal-bom','sal-mali','sal-jen','sal-an'].map(id=>+document.getElementById(id).value||0)]; // index 0 = อ.หญิง (0 เพราะจ่ายผ่านช่องทาง "ส่งให้อ.หญิง")
   const salMo=+document.getElementById('sal-mo').value||0;
   const salNam=+document.getElementById('sal-nampheung').value||0;
-  let totBrow=Array(6).fill(0),totEye=Array(6).fill(0),totLip=Array(6).fill(0),totLaser=Array(6).fill(0),totLash=Array(6).fill(0),totHair=Array(6).fill(0),totNail=Array(6).fill(0),totItem=Array(6).fill(0),totChalacol=Array(6).fill(0),totR2=Array(6).fill(0),absentDays=Array(5).fill(0),totHaeinRev=0;
+  let totBrow=Array(6).fill(0),totEye=Array(6).fill(0),totLip=Array(6).fill(0),totLaser=Array(6).fill(0),totLash=Array(6).fill(0),totHair=Array(6).fill(0),totNail=Array(6).fill(0),totItem=Array(6).fill(0),totChalacol=Array(6).fill(0),totFacial=Array(6).fill(0),totR2=Array(6).fill(0),absentDays=Array(5).fill(0),totHaeinRev=0;
+  // คอมมิชชั่นที่ช่างกรอกเองรายวัน — รวมตามที่กรอกจริง ไม่คำนวณจากสูตรทับ
+  let commBrow=Array(6).fill(0),commEye=Array(6).fill(0),commLip=Array(6).fill(0),mLaser=Array(6).fill(0),mLash=Array(6).fill(0),mHair=Array(6).fill(0),mNail=Array(6).fill(0),mItem=Array(6).fill(0),mChalacol=Array(6).fill(0),mFacial=Array(6).fill(0);
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
     (dd.svc||[]).forEach((sv,i)=>{
@@ -1341,6 +1343,19 @@ window.calcPayroll = function() {
       totNail[i]+=(sv.nail||0);
       totItem[i]+=sv.item||0;
       totChalacol[i]+=sv.chalacol||0;
+      totFacial[i]+=sv.facial||0;
+      // ถ้าวันนั้นยังไม่เคยกรอกคอมเอง (บันทึกไว้ก่อนมีฟีเจอร์นี้) ให้ใช้สูตรแนะนำเดิมแทน เพื่อไม่ให้ตกหล่นเป็น 0
+      const gc = (id,val) => sv[id+'_comm']!=null ? sv[id+'_comm'] : suggestComm(id, val||0);
+      commBrow[i]+=gc('brow', sv.brow);
+      commEye[i]+=gc('eye', sv.eye);
+      commLip[i]+=gc('lip', sv.lip);
+      mLaser[i]+=gc('laser', sv.laser);
+      mLash[i]+=gc('lash', sv.lash);
+      mHair[i]+=gc('hair', sv.hair);
+      mNail[i]+=gc('nail', sv.nail);
+      mItem[i]+=gc('item', sv.item);
+      mChalacol[i]+=gc('chalacol', sv.chalacol);
+      mFacial[i]+=gc('facial', sv.facial);
     });
     (dd.commR2||[]).forEach((r,i)=>totR2[i]+=r);
     if(dd.absent) (dd.absent||[]).forEach((a,i)=>{if(a)absentDays[i]++;});
@@ -1349,23 +1364,23 @@ window.calcPayroll = function() {
   const haeinPool=totHaeinRev*0.10, haeinPP=haeinPool/5; // ÷5 ช่าง (ไม่รวมอ.หญิง)
   const totTat=totBrow.map((b,i)=>b+totEye[i]+totLip[i]);
   const totOther=totLash.map((l,i)=>l+totHair[i]+totNail[i]);
-  const commTat=totTat.map((t,i)=>Math.max(0,t*0.20-totR2[i]));
-  const commLaser=totLaser.map(t=>t*0.20);
-  const commLash=totLash.map(t=>t*0.10);
-  const commHair=totHair.map(t=>t*0.10);
-  const commNail=totNail.map(t=>t*0.10);
-  const commOther=totOther.map(t=>t*0.10);
-  const commItem=totItem.map(t=>calcItemComm(t));
-  const commChalacol=totChalacol.map(t=>t*CHALACOL_RATE);
+  // คอมทุกหมวดตอนนี้ = ผลรวมตัวเลขที่ช่างกรอกเองในหน้าบันทึกรายวัน (ไม่ใช่สูตรคำนวณย้อนหลัง)
+  const commTat=commBrow.map((b,i)=>b+commEye[i]+commLip[i]);
+  const commLaser=mLaser;
+  const commOther=totLash.map((_,i)=>mLash[i]+mHair[i]+mNail[i]+mFacial[i]); // รวมสลายฝ้า/กระ เข้าหมวดนี้ด้วย (เดิมตกหล่น)
+  const commItem=mItem;
+  const commChalacol=mChalacol;
   let anServiceCount = 0;
   let anDailyDetails = [];
+  let anExtraComm = 0; // รวมจากที่กรอกเองในหน้าบันทึกรายวัน (ไม่ใช่สูตร count×200 อีกต่อไป)
   for(let d=1;d<=getDaysInMonth();d++){
     const dd=getDay(d);
     let dayCount = countDaySvc(dd);
     if(dayCount > 0) anDailyDetails.push({d, count: dayCount});
     anServiceCount += dayCount;
+    const anCommVal = dd.svc?.[5]?.an_comm;
+    anExtraComm += anCommVal!=null ? anCommVal : dayCount*AN_COMM_PER_SVC;
   }
-  const anExtraComm = anServiceCount * AN_COMM_PER_SVC;
 
   // ═══ คอมค่าสอน — รวมจากคอร์สที่สอนในเดือน/ปีปัจจุบัน รองรับผู้สอนหลายคนต่อคอร์ส ═══
   const teachComm = Array(6).fill(0);
@@ -1428,7 +1443,7 @@ window.calcPayroll = function() {
       <td style="color:#065f46;font-weight:600">${totChalacol[i]>0?`${totChalacol[i]} ครั้ง`:'–'}<br><span style="color:#16a34a;font-size:10px">${commChalacol[i]>0?'+'+fmtN(commChalacol[i]):''}</span></td>
       <td style="color:#6d28d9;font-weight:600">${fmtN(haeinPP)}</td>
       <td style="color:#0891b2;font-weight:600">${teachComm[i]>0?fmtN(teachComm[i]):'–'}</td>
-      <td style="font-weight:700">${fmtN(totalComm[i])}${i===5&&anExtraComm>0?`<br><span style="font-size:10px;color:#f59e0b">🎯 คอมบริการ: ${anServiceCount} ครั้ง×฿200=${fmtN(anExtraComm)}</span>`:''}</td>
+      <td style="font-weight:700">${fmtN(totalComm[i])}${i===5&&anExtraComm>0?`<br><span style="font-size:10px;color:#f59e0b">🎯 คอมบริการ (กรอกเอง): ${fmtN(anExtraComm)} <span style="color:#aaa">(อ้างอิง ${anServiceCount} ครั้ง)</span></span>`:''}</td>
       <td>${fmtN(bases[i])}</td>
       <td style="color:#dc2626">-${fmtN(SOCIAL_SECURITY)}</td>
       <td><input type="number" value="${adv(i)||''}" placeholder="0" min="0" onchange="window.saveAdvance('${ADV_KEYS[i]}', this.value)" style="width:75px;padding:4px 6px;border:1.5px solid #fca5a5;border-radius:5px;font-size:12px;text-align:right;color:#dc2626"></td>
@@ -1452,7 +1467,7 @@ window.calcPayroll = function() {
   if(anDetailEl) {
     if(anDailyDetails.length > 0) {
       anDetailEl.innerHTML = `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px;margin-bottom:14px">
-        <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:8px">🎯 รายละเอียดคอมอั๋น (${anServiceCount} บริการ × ฿200 = ${fmtN(anExtraComm)})</div>
+        <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:8px">🎯 รายละเอียดคอมอั๋น (กรอกเอง: ${fmtN(anExtraComm)} | อ้างอิงจำนวนบริการ: ${anServiceCount} ครั้ง)</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px">
           ${anDailyDetails.map(({d,count})=>`<span style="background:#fff;border:1px solid #fde68a;border-radius:5px;padding:3px 10px;font-size:11px;color:#92400e">${d}/${String(curMonth+1).padStart(2,'0')} — ${count} บริการ (${fmtN(count*AN_COMM_PER_SVC)})</span>`).join('')}
         </div>
