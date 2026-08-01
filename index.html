@@ -475,7 +475,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
     <h3 style="font-size:14px;font-weight:700;color:#0c4a6e">⚙️ ตั้งค่าเงินเดือนพื้นฐาน</h3>
     <div style="font-size:12px;color:#888;margin-bottom:10px">
       🔒 ฐานเงินเดือนล็อคแล้ว &nbsp;|&nbsp; 📌 วันหยุด 4 วัน/เดือน &nbsp;|&nbsp;
-      🎨 คอม: คิ้ว/ปาก/ตา 20% (ทำคิ้วใหม่จ่าย 2 รอบ) | เลเซอร์ 20% | ขนตา/ผม/เล็บ 10% | ขายของ ฿150→฿50 &nbsp;|&nbsp; 💜 HAE-IN 10%÷5 (ไม่รวมอ.หญิง) &nbsp;|&nbsp; 🌿 ชลาชล ฿1,161/คน/ครั้ง &nbsp;|&nbsp; 🎓 คอมค่าสอน: ตามคอร์สที่สอนในเดือนนี้ &nbsp;|&nbsp; 🏥 หักประกันสังคมคนละ ฿600/เดือน &nbsp;|&nbsp; โม/น้ำผึ้ง: เงินเดือนอย่างเดียว ไม่มีคอม
+      🎨 คอม: คิ้ว/ปาก/ตา 20% (ทำคิ้วใหม่จ่าย 2 รอบ) | เลเซอร์ 20% | ขนตา/ผม/เล็บ 10% | ขายของ ฿150→฿50 &nbsp;|&nbsp; 💜 HAE-IN 10%÷5 (ไม่รวมอ.หญิง) &nbsp;|&nbsp; 🌿 ชลาชล ฿1,161/คน/ครั้ง &nbsp;|&nbsp; 🎓 คอมค่าสอน: ตามคอร์สที่สอนในเดือนนี้ &nbsp;|&nbsp; 🏥 หักประกันสังคมคนละ ฿600/เดือน &nbsp;|&nbsp; 💸 เบิกล่วงหน้า: กรอกเองต่อคน หักออกจากยอดรับสุทธิ &nbsp;|&nbsp; โม/น้ำผึ้ง: เงินเดือนอย่างเดียว ไม่มีคอม
     </div>
     <div class="salary-grid">
       <div class="s-field"><label>ช่างมด 🔒</label><input type="number" id="sal-mod" value="15000" readonly style="background:#f5f5f5"></div>
@@ -501,7 +501,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
         <th>เลเซอร์ (20%)</th>
         <th>ขนตา/ผม/เล็บ (10%)</th><th>ขายของ</th>
         <th>🌿 ชลาชล</th>
-        <th>💜 HAE-IN ÷6</th><th>🎓 คอมค่าสอน</th><th>รวมคอม</th><th>เงินเดือน</th><th>🏥 ประกันสังคม</th><th>รวมรับ</th>
+        <th>💜 HAE-IN ÷6</th><th>🎓 คอมค่าสอน</th><th>รวมคอม</th><th>เงินเดือน</th><th>🏥 ประกันสังคม</th><th>💸 เบิกล่วงหน้า</th><th>รวมรับ</th>
       </tr></thead>
       <tbody id="pr-tbody"></tbody>
       <tfoot id="pr-tfoot"></tfoot>
@@ -683,8 +683,10 @@ window.changeMonth = function() {
   // รีเซ็ตข้อมูลและ re-sync
   data = {}; selDay = null;
   stopSync();
+  stopAdvanceSync();
   buildCal();
   startRealtimeSync();
+  startAdvanceSync();
   startCourseSync();
 };
 
@@ -810,6 +812,21 @@ function updateLastSync() {
 function stopSync() {
   if (syncUnsub) { syncUnsub(); syncUnsub = null; }
 }
+
+let advanceData = {}; // เงินเบิกล่วงหน้าของเดือนนี้ {mod:0, bom:0, ...}
+let advanceUnsub = null;
+function stopAdvanceSync() {
+  if (advanceUnsub) { advanceUnsub(); advanceUnsub = null; }
+}
+function startAdvanceSync() {
+  advanceUnsub = onValue(ref(db, 'payroll_advance/' + getRoot()), (snapshot) => {
+    advanceData = snapshot.val() || {};
+    if (document.getElementById('p-payroll')?.classList.contains('active')) window.calcPayroll();
+  });
+}
+window.saveAdvance = function(key, val) {
+  set(ref(db, `payroll_advance/${getRoot()}/${key}`), +val || 0);
+};
 
 function startRealtimeSync() {
   syncUnsub = onValue(ref(db, getRoot()), (snapshot) => {
@@ -1082,6 +1099,7 @@ function updatePreview() {
   if(otEl) otEl.textContent=otherTotal>0?`รวมรายรับอื่นๆ: ${fmtN(otherTotal)}`:'';
   syncChannelTotal();
 }
+window.updatePreview = updatePreview;
 
 function syncChannelTotal() {
   let at=0;
@@ -1095,6 +1113,7 @@ function syncChannelTotal() {
   else if(diff>0) el.innerHTML=`<span style="color:#f97316">⚠️ ยอดช่องทางมากกว่า ${fmtN(diff)}</span>`;
   else el.innerHTML=`<span style="color:#f97316">⚠️ ยอดช่องทางน้อยกว่า ${fmtN(-diff)}</span>`;
 }
+window.syncChannelTotal = syncChannelTotal;
 
 window.addExpRow = function() {
   const row=document.createElement('div'); row.className='exp-row';
@@ -1368,17 +1387,21 @@ window.calcPayroll = function() {
     return i===5 ? base+anExtraComm : base; // index 5 = ช่างอั๋น
   });
   const leaveAdj=ATTEND_IDX.map((ai,i)=>Math.round((LEAVE_DAYS-absentDays[i])*bases[ai]/30*100)/100);
+  const ADV_KEYS=['','mod','bom','mali','jen','an']; // index ตรงกับ ARTISTS (0=อ.หญิง ไม่มีเบิก)
+  const adv=i=>+advanceData[ADV_KEYS[i]]||0;
   const totPay=ARTISTS.map((_,i)=>{
     const adjIdx=ATTEND_IDX.indexOf(i);
     const gross=bases[i]+totalComm[i]+(adjIdx>=0?leaveAdj[adjIdx]:0);
-    return i===0 ? gross : Math.max(0, gross-SOCIAL_SECURITY);
+    return i===0 ? gross : Math.max(0, gross-SOCIAL_SECURITY-adv(i));
   });
-  const salMoNet = Math.max(0, salMo - SOCIAL_SECURITY);
-  const salNamNet = Math.max(0, salNam - SOCIAL_SECURITY);
+  const advMo=+advanceData.mo||0, advNam=+advanceData.nampheung||0;
+  const salMoNet = Math.max(0, salMo - SOCIAL_SECURITY - advMo);
+  const salNamNet = Math.max(0, salNam - SOCIAL_SECURITY - advNam);
   const grandTotal=totPay.slice(1).reduce((a,b)=>a+b,0)+salMoNet+salNamNet; // ไม่รวม อ.หญิง (index 0)
   const gComm=totalComm.reduce((a,b)=>a+b,0),gBase=bases.slice(1).reduce((a,b)=>a+b,0);
   const gTeachComm=teachComm.reduce((a,b)=>a+b,0);
   const gSocialSec=SOCIAL_SECURITY*(ATTEND_ARTISTS.length+2); // 5 ช่าง + โม + น้ำผึ้ง
+  const gAdvance=[1,2,3,4,5].reduce((s,i)=>s+adv(i),0)+advMo+advNam;
 
   const totShopRev=ARTISTS.reduce((s,_,i)=>s+totTat[i]+totLaser[i]+totOther[i]+totItem[i],0);
   const totBrowAll=totBrow.reduce((a,b)=>a+b,0),totEyeAll=totEye.reduce((a,b)=>a+b,0),totLipAll=totLip.reduce((a,b)=>a+b,0);
@@ -1387,7 +1410,7 @@ window.calcPayroll = function() {
     <div class="card purple"><div class="label">💜 HAE-IN | pool 10% ÷5</div><div class="value">${fmtN(totHaeinRev)} | ${fmtN(haeinPool)}</div></div>
     <div class="card green"><div class="label">คอมรวมทุกช่าง (รวม 🎓 ${fmtN(gTeachComm)})</div><div class="value">${fmtN(gComm)}</div></div>
     <div class="card"><div class="label">เงินเดือนพื้นฐาน</div><div class="value">${fmtN(gBase+salMo+salNam)}</div></div>
-    <div class="card red"><div class="label">รวมจ่ายทั้งหมด (หัก 🏥 ${fmtN(gSocialSec)} แล้ว)</div><div class="value">${fmtN(grandTotal)}</div></div>`;
+    <div class="card red"><div class="label">รวมจ่ายทั้งหมด (หัก 🏥${fmtN(gSocialSec)} + 💸${fmtN(gAdvance)})</div><div class="value">${fmtN(grandTotal)}</div></div>`;
 
   document.getElementById('pr-tbody').innerHTML=ARTISTS.map((name,i)=>{
     if(i===0) return ''; // อ.หญิง — ไม่แสดงในตารางเงินเดือน (ส่งเงินผ่านช่องทาง "ส่งให้อ.หญิง" แทน)
@@ -1408,16 +1431,21 @@ window.calcPayroll = function() {
       <td style="font-weight:700">${fmtN(totalComm[i])}${i===5&&anExtraComm>0?`<br><span style="font-size:10px;color:#f59e0b">🎯 คอมบริการ: ${anServiceCount} ครั้ง×฿200=${fmtN(anExtraComm)}</span>`:''}</td>
       <td>${fmtN(bases[i])}</td>
       <td style="color:#dc2626">-${fmtN(SOCIAL_SECURITY)}</td>
+      <td><input type="number" value="${adv(i)||''}" placeholder="0" min="0" onchange="window.saveAdvance('${ADV_KEYS[i]}', this.value)" style="width:75px;padding:4px 6px;border:1.5px solid #fca5a5;border-radius:5px;font-size:12px;text-align:right;color:#dc2626"></td>
       <td style="font-weight:700;color:#16a34a;font-size:13px">${fmtN(totPay[i])}</td>
     </tr>`;
   }).join('')+`<tr style="background:#fefce8">
     <td><span class="av" style="background:#78716c;margin-right:6px">ม</span>โม <span style="font-size:10px;color:#888">(กราฟิก)</span></td>
-    <td colspan="12" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว</td>
-    <td>${fmtN(salMo)}</td><td style="color:#dc2626">-${fmtN(SOCIAL_SECURITY)}</td><td style="font-weight:700;color:#16a34a">${fmtN(salMoNet)}</td></tr>
+    <td colspan="11" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว</td>
+    <td>${fmtN(salMo)}</td><td style="color:#dc2626">-${fmtN(SOCIAL_SECURITY)}</td>
+    <td><input type="number" value="${advMo||''}" placeholder="0" min="0" onchange="window.saveAdvance('mo', this.value)" style="width:75px;padding:4px 6px;border:1.5px solid #fca5a5;border-radius:5px;font-size:12px;text-align:right;color:#dc2626"></td>
+    <td style="font-weight:700;color:#16a34a">${fmtN(salMoNet)}</td></tr>
   <tr style="background:#fefce8">
     <td><span class="av" style="background:#d97706;margin-right:6px">ผ</span>น้ำผึ้ง <span style="font-size:10px;color:#888">(แม่บ้าน)</span></td>
-    <td colspan="12" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว</td>
-    <td>${fmtN(salNam)}</td><td style="color:#dc2626">-${fmtN(SOCIAL_SECURITY)}</td><td style="font-weight:700;color:#16a34a">${fmtN(salNamNet)}</td></tr>`;
+    <td colspan="11" style="text-align:center;color:#aaa;font-size:11px">เงินเดือนอย่างเดียว</td>
+    <td>${fmtN(salNam)}</td><td style="color:#dc2626">-${fmtN(SOCIAL_SECURITY)}</td>
+    <td><input type="number" value="${advNam||''}" placeholder="0" min="0" onchange="window.saveAdvance('nampheung', this.value)" style="width:75px;padding:4px 6px;border:1.5px solid #fca5a5;border-radius:5px;font-size:12px;text-align:right;color:#dc2626"></td>
+    <td style="font-weight:700;color:#16a34a">${fmtN(salNamNet)}</td></tr>`;
 
   // แสดงรายละเอียดคอมอั๋นแต่ละวัน
   const anDetailEl = document.getElementById('an-comm-detail');
@@ -1444,8 +1472,9 @@ window.calcPayroll = function() {
     <td style="color:#6d28d9">${fmtN(haeinPool)}</td>
     <td style="color:#0891b2">${fmtN(gTeachComm)}</td>
     <td>${fmtN(gComm)}</td>
-    <td>${fmtN(gBase+salMo)}</td>
+    <td>${fmtN(gBase+salMo+salNam)}</td>
     <td style="color:#dc2626">-${fmtN(gSocialSec)}</td>
+    <td style="color:#dc2626">-${fmtN(gAdvance)}</td>
     <td style="color:#16a34a">${fmtN(grandTotal)}</td></tr>`;
 };
 
@@ -1463,7 +1492,7 @@ window.exportChannelCSV=function(){
   for(let d=1;d<=dim;d++){const dd=getDay(d);const rev=(dd.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0);const ct=chTotal(dd.channels);if(rev>0||ct>0)rows.push([`${d}/${mo}/${yr}`,...CHANNELS.map(k=>dd.channels[k]||0),ct,rev,ct-rev]);}
   dl('﻿'+rows.map(r=>r.join(',')).join('\n'),`channels_${root}.csv`);
 };
-window.exportPayrollCSV=function(){window.calcPayroll();const root=getRoot();const rows=[['พนักงาน','วันหยุด','ปรับวันหยุด','คิ้ว/ปาก/ตา','คอมรอบ2','เลเซอร์','ขนตา/ผม/เล็บ','ขายของ','ชลาชล','HAE-IN','คอมค่าสอน','รวมคอม','ฐาน','ประกันสังคม','รวมรับ']];document.querySelectorAll('#pr-tbody tr').forEach(tr=>{rows.push([...tr.querySelectorAll('td')].map(td=>td.innerText.replace(/\n/g,' ').trim()));});dl('﻿'+rows.map(r=>r.join(',')).join('\n'),`payroll_${root}.csv`);};
+window.exportPayrollCSV=function(){window.calcPayroll();const root=getRoot();const rows=[['พนักงาน','วันหยุด','ปรับวันหยุด','คิ้ว/ปาก/ตา','คอมรอบ2','เลเซอร์','ขนตา/ผม/เล็บ','ขายของ','ชลาชล','HAE-IN','คอมค่าสอน','รวมคอม','ฐาน','ประกันสังคม','เบิกล่วงหน้า','รวมรับ']];document.querySelectorAll('#pr-tbody tr').forEach(tr=>{rows.push([...tr.querySelectorAll('td')].map(td=>{const inp=td.querySelector('input');return inp?inp.value:td.innerText.replace(/\n/g,' ').trim();}));});dl('﻿'+rows.map(r=>r.join(',')).join('\n'),`payroll_${root}.csv`);};
 function dl(csv,fn){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=fn;a.click();}
 
 window.showPanel=function(id){
@@ -1933,6 +1962,7 @@ async function init() {
     `💙 สรุปยอด The Beauty Arts & HAE-IN — ${MONTH_TH_NAMES[curMonth]} ${curYear}`;
   buildCal();
   startRealtimeSync();
+  startAdvanceSync();
   startCourseSync();
   // เลือกวันปัจจุบันถ้าเป็นเดือนนี้
   const today = new Date();
