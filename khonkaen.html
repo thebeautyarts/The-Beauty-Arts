@@ -612,7 +612,7 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
   <div class="yr-sum-row">
     <div class="card"><div class="c-lbl">รายรับทั้งปี</div><div class="c-val" id="yr-rev">฿0</div></div>
     <div class="card red"><div class="c-lbl">รายจ่ายทั้งปี</div><div class="c-val" id="yr-exp">฿0</div></div>
-    <div class="card green"><div class="c-lbl">กำไรทั้งปี</div><div class="c-val" id="yr-profit">฿0</div></div>
+    <div class="card green"><div class="c-lbl">กำไรสุทธิทั้งปี (หักเงินเดือน+คอมแล้ว)</div><div class="c-val" id="yr-profit">฿0</div></div>
     <div class="card gold"><div class="c-lbl">คอมมิชชั่นทั้งปี</div><div class="c-val" id="yr-comm">฿0</div></div>
   </div>
 
@@ -623,12 +623,12 @@ tfoot td{font-weight:700;background:var(--rose-pale);border-top:2px solid #7c1d3
   <div class="table-wrap">
     <table>
       <thead><tr>
-        <th>เดือน</th><th>รายรับ</th><th>รายจ่าย</th><th>กำไร</th><th>คอม</th><th>วันทำงาน</th>
+        <th>เดือน</th><th>รายรับ</th><th>รายจ่าย</th><th>เงินเดือน</th><th>กำไรสุทธิ</th><th>คอม</th><th>วันทำงาน</th>
       </tr></thead>
       <tbody id="yr-tbody"></tbody>
       <tfoot><tr>
         <td>รวมทั้งปี</td>
-        <td id="yft-rev">฿0</td><td id="yft-exp">฿0</td>
+        <td id="yft-rev">฿0</td><td id="yft-exp">฿0</td><td id="yft-salary">฿0</td>
         <td id="yft-profit">฿0</td><td id="yft-comm">฿0</td><td id="yft-days">0</td>
       </tr></tfoot>
     </table>
@@ -1576,7 +1576,7 @@ window.goToday=function(){curBkDate=new Date();renderBkHdr();loadBk();};
 // ════════════════════════════════════════════════════════
 async function buildYearly(){
   document.getElementById('yr-lbl').textContent=`พ.ศ. ${yrYear}`;
-  let totRev=0,totExp=0,totComm=0,totWdays=0;
+  let totRev=0,totExp=0,totComm=0,totWdays=0,totSalary=0;
   const tbody=document.getElementById('yr-tbody'); tbody.innerHTML='';
   const grid=document.getElementById('yr-grid'); grid.innerHTML='';
   // Load all 12 months
@@ -1591,15 +1591,17 @@ async function buildYearly(){
       if(grand>0){mWdays++;}
       mRev+=grand;mExp+=exp;mOth+=oth;mComm+=getTotalComm(dd);
     }
-    const mProfit=mRev-mExp;
-    totRev+=mRev;totExp+=mExp;totComm+=mComm;totWdays+=mWdays;
+    const mSalary=mRev>0?BASE_SALARY:0; // หักฐานเงินเดือนเฉพาะเดือนที่มีการใช้งานจริง
+    const mProfit=mRev-mExp-mSalary-mComm; // กำไรสุทธิจริง หักเงินเดือน+คอมแล้ว
+    totRev+=mRev;totExp+=mExp;totComm+=mComm;totWdays+=mWdays;totSalary+=mSalary;
     // Month card
     const card=document.createElement('div');
     card.className='yr-card'+(mRev>0?' has-rev':'');
     card.innerHTML=`<div class="yr-month">${ML[m]}</div>
       <div class="yr-rev">${mRev?fN(mRev):'—'}</div>
       ${mExp>0?`<div class="yr-exp">-${fN(mExp)}</div>`:''}
-      ${mRev>0?`<div class="yr-profit">กำไร ${fN(mProfit)}</div>`:'' }
+      ${mSalary>0?`<div class="yr-exp">-${fN(mSalary)} (เงินเดือน)</div>`:''}
+      ${mRev>0?`<div class="yr-profit">กำไรสุทธิ ${fN(mProfit)}</div>`:'' }
       ${mComm>0?`<div class="yr-comm">คอม ${fN(mComm)}</div>`:''}`;
     card.onclick=()=>{calMonth=m;calYear=yrYear;switchTab('cal');};
     grid.appendChild(card);
@@ -1609,18 +1611,20 @@ async function buildYearly(){
       row.style.cursor='pointer';
       row.onclick=()=>{calMonth=m;calYear=yrYear;switchTab('cal');};
       row.innerHTML=`<td>${ML[m]}</td><td>${fN(mRev)}</td><td style="color:#dc2626">${mExp?fN(mExp):'–'}</td>
+        <td style="color:#dc2626">${mSalary?fN(mSalary):'–'}</td>
         <td style="color:${mProfit>=0?'#0c4a6e':'#dc2626'}">${fN(mProfit)}</td>
         <td style="color:var(--gold)">${mComm?fN(mComm):'–'}</td><td>${mWdays} วัน</td>`;
       tbody.appendChild(row);
     }
   });
-  const totProfit=totRev-totExp;
+  const totProfit=totRev-totExp-totSalary-totComm;
   document.getElementById('yr-rev').textContent=fN(totRev);
-  document.getElementById('yr-exp').textContent=fN(totExp);
+  document.getElementById('yr-exp').textContent=fN(totExp+totSalary);
   document.getElementById('yr-profit').textContent=fN(totProfit);
   document.getElementById('yr-comm').textContent=fN(totComm);
   document.getElementById('yft-rev').textContent=fN(totRev);
   document.getElementById('yft-exp').textContent=fN(totExp);
+  document.getElementById('yft-salary').textContent=fN(totSalary);
   document.getElementById('yft-profit').textContent=fN(totProfit);
   document.getElementById('yft-comm').textContent=fN(totComm);
   document.getElementById('yft-days').textContent=totWdays+' วัน';
@@ -1785,12 +1789,12 @@ function buildLineMsg(type){
       const sv=getSvcTot(dd),exp=getExp(dd),oth=getOth(dd);
       mRev+=sv+oth;mExp+=exp;mComm+=getTotalComm(dd);
     }
-    const mProfit=mRev-mExp;
+    const mProfit=mRev>0 ? mRev-mExp-BASE_SALARY-mComm : mRev-mExp;
     let msg=`💗 The Beauty Arts สาขาขอนแก่น${NL}📊 สรุปเดือน ${ML[calMonth]} ${calYear}${NL}${LINE}${NL}`;
     msg+=`📥 รายรับรวม:    ฿${fNN(mRev)}${NL}`;
     msg+=`📤 รายจ่ายรวม:  ฿${fNN(mExp)}${NL}`;
-    msg+=`💚 กำไรสุทธิ:    ฿${fNN(mProfit)}${NL}`;
-    msg+=`🎯 คอมมิชชั่น:  ฿${fNN(mComm)}${NL}`;
+    msg+=`💰 เงินเดือน+คอมไอซ์: ฿${fNN(BASE_SALARY+mComm)}${NL}`;
+    msg+=`💚 กำไรสุทธิ (หักเงินเดือน+คอมแล้ว): ฿${fNN(mProfit)}${NL}`;
     msg+=`${LINE}${NL}`;
     msg+=`💰 เงินเดือนไอซ์${NL}`;
     msg+=`   ฐาน ฿${fNN(BASE_SALARY)} + คอม ฿${fNN(mComm)}${NL}`;
