@@ -538,7 +538,7 @@ tfoot td { font-weight: 700; background: #e0f2fe; border-top: 2px solid #0c4a6e;
     <table>
       <thead><tr>
         <th>เดือน</th><th>รายรับร้านหลัก</th><th>💜 HAE-IN</th>
-        <th>รายจ่าย</th><th>กำไร</th><th>วันที่บันทึก</th>
+        <th>รายจ่าย</th><th>เงินเดือน+คอม</th><th>กำไรสุทธิ</th><th>วันที่บันทึก</th>
       </tr></thead>
       <tbody id="yr-tbody"></tbody>
       <tfoot id="yr-tfoot"></tfoot>
@@ -963,10 +963,12 @@ function buildEntryCards() {
     totRev+=r; totExp+=(dd.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);
     if(r>0) daysWorked++;
   }
+  const totPayroll = daysWorked>0 ? computeMonthPayrollGross(getDay, curMonth, curYear) : 0;
   document.getElementById('entry-cards').innerHTML=`
     <div class="card"><div class="label">ยอดรวมเดือน</div><div class="value">${fmtN(totRev)}</div></div>
     <div class="card red"><div class="label">รายจ่ายรวม</div><div class="value">${fmtN(totExp)}</div></div>
-    <div class="card green"><div class="label">กำไรสุทธิ</div><div class="value">${fmtN(totRev-totExp)}</div></div>
+    <div class="card red"><div class="label">เงินเดือน+คอมรวม</div><div class="value">${fmtN(totPayroll)}</div></div>
+    <div class="card green"><div class="label">กำไรสุทธิ (หักเงินเดือน+คอมแล้ว)</div><div class="value">${fmtN(totRev-totExp-totPayroll)}</div></div>
     <div class="card orange"><div class="label">วันที่มีรายได้</div><div class="value">${daysWorked} วัน</div></div>
     <div class="card purple"><div class="label">บันทึกแล้ว</div><div class="value">${Object.keys(data).length}/30 วัน</div></div>`;
 }
@@ -1287,14 +1289,16 @@ window.buildSummary = function() {
       <td style="text-align:left;font-size:11px;color:#888">${dd.note||''}</td></tr>`;
   }
   buildSvcDashboard(allDays);
+  const totPayroll = totRev>0 ? computeMonthPayrollGross(getDay, curMonth, curYear) : 0;
   document.getElementById('sum-tbody').innerHTML=rows||`<tr><td colspan="15" style="text-align:center;padding:20px;color:#aaa">ยังไม่มีข้อมูล</td></tr>`;
-  document.getElementById('sum-tfoot').innerHTML=`<tr><td>รวม</td>${totSvcA.map(r=>`<td>${fmtN(r)}</td>`).join('')}<td>${fmtN(totRev)}</td><td style="color:#6d28d9">${fmtN(totHaein)}</td><td style="color:#92400e">${fmtN(totOther)}</td><td style="color:#dc2626">${fmtN(totExp)}</td><td style="color:#16a34a">${fmtN(totRev+totHaein+totOther-totExp)}</td><td></td></tr>`;
+  document.getElementById('sum-tfoot').innerHTML=`<tr><td>รวม</td>${totSvcA.map(r=>`<td>${fmtN(r)}</td>`).join('')}<td>${fmtN(totRev)}</td><td style="color:#6d28d9">${fmtN(totHaein)}</td><td style="color:#92400e">${fmtN(totOther)}</td><td style="color:#dc2626">${fmtN(totExp)}</td><td style="color:#16a34a">${fmtN(totRev+totHaein+totOther-totExp-totPayroll)}</td><td></td></tr>`;
   document.getElementById('sum-cards').innerHTML=`
     <div class="card"><div class="label">รายรับร้านหลัก</div><div class="value">${fmtN(totRev)}</div></div>
     <div class="card purple"><div class="label">💜 HAE-IN</div><div class="value">${fmtN(totHaein)}</div></div>
     <div class="card orange"><div class="label">💛 รายรับอื่นๆ</div><div class="value">${fmtN(totOther)}</div></div>
     <div class="card red"><div class="label">รายจ่ายรวม</div><div class="value">${fmtN(totExp)}</div></div>
-    <div class="card green"><div class="label">กำไรรวม</div><div class="value">${fmtN(totRev+totHaein+totOther-totExp)}</div></div>`;
+    <div class="card red"><div class="label">เงินเดือน+คอมรวม</div><div class="value">${fmtN(totPayroll)}</div></div>
+    <div class="card green"><div class="label">กำไรสุทธิ (หักเงินเดือน+คอมแล้ว)</div><div class="value">${fmtN(totRev+totHaein+totOther-totExp-totPayroll)}</div></div>`;
 };
 
 window.buildChannels = function() {
@@ -1576,9 +1580,68 @@ window.showPanel=function(id){
 const MONTH_SHORT_YR = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 const MONTH_TH_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 
+// คำนวณต้นทุนพนักงานรวม (เงินเดือนฐาน+คอมทั้งหมด ก่อนหักประกันสังคม/เบิกล่วงหน้า เพราะสองอย่างนั้นไม่ได้ลดต้นทุนจริงของร้าน)
+// ใช้สำหรับคำนวณกำไรสุทธิให้ตรงกับหน้าเงินเดือน โดยไม่ต้องพึ่งข้อมูลเดือนที่กำลังเปิดอยู่
+function computeMonthPayrollGross(mDataOrGetter, monthIdx, yearBE) {
+  const dim = new Date(yearBE-543, monthIdx+1, 0).getDate();
+  const getD = typeof mDataOrGetter === 'function' ? mDataOrGetter : (d => mDataOrGetter[d]);
+  const bases=[0,...['sal-mod','sal-bom','sal-mali','sal-jen','sal-an'].map(id=>+document.getElementById(id)?.value||0)];
+  const salMo=+document.getElementById('sal-mo')?.value||0;
+  const salNam=+document.getElementById('sal-nampheung')?.value||0;
+
+  let commBrow=Array(6).fill(0),commEye=Array(6).fill(0),commLip=Array(6).fill(0),mLaser=Array(6).fill(0),mLash=Array(6).fill(0),mHair=Array(6).fill(0),mNail=Array(6).fill(0),mItem=Array(6).fill(0),mChalacol=Array(6).fill(0),mFacial=Array(6).fill(0);
+  let totR2=Array(6).fill(0),absentDays=Array(5).fill(0),absentNamDays=0,totHaeinRev=0,anExtraComm=0;
+
+  for(let d=1; d<=dim; d++){
+    const dd = getD(d);
+    if(!dd || typeof dd !== 'object') continue;
+    (dd.svc||[]).forEach((sv,i)=>{
+      const gc=(id,val)=> sv[id+'_comm']!=null ? sv[id+'_comm'] : suggestComm(id, val||0);
+      commBrow[i]+=gc('brow',sv.brow); commEye[i]+=gc('eye',sv.eye); commLip[i]+=gc('lip',sv.lip);
+      mLaser[i]+=gc('laser',sv.laser); mLash[i]+=gc('lash',sv.lash); mHair[i]+=gc('hair',sv.hair);
+      mNail[i]+=gc('nail',sv.nail); mItem[i]+=gc('item',sv.item); mChalacol[i]+=gc('chalacol',sv.chalacol); mFacial[i]+=gc('facial',sv.facial);
+    });
+    (dd.commR2||[]).forEach((r,i)=>totR2[i]+=r);
+    if(dd.absent) dd.absent.forEach((a,i)=>{if(a) absentDays[i]++;});
+    if(dd.absentNam) absentNamDays++;
+    totHaeinRev += haeinTotal(dd.haein||{});
+    const dayCount = countDaySvc(dd);
+    const anCommVal = dd.svc?.[5]?.an_comm;
+    anExtraComm += anCommVal!=null ? anCommVal : dayCount*AN_COMM_PER_SVC;
+  }
+
+  const haeinPool = totHaeinRev*0.10, haeinPP = haeinPool/5;
+  const commTat = commBrow.map((b,i)=>b+commEye[i]+commLip[i]);
+  const commOther = mLash.map((_,i)=>mLash[i]+mHair[i]+mNail[i]+mFacial[i]);
+
+  const teachComm=Array(6).fill(0);
+  Object.values(courses||{}).forEach(cr=>{
+    if(!cr.date) return;
+    const [cy,cm]=cr.date.split('-').map(Number);
+    if(cy!==(yearBE-543) || cm!==(monthIdx+1)) return;
+    const teacherList = Array.isArray(cr.teachers)?cr.teachers:(cr.teacher?[{name:cr.teacher,comm:cr.comm}]:[]);
+    teacherList.forEach(t=>{ const idx=ARTISTS.indexOf(t.name); if(idx>=0) teachComm[idx]+=(+t.comm||0); });
+  });
+
+  const totalComm = ARTISTS.map((_,i)=>{
+    if(i===0) return 0;
+    const base = commTat[i]+totR2[i]+mLaser[i]+commOther[i]+mItem[i]+mChalacol[i]+haeinPP+teachComm[i];
+    return i===5 ? base+anExtraComm : base;
+  });
+
+  const leaveAdj = ATTEND_IDX.map((ai,i)=>Math.round((LEAVE_DAYS-absentDays[i])*bases[ai]/30*100)/100);
+  const leaveAdjNam = Math.round((LEAVE_DAYS-absentNamDays)*salNam/30*100)/100;
+
+  let total = 0;
+  ATTEND_IDX.forEach((ai,i)=>{ total += bases[ai]+totalComm[ai]+leaveAdj[i]; });
+  total += salMo; // โม ไม่หักประกันสังคมแล้ว รับเต็ม
+  total += salNam+leaveAdjNam;
+  return total;
+}
+
 async function buildYearly() {
   const yr = curYear;
-  let totRev=0, totHaein=0, totExp=0, rows='', monthData=[];
+  let totRev=0, totHaein=0, totExp=0, totPayroll=0, rows='', monthData=[];
 
   for(let m=0;m<12;m++){
     const root = `${MONTH_SHORT_YR[m]}${yr}`;
@@ -1592,27 +1655,31 @@ async function buildYearly() {
       mExp += (d.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);
       if((d.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0)>0) mDays++;
     });
-    totRev+=mRev; totHaein+=mHaein; totExp+=mExp;
-    monthData.push({m,mRev,mHaein,mExp,mDays,profit:mRev+mHaein-mExp});
+    const mPayroll = mDays>0 ? computeMonthPayrollGross(mData, m, yr) : 0; // หักเฉพาะเดือนที่มีการใช้งานจริง
+    const mProfit = mRev+mHaein-mExp-mPayroll;
+    totRev+=mRev; totHaein+=mHaein; totExp+=mExp; totPayroll+=mPayroll;
+    monthData.push({m,mRev,mHaein,mExp,mDays,profit:mProfit});
     if(mRev>0||mHaein>0||mExp>0){
       rows+=`<tr onclick="jumpToMonth(${m})" title="คลิกเพื่อดูเดือนนี้">
         <td>${MONTH_TH_NAMES[m]}</td>
         <td>${fmtN(mRev)}</td>
         <td style="color:#7c3aed">${mHaein>0?fmtN(mHaein):'–'}</td>
         <td style="color:#dc2626">${mExp>0?fmtN(mExp):'–'}</td>
-        <td style="color:#16a34a;font-weight:700">${fmtN(mRev+mHaein-mExp)}</td>
+        <td style="color:#dc2626">${mPayroll>0?fmtN(mPayroll):'–'}</td>
+        <td style="color:#16a34a;font-weight:700">${fmtN(mProfit)}</td>
         <td style="text-align:center;color:#888">${mDays} วัน</td>
       </tr>`;
     }
   }
 
   // cards
-  const totProfit = totRev+totHaein-totExp;
+  const totProfit = totRev+totHaein-totExp-totPayroll;
   document.getElementById('yr-cards').innerHTML=`
     <div class="yr-card"><div class="yc-label">รายรับร้านหลัก</div><div class="yc-val">${fmtN(totRev)}</div></div>
     <div class="yr-card purple"><div class="yc-label">💜 HAE-IN รวม</div><div class="yc-val">${fmtN(totHaein)}</div></div>
     <div class="yr-card red"><div class="yc-label">รายจ่ายรวม</div><div class="yc-val">${fmtN(totExp)}</div></div>
-    <div class="yr-card green"><div class="yc-label">กำไรสุทธิรวม</div><div class="yc-val">${fmtN(totProfit)}</div></div>`;
+    <div class="yr-card red"><div class="yc-label">เงินเดือน+คอมรวม</div><div class="yc-val">${fmtN(totPayroll)}</div></div>
+    <div class="yr-card green"><div class="yc-label">กำไรสุทธิรวม (หักเงินเดือน+คอมแล้ว)</div><div class="yc-val">${fmtN(totProfit)}</div></div>`;
 
   // bar charts
   const maxRev = Math.max(...monthData.map(d=>d.mRev),1);
@@ -1630,11 +1697,12 @@ async function buildYearly() {
       <span class="yr-bar-val">${d.mHaein>0?fmtN(d.mHaein):'–'}</span>
     </div>`).join('');
 
-  document.getElementById('yr-tbody').innerHTML = rows||`<tr><td colspan="6" style="text-align:center;padding:20px;color:#aaa">ยังไม่มีข้อมูลปีนี้</td></tr>`;
+  document.getElementById('yr-tbody').innerHTML = rows||`<tr><td colspan="7" style="text-align:center;padding:20px;color:#aaa">ยังไม่มีข้อมูลปีนี้</td></tr>`;
   document.getElementById('yr-tfoot').innerHTML=`<tr>
     <td>รวมปี ${yr}</td><td>${fmtN(totRev)}</td>
     <td style="color:#7c3aed">${fmtN(totHaein)}</td>
     <td style="color:#dc2626">${fmtN(totExp)}</td>
+    <td style="color:#dc2626">${fmtN(totPayroll)}</td>
     <td style="color:#16a34a">${fmtN(totProfit)}</td><td></td></tr>`;
 }
 
@@ -1646,14 +1714,15 @@ window.jumpToMonth = function(m) {
 
 window.exportYearlyCSV = async function() {
   const yr = curYear;
-  let rows=[['เดือน','รายรับร้านหลัก','HAE-IN','รายจ่าย','กำไร','วันที่บันทึก']];
+  let rows=[['เดือน','รายรับร้านหลัก','HAE-IN','รายจ่าย','เงินเดือน+คอม','กำไรสุทธิ','วันที่บันทึก']];
   for(let m=0;m<12;m++){
     const root=`${MONTH_SHORT_YR[m]}${yr}`;
     const snap=await get(ref(db,root));
     const mData=normalizeMonthData(snap.val());
     let mRev=0,mHaein=0,mExp=0,mDays=0;
     Object.values(mData).forEach(d=>{if(typeof d!=='object')return;mRev+=(d.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0);mHaein+=haeinTotal(d.haein||{});mExp+=(d.expenses||[]).reduce((a,e)=>a+(+e.a||0),0);if((d.svc||[]).reduce((s,sv)=>s+totalRevFromSvc(sv),0)>0)mDays++;});
-    if(mRev>0||mHaein>0||mExp>0) rows.push([MONTH_TH_NAMES[m],mRev,mHaein,mExp,mRev+mHaein-mExp,mDays]);
+    const mPayroll=mDays>0?computeMonthPayrollGross(mData,m,yr):0;
+    if(mRev>0||mHaein>0||mExp>0) rows.push([MONTH_TH_NAMES[m],mRev,mHaein,mExp,mPayroll,mRev+mHaein-mExp-mPayroll,mDays]);
   }
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+rows.map(r=>r.join(',')).join('\n')],{type:'text/csv;charset=utf-8'}));a.download=`yearly_${yr}.csv`;a.click();
 };
